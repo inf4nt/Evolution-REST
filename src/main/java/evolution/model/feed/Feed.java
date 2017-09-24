@@ -34,11 +34,11 @@ public class Feed implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "sender_id")
     private UserLight sender;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "to_user_id")
     private UserLight toUser;
 
@@ -52,9 +52,7 @@ public class Feed implements Serializable {
     public List<String> listTags() {
         if (tags == null)
             return null;
-        return Arrays
-                .asList(tags.split("#"))
-                .stream()
+        return Arrays.stream(tags.split("#"))
                 .skip(1)
                 .collect(Collectors.toList());
     }

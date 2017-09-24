@@ -1,4 +1,4 @@
-package evolution.dao;
+package evolution.data;
 
 import evolution.model.feed.Feed;
 import org.springframework.data.jpa.repository.JpaRepository;

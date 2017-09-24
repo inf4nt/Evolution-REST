@@ -1,4 +1,4 @@
-package evolution.service.data;
+package evolution.data;
 
 import evolution.common.FriendStatusEnum;
 import evolution.dao.FriendRepository;

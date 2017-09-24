@@ -1,24 +1,29 @@
-package evolution.dao;
+package evolution.data;
 
-import evolution.data.FeedRepository;
 import evolution.model.feed.Feed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
- * Created by Infant on 26.07.2017.
+ * Created by Infant on 24.09.2017.
  */
 @Service
-public class FeedServiceDao {
+public class FeedDataService {
 
     private final FeedRepository feedRepository;
 
     @Autowired
-    public FeedServiceDao(FeedRepository feedRepository) {
+    public FeedDataService(FeedRepository feedRepository) {
         this.feedRepository = feedRepository;
+    }
+
+    @Transactional
+    public Optional findOne(Long id) {
+        return Optional.ofNullable(feedRepository.findOne(id));
     }
 
     @Transactional
@@ -55,4 +60,5 @@ public class FeedServiceDao {
     public List<Feed> findAll() {
         return feedRepository.findAll();
     }
+
 }
