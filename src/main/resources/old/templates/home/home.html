@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Title</title>
+
+    <!--JQUERY-->
+    <script src="/JQuery/jquery-3.2.1.min.js"></script>
+    <!--BOOTSTRAP-->
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.css"/>
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap-theme.css"/>
+    <script src="/bootstrap/js/bootstrap.js"></script>
+
+    <!--Preloader-->
+    <link rel="stylesheet" href="/css/nprogress.css"/>
+    <script src="/js/nprogress.js"></script>
+
+    <!--Angular JS-->
+    <script src="/app/lib/angular.min.js"></script>
+    <script src="/app/lib/angular-route.min.js"></script>
+
+    <!--Angular Controller -->
+    <script src="/app/controller/ng-app.js"></script>
+    <script src="/app/controller/home-controller.js"></script>
+    <script src="/app/controller/dialog-controller.js"></script>
+
+    <!--CUSTOM-->
+    <link rel="stylesheet" href="/css/main-css.css"/>
+    <script src="/js/main-js.js"></script>
+    <script src="/js/my-js.js"></script>
+    <script src="/js/validators.js"></script>
+
+
+    <style>
+        body {
+            background: url(http://samsung-wallpapers.com/uploads/allimg/130630/1-130630100210.jpg);
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-attachment: fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+        }
+    </style>
+
+
+
+</head>
+<body ng-controller="HomeController" ng-app="RootApp" data-ng-cloak="">
+
+<div id="header">
+    <div id="head-navbar" class="navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="div-white">
+                <a id="brand" class="navbar-brand curs">Evolution
+                    <span><img style="width: 20px; height: 20px" src="/img/brand.gif"/></span>
+                </a>
+            </div>
+            <div class="callapse navbar-collapse div-white">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="/user/id${authUser.id}">
+                            <span class="glyphicon glyphicon-home"> Home</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/user/${authUser.id}/put/view">
+                            <span class="glyphicon glyphicon-cog"> Profile</span>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <!--${authUser.login}-->
+                            <!--${fn:substring(authUser.login,0 , 20)}-->
+                            <span class="glyphicon glyphicon-log-out"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/logout" class="black">Exit</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <br/><br/>  <br/>
+    <div style="display: none" id="side" class="sidebar-nav-fixed affix col-md-3 col-lg-2 col-sm-3 col-xs-3">
+            <div class="col-sm-10 col-md-9 col-lg-10 col-xs-12 sidebar block-background">
+                <ul class="nav nav-sidebar">
+                    <div id="userPanel" class="div-white">
+
+                        <hr/>
+                        <!--<li>-->
+                            <!--<a href="/feed/${authUser.id}/get/view">&#45;&#45;%>-->
+                                <!--<span class="glyphicon glyphicon-list-alt"></span> News-->
+                            <!--</a>-->
+                        <!--</li>-->
+                        <!--<hr/>-->
+                        <li>
+                            <a href="/user/search">
+                                <span class="glyphicon glyphicon-search"></span> Search
+                            </a>
+                        </li>
+                        <hr/>
+                        <li>
+                            <a href="">
+                            <span class="glyphicon glyphicon-user"></span> Friends
+                            </a>
+                        </li>
+                        <hr/>
+                        <li>
+                            <a href="/im/">
+                                <span class="glyphicon glyphicon-envelope"></span> Message
+                            </a>
+                        </li>
+                        <hr/>
+                    </div>
+                    <div id="admin-panel" sec:authorize="hasRole('ROLE_ADMIN')">
+                        <div id="showAdminPanel" class="div-white">
+                            <li><a onclick="adminPanel()" class="curs"><span class="glyphicon glyphicon-arrow-down"></span> Admin panel</a></li>
+                        </div>
+                        <div id="adminPanel" style="display:none;" class="div-white">
+                            <hr/>
+                            <li>
+                                <a href="/user/role/admin"><span class="glyphicon glyphicon-king"></span>
+                                    Admins
+                                </a>
+                            </li>
+                            <hr/>
+                            <li>
+                                <a href="/user/role/user"><span class="glyphicon glyphicon-pawn"></span>
+                                    Users
+                                </a>
+                            </li>
+                        </div>
+                        <hr/>
+                    </div>
+                </ul>
+            </div>
+        </div>
+
+</div>
+
+<div id="content" class="ng-view">
+
+    <div class="col-lg-10 col-lg-offset-2" ng-if="isDone">
+
+        <div class="col-lg-4">
+
+            <div class="col-lg-12 block-background">
+
+                <div class="profile-userpic">
+                    <!--<img class="img-circle center-block" style="width: 250px; height: 300px;"-->
+                         <!--src="https://avatars1.githubusercontent.com/u/15056371?v=3&s=400" data-holder-rendered="true"/>-->
+                    <img class="img-circle center-block" src="/img/avatar.png" style="width: 250px; height: 300px;"/>
+                </div>
+
+                <br/>
+
+                <div>
+                    <a th:href="${id == auth_id} ? @{/im/} : @{/im/} + ${id}" class="btn btn-success" style="width: 100%">
+                        Message <span class="glyphicon glyphicon-envelope"></span>
+                    </a>
+                    <a ng-href="{{messageUrl}}" class="btn btn-success" style="width: 100%">
+                        Message <span class="glyphicon glyphicon-envelope"></span>
+                    </a>
+                </div>
+
+                <br/>
+
+                <div ng-if="user_id !== auth_id">
+                    <!--<c:if test="${user != authUser}">-->
+                        <div id="div-friend-panel-loader" style="display: none">
+                            <p class="text-center">
+                                <img style="height: 25px; width: 150px" src="/resources/page-preloader.gif"/>
+                            </p>
+                        </div>
+                        <div id="div-friend-panel">
+                            <p class="text-center">
+                                <c:if test="${status == null}">
+                                    <button class="btn btn-md btn-info" onclick="actionFriend('ADD_FRIEND')">
+                                        <span class="glyphicon glyphicon-plus"></span> Add friend
+                                    </button>
+                                </c:if>
+                                <c:if test="${status == 2}">
+                                    <button class="btn btn-md btn-info" onclick="actionFriend('ACCEPT_REQUEST')" >
+                                        <span class="glyphicon glyphicon-ok "></span> Accept request
+                                    </button>
+                                </c:if>
+
+                                <c:if test="${status == 1}">
+                                    <button class="btn btn-md btn-info" onclick="actionFriend('DELETE_FRIEND')">
+                                        <span class="glyphicon glyphicon-remove"></span> Delete friend
+                                    </button>
+                                </c:if>
+
+                                <c:if test="${status == 3}">
+                                    <button class="btn btn-md btn-info" onclick="actionFriend('DELETE_REQUEST')">
+                                        <span class="glyphicon glyphicon-trash"></span> Delete request
+                                    </button>
+                                </c:if>
+                            </p>
+                        </div>
+                    <!--</c:if>-->
+                </div>
+
+                <div id="admin-panel">
+                    <sec:authorize access="hasRole('ROLE_ADMIN')">
+                        <c:if test="${authUser != user}">
+                            <hr/>
+                            <div class="btn-group" style="width: 100%">
+                                <p class="text-center">
+                                    <a href="/user/${user.id}/put/view" class="btn btn-md btn-primary">
+                                        <span class="glyphicon glyphicon-edit"></span>
+                                        Profile
+                                    </a>
+                                    <button data-toggle="modal" data-target="#modal-id" class="btn btn-md btn-danger">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                        Delete
+                                    </button>
+                                </p>
+                            </div>
+                            <hr/>
+                        </c:if>
+                    </sec:authorize>
+                </div>
+
+
+
+            </div>
+
+            <div class="col-lg-12">
+                <br/>
+            </div>
+
+            <div class="col-lg-12 block-background">
+                <a href="/friend/${user.id}" class="white-and-visited">
+                    Friends ${countFriends}
+                </a>
+                <br/><br/>
+                <c:forEach var="a" items="${randomFriends}">
+                    <div class="col-lg-4">
+                        <a href="/user/id${a.user.id}" class="block-link" style="color: white">
+                            <img data-src="holder.js/140x140" class="img-circle center-block" style="width: 100%;"
+                                 src="http://www.isu.edu.tw/upload/276e/9/coming-soon.jpg" data-holder-rendered="true">
+                            <p class="text-center" style="width: 100%">${a.user.firstName}</p>
+                        </a>
+                    </div>
+                </c:forEach>
+
+            </div>
+
+
+        </div>
+
+        <div class="col-lg-8">
+
+            <div class="col-lg-12 block-background">
+                <div>
+                    <a class="user-data-link" href="/user/id${user.id}">
+                        ${user.firstName} ${user.lastName}
+                    </a>
+                </div>
+
+                <hr/>
+
+                <div id="friends-block">
+
+                    <a href="/friend/${user.id}" class="block-link white-and-visited">
+                        <div class="col-lg-4  text-center">
+                            Friends
+                        </div>
+                        <div class="col-lg-4 text-center">
+                            Followers
+                        </div>
+                        <div class="col-lg-4 text-center">
+                            Requests
+                        </div>
+
+                        <br/><br/>
+                        <div class="col-lg-4 text-center">
+                            ${countFriends}
+                        </div>
+                        <div class="col-lg-4 text-center">
+                            ${countFollowers}
+                        </div>
+                        <div class="col-lg-4 text-center">
+                            ${countRequests}
+                        </div>
+                    </a>
+                </div>
+
+                <br/>
+                <hr/>
+            </div>
+
+            <div class="col-lg-12 block-background" style="top:15px">
+                <form action="/feed/post/view" method="POST">
+                    <div class="form-group">
+                        <textarea id="input-tweet" placeholder="What's new ?" name="tweet-content" class="form-control" style="height: 100px " rows="5" ></textarea>
+                    </div>
+                    <div class="col-lg-12 " id="tweet-post">
+                        <button type="submit" id="btn-tweet-post" style="width: 20%" class="btn btn-info pull-right">
+                            Post <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <c:if test="${!empty tweets}">
+                <div id="content-tweet" class="col-lg-12 block-background" style="top:35px">
+                    <table style="width: 100%">
+                        <thead>
+                        <tr>
+                            <td></td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <c:forEach var="a" items="${tweets}">
+                            <tr id="tr-${a.id}">
+                                <td>
+                                    <div class="block-background div-white">
+                                        <c:if test="${a.sender.id == authUser.id}">
+                                            <form action="/feed/${a.id}/delete/view" method="GET">
+                                                <button type="submit" class="btn btn-default btn-md pull-right">
+                                                    <span class="glyphicon glyphicon-remove text-danger"></span>
+                                                </button>
+                                            </form>
+                                        </c:if>
+                                        <c:if test="${a.toUser.id == authUser.id}">
+                                            <form action="/feed/feed-message/${a.id}/delete/view" method="GET">
+                                                <button type="submit" class="btn btn-default btn-md pull-right">
+                                                    <span class="glyphicon glyphicon-remove text-danger"></span>
+                                                </button>
+                                            </form>
+                                        </c:if>
+                                        <a href="/user/id${a.sender.id}">
+                                            ${a.sender.firstName} ${a.sender.lastName}
+                                        </a>
+                                        <span class="date-tweet">
+                                                ${a.dateFormat()}
+                                        </span>
+                                        <div class="feed-link">
+                                            <br/>
+                                            <p>
+                                                ${a.content}
+                                            </p>
+                                        </div>
+                                        <p>
+                                            <c:forEach var="t" items="${a.listTags()}">
+                                                <a class="tweet-tags" href="/feed/tag/${t}">
+                                                    #${t}
+                                                </a>
+                                            </c:forEach>
+                                        </p>
+                                        <br/>
+                                    </div>
+                                    <br/>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
+            </c:if>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+<script th:inline="javascript">
+    angular.module('RootApp')
+        .constant('user_id', [[${id}]])
+        .constant('auth_id', [[${auth_id}]]);
+</script>
+
+
+</body>
+</html>
