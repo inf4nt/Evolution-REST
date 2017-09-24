@@ -19,11 +19,21 @@ import java.util.Properties;
 @Configuration
 public class AppConfig {
 
+//    @Bean
+//    @Primary
+//    @ConfigurationProperties(prefix = "spring.datasource")
+//    public DataSource dataSource() {
+//        return DataSourceBuilder.create().build();
+//    }
+
     @Bean
-    @Primary
-    @ConfigurationProperties(prefix = "spring.datasource")
     public DataSource dataSource() {
-        return DataSourceBuilder.create().build();
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName("org.postgresql.Driver");
+        dataSource.setUrl("jdbc:postgresql://ec2-176-34-113-15.eu-west-1.compute.amazonaws.com:5432/d1dsfee517idaf?sslmode=require&ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory");
+        dataSource.setUsername("blnjznffbkytsy");
+        dataSource.setPassword("c119924e3525cce4b65884b042b6b83a6256f09e464b4767338d429d5adc6462");
+        return dataSource;
     }
 
     @Bean
