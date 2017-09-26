@@ -15,6 +15,18 @@ import java.util.List;
  */
 public interface FriendRepository extends JpaRepository<Friends, Long> {
 
+    @Query("select f from Friends f where f.user.id =:userId and f.status =:status")
+    List<Friends> findFriendsByStatusAndUser(Long userId, Long status);
+
+//    select * from friends f WHERE f.friend_id = 216 and f.user_id = 226 and status != 3;
+
+    @Query("select f from Friends f where f.user.id =:authUserId and f.friend.id =:firneUserId and f.status <> :statusProgress")
+    Friends checkFriends(Long authUserId, Long friendUserId, Long statusProgress);
+
+    @Query("select f from Friends f where f.user.id =:authUserId and f.friend.id =:firneUserId and f.status =:status")
+    Friends getFriendsByUserIdAndStatus(Long authUserId, Long friendUserId, Long status);
+
+
 //    //todo: in future repair this
 //    @Query(" FROM Friends f, StandardUser u " +
 //            " where u.id = f.friend.id and f.user.id = :authUserId" +

@@ -3,6 +3,7 @@ package evolution.model.user;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.oracle.webservices.internal.api.message.PropertySet;
 import evolution.common.UserRoleEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,7 @@ import javax.persistence.*;
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.NoSuchElementException;
 
 /**
  * Created by Admin on 09.03.2017.
@@ -91,18 +93,12 @@ public class User {
 //        this.registrationDate = user.registrationDate;
     }
 
-    @JsonIgnore
+    @JsonProperty(value = "roleValue")
     public String getRole() {
-//        StringBuilder s = new StringBuilder();
-//        Arrays.asList(UserRoleEnum.values()).forEach(userRoleEnum -> {
-//            if (userRoleEnum.id == roleId) {
-//                s.append(userRoleEnum.name());
-//            }
-//        });
-//        return s.toString();
-
         return Arrays.stream(UserRoleEnum.values())
-                .filter(r -> r.getId() == this.roleId).map(Enum::name).findAny().orElse(UserRoleEnum.USER.name());
+                .filter(r -> r.getId() == this.roleId)
+                .findAny()
+                .orElseThrow(NoSuchElementException::new).name();
     }
 
     @JsonIgnore

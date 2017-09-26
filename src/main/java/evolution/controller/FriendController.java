@@ -127,14 +127,14 @@ public class FriendController {
             friendsDao.acceptFriend(userId, friendId);
             responseJson = jsonBuilder.buildJson(HttpStatus.OK.toString(), FriendActionEnum.DELETE_FRIEND.toString(), true);
 
-        } else if (jsonInformation.getMessage().equals(FriendActionEnum.ADD_FRIEND.toString()) &&
+        } else if (jsonInformation.getMessage().equals(FriendActionEnum.REQUEST_FRIEND.toString()) &&
                 !friendsDao.checkFriends(userId, friendId)) {
             friendsDao.friendRequest(userId, friendId);
             responseJson = jsonBuilder.buildJson(HttpStatus.OK.toString(), FriendActionEnum.DELETE_REQUEST.toString(), true);
 
         } else if (jsonInformation.getMessage().equals(FriendActionEnum.DELETE_REQUEST.toString())) {
             friendsDao.deleteRequest(userId, friendId);
-            responseJson = jsonBuilder.buildJson(HttpStatus.OK.toString(), FriendActionEnum.ADD_FRIEND.toString(), true);
+            responseJson = jsonBuilder.buildJson(HttpStatus.OK.toString(), FriendActionEnum.REQUEST_FRIEND.toString(), true);
         }
 
         LOGGER.info("RESPONSE JSON \n" + responseJson + "\n");

@@ -1,11 +1,16 @@
 package evolution.model.friend;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import evolution.common.FriendStatusEnum;
 import evolution.model.user.UserLight;
 import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 /**
  * Created by Admin on 15.04.2017.
@@ -19,17 +24,20 @@ import java.io.Serializable;
 public class Friends implements Serializable{
 
     @Id
-    @Column
+    @Column(columnDefinition = "bigint")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_friends")
     @SequenceGenerator(name = "seq_friends", sequenceName = "seq_friends_id", allocationSize = 1)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
+    /**
+     *  AUTH USER !
+     */
+    @ManyToOne
+    @JoinColumn(name = "user_id", columnDefinition = "bigint", nullable = false)
     private UserLight user;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "friend_id")
+    @ManyToOne
+    @JoinColumn(name = "friend_id", columnDefinition = "bigint", nullable = false)
     private UserLight friend;
 
     @Column(name = "status")
@@ -64,6 +72,15 @@ public class Friends implements Serializable{
                    Long userId, String userFirstName, String userLastName, Long status) {
         this(userId, userFirstName, userLastName, status);
         this.friend = new UserLight(friendId, friendFirstName, friendLastName);
+    }
+
+    @JsonProperty(value = "statusValue")
+    public String getStatusValue() {
+        return  Arrays
+                .stream(FriendStatusEnum.values())
+                .filter(o -> o.getId() == status)
+                .findAny()
+                .orElseThrow(NoSuchElementException::new).name();
     }
 
 }
