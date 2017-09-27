@@ -1,13 +1,14 @@
 package evolution.model.dialog;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import evolution.model.message.Message;
 import evolution.model.user.UserLight;
+import evolution.service.serialization.CustomDialogSerializerMessageList;
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class Dialog {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue (strategy = GenerationType.SEQUENCE, generator = "seq_dialog")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_dialog")
     @SequenceGenerator(name = "seq_dialog", sequenceName = "seq_dialog_id", allocationSize = 1)
     private Long id;
 
@@ -39,7 +40,7 @@ public class Dialog {
     @JoinColumn(name = "second", updatable = false)
     private UserLight second;
 
-    @JsonIgnore
+    @JsonSerialize(using = CustomDialogSerializerMessageList.class)
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "dialog", cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE})
     private List<Message> messageList = new ArrayList<>();
 

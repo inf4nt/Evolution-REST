@@ -4,7 +4,6 @@ package evolution.controller;
 import evolution.data.MessageDataService;
 import evolution.model.message.Message;
 import evolution.security.model.CustomSecurityUser;
-import evolution.service.MyJacksonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -22,18 +21,19 @@ import java.util.Optional;
 @RestController
 @CrossOrigin
 @RequestMapping(value = "/message")
-public class RestMessageController {
+public class MessageRestController {
 
     private final MessageDataService messageDataService;
 
     @Autowired
-    public RestMessageController(MessageDataService messageDataService) {
+    public MessageRestController(MessageDataService messageDataService) {
         this.messageDataService = messageDataService;
     }
 
     @GetMapping(value = "/{id}")
     public ResponseEntity findOne(@PathVariable Long id) {
-        Optional optional = this.messageDataService.findOne(id);
+//        Optional optional = this.messageDataService.findOne(id);
+        Optional optional = this.messageDataService.findOneRepairDialog(id);
         System.out.println(optional);
         if (!optional.isPresent()) {
             return ResponseEntity.noContent().build();
@@ -44,6 +44,7 @@ public class RestMessageController {
     @GetMapping
     public ResponseEntity findAllMessage() {
         List<Message> messages = this.messageDataService.findAll();
+//        List<Message> messages = this.messageDataService.findAllAfterRepairDialog();
         if (messages.isEmpty())
             return ResponseEntity.noContent().build();
         return ResponseEntity.ok(messages);
@@ -51,7 +52,7 @@ public class RestMessageController {
 
     @GetMapping(value = "/last_from_my_dialog")
     public ResponseEntity findLastMessageForDialog(@AuthenticationPrincipal CustomSecurityUser customSecurityUser) {
-        List<Message> dialogList = this.messageDataService.findLastMessageForDialog(customSecurityUser.getUser().getId());
+        List<Message> dialogList = this.messageDataService.findLastMessageForDialogByUser(customSecurityUser.getUser().getId());
         if (dialogList.isEmpty())
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         return new ResponseEntity<>(dialogList, HttpStatus.OK);
@@ -59,7 +60,7 @@ public class RestMessageController {
 
     @GetMapping(value = "/last_from_my_dialog/repair_dialog")
     public ResponseEntity findLastMessageForDialogRepairDialog(@AuthenticationPrincipal CustomSecurityUser customSecurityUser) {
-        List<Message> dialogList = this.messageDataService.findLastMessageForDialogAfterRepairDialog(customSecurityUser.getUser().getId());
+        List<Message> dialogList = this.messageDataService.findLastMessageForDialogAfterRepairDialogByUser(customSecurityUser.getUser().getId());
         if (dialogList.isEmpty())
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         return new ResponseEntity<>(dialogList, HttpStatus.OK);
@@ -95,7 +96,7 @@ public class RestMessageController {
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity deleteMessageByIdAdmin(@PathVariable Long id) {
+    public ResponseEntity deleteMessageByAuth(@PathVariable Long id) {
         try {
             messageDataService.deleteByAuthentication(id);
         } catch (Exception e) {

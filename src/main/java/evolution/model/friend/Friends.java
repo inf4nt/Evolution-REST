@@ -29,9 +29,6 @@ public class Friends implements Serializable{
     @SequenceGenerator(name = "seq_friends", sequenceName = "seq_friends_id", allocationSize = 1)
     private Long id;
 
-    /**
-     *  AUTH USER !
-     */
     @ManyToOne
     @JoinColumn(name = "user_id", columnDefinition = "bigint", nullable = false)
     private UserLight user;

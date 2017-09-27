@@ -3,8 +3,10 @@ package evolution.data;
 import evolution.model.dialog.Dialog;
 import evolution.model.message.Message;
 import evolution.model.user.UserLight;
+import evolution.service.TechnicalDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,17 +19,42 @@ public class DialogDataService {
 
     private final DialogRepository dialogRepository;
 
+    private final TechnicalDataService technicalDataService;
+
     @Autowired
-    public DialogDataService(DialogRepository dialogRepository) {
+    public DialogDataService(DialogRepository dialogRepository, TechnicalDataService technicalDataService) {
         this.dialogRepository = dialogRepository;
+        this.technicalDataService = technicalDataService;
     }
 
+    @Transactional(readOnly = true)
     public List<Dialog> findAll() {
-        return dialogRepository.findAll();
+        return technicalDataService
+                .repairDialogForDialogList(dialogRepository.findAll());
     }
 
+    @Transactional
     public void delete(Dialog dialog) {
         dialogRepository.delete(dialog);
+    }
+
+    /**
+     * Удаляет сообщение. Если сообщений нету, то удалит и диалог
+     *
+     * @param message
+     */
+    @Transactional
+    public void deleteMessageByDialog(Message message) {
+        Optional<Dialog> optional = findOne(message.getDialog().getId());
+
+        if (optional.isPresent()) {
+            Dialog dialog = optional.get();
+            if (dialog.getMessageList().isEmpty() || dialog.getMessageList().size() == 1) {
+                dialogRepository.delete(dialog);
+            } else {
+                dialog.getMessageList().remove(message);
+            }
+        }
     }
 
     /**
@@ -35,36 +62,41 @@ public class DialogDataService {
      *
      * @param id
      */
-
+    @Transactional
     public void delete(Long id) {
-        Optional optional = findOne(id);
-        if (optional.isPresent())
-            dialogRepository.delete((Dialog) optional.get());
+        Optional<Dialog> optional = findOne(id);
+        optional.ifPresent(dialog -> {
+            dialog.getMessageList().size();
+            dialogRepository.delete(dialog);
+        });
     }
 
-    public Optional findOne(Long id) {
+    @Transactional(readOnly = true)
+    public Optional<Dialog> findOne(Long id) {
         return Optional.ofNullable(dialogRepository.findOne(id));
     }
 
     /**
      * метод сохраняет сообщения, проверит существует ли диалог, если не существует создаст новый
+     *
      * @param text
      * @param senderUserId
      * @param secondUserId
      * @return
      */
+    @Transactional
     public Dialog save(String text, Long senderUserId, Long secondUserId) {
 
         UserLight authUser = new UserLight(senderUserId);
 
-        Optional optional = this.findDialogByUsers(secondUserId, authUser.getId());
+        Optional<Dialog> optional = this.findDialogByUsers(secondUserId, authUser.getId());
         Message message = new Message();
         Dialog dialog;
 
         if (optional.isPresent()) {
-            dialog = (Dialog) optional.get();  // dialog exist
+            dialog = optional.get();  // dialog exist
         } else {
-            dialog = new Dialog(authUser, new UserLight(secondUserId)); // dialog not exist
+            dialog = new Dialog(new UserLight(senderUserId), new UserLight(secondUserId)); // dialog not exist
         }
 
         message.setMessage(text);
@@ -76,7 +108,13 @@ public class DialogDataService {
         return this.dialogRepository.saveAndFlush(dialog);
     }
 
-    public Optional findDialogByUsers(Long userid1, Long userid2) {
-        return Optional.ofNullable(dialogRepository.findDialogByUsers(userid1, userid2));
+    @Transactional(readOnly = true)
+    public Optional<Dialog> findDialogByUsers(Long userid1, Long userid2) {
+        Dialog dialog = dialogRepository.findDialogByUsers(userid1, userid2);
+        if(dialog != null) {
+            return Optional.of(technicalDataService.repairDialog(dialog));
+        } else {
+            return Optional.empty();
+        }
     }
 }

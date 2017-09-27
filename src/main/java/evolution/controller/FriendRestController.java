@@ -15,7 +15,8 @@ import java.util.List;
  * Created by Infant on 26.09.2017.
  */
 
-@RestController(value = "/friend")
+@RestController
+@RequestMapping(value = "/rest/friend")
 @CrossOrigin
 public class FriendRestController {
 

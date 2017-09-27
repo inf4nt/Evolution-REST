@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
  * Created by Admin on 25.05.2017.
  */
 @Service
+@Deprecated
 public class JsonInformationBuilder {
 
     @Autowired

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -14,7 +15,8 @@ import java.util.List;
 /**
  * Created by Infant on 24.09.2017.
  */
-@RestController(value = "/feed")
+@RestController
+@RequestMapping(value = "/rest/feed")
 @CrossOrigin
 public class FeedRestController {
 
@@ -34,7 +36,7 @@ public class FeedRestController {
         if (list.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(dtoConverter.feedToDTOList(list));
+        return ResponseEntity.ok(list);
     }
 
 }

@@ -19,14 +19,18 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private AuthenticationEntryPointImpl unauthorizedHandler;
+    private final AuthenticationEntryPointImpl unauthorizedHandler;
+
+    private final AuthenticationTokenFilter authenticationTokenFilter;
+
+    private final UserDetailsService userDetailsService;
 
     @Autowired
-    private AuthenticationTokenFilter authenticationTokenFilter;
-
-    @Autowired
-    private UserDetailsService userDetailsService;
+    public WebSecurityConfig(AuthenticationEntryPointImpl unauthorizedHandler, AuthenticationTokenFilter authenticationTokenFilter, UserDetailsService userDetailsService) {
+        this.unauthorizedHandler = unauthorizedHandler;
+        this.authenticationTokenFilter = authenticationTokenFilter;
+        this.userDetailsService = userDetailsService;
+    }
 
     @Autowired
     public void configureAuthentication(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
@@ -48,7 +52,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
-                .antMatchers("/auth/**", "/index/**", "/feed/**").permitAll()
+                .antMatchers("/auth/**", "/index/**", "/rest/**", "/message/**", "/dialog/**").permitAll()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .anyRequest().authenticated();
         httpSecurity

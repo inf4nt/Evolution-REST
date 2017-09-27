@@ -21,17 +21,17 @@ public class FeedDataService {
         this.feedRepository = feedRepository;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Optional findOne(Long id) {
         return Optional.ofNullable(feedRepository.findOne(id));
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Feed> findFeedsOfMyFriends(Long userId) {
         return feedRepository.findFeedsOfMyFriends(userId);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Feed> findMyFeeds(Long userId) {
         return feedRepository.findMyFeeds(userId);
     }
@@ -43,12 +43,14 @@ public class FeedDataService {
 
     @Transactional
     public void delete(Long feedId, Long senderId) {
-        feedRepository.delete(feedId, senderId);
+        Feed feed = feedRepository.findFeedByIdAndSenderId(feedId, senderId);
+        feedRepository.delete(feed);
     }
 
     @Transactional
     public void deleteFeedMessage (Long feedId, Long toUserId) {
-        feedRepository.deleteFeedMessage(feedId, toUserId);
+        Feed feed = feedRepository.findFeedByIdAndToUserId(feedId, toUserId);
+        feedRepository.delete(feed);
     }
 
     @Transactional
@@ -56,7 +58,7 @@ public class FeedDataService {
         return feedRepository.save(feed);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Feed> findAll() {
         return feedRepository.findAll();
     }

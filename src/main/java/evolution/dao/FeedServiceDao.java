@@ -12,6 +12,7 @@ import java.util.List;
  * Created by Infant on 26.07.2017.
  */
 @Service
+@Deprecated
 public class FeedServiceDao {
 
     private final FeedRepository feedRepository;
@@ -38,12 +39,12 @@ public class FeedServiceDao {
 
     @Transactional
     public void delete(Long feedId, Long senderId) {
-        feedRepository.delete(feedId, senderId);
+//        feedRepository.delete(feedId, senderId);
     }
 
     @Transactional
     public void deleteFeedMessage (Long feedId, Long toUserId) {
-        feedRepository.deleteFeedMessage(feedId, toUserId);
+//        feedRepository.deleteFeedMessage(feedId, toUserId);
     }
 
     @Transactional

@@ -16,12 +16,12 @@ import java.util.Optional;
 @RestController
 @CrossOrigin
 @RequestMapping(value = "/dialog")
-public class RestDialogController {
+public class DialogRestController {
 
     private final DialogDataService dialogDataService;
 
     @Autowired
-    public RestDialogController(DialogDataService dialogDataService) {
+    public DialogRestController(DialogDataService dialogDataService) {
         this.dialogDataService = dialogDataService;
     }
 

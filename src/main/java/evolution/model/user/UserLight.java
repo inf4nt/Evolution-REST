@@ -21,7 +21,6 @@ import java.util.Arrays;
 @AllArgsConstructor
 @ToString
 @Getter
-@Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserLight {
 
@@ -68,7 +67,6 @@ public class UserLight {
         this.lastName = lastName;
     }
 
-    @JsonIgnore
     public String getRole() {
         if (roleId == null)
             return UserRoleEnum.USER.name();

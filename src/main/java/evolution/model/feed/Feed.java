@@ -3,10 +3,13 @@ package evolution.model.feed;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import evolution.model.user.UserLight;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -35,10 +38,12 @@ public class Feed implements Serializable {
     private Date date;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @Fetch(FetchMode.JOIN)
     @JoinColumn(name = "sender_id")
     private UserLight sender;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @Fetch(FetchMode.JOIN)
     @JoinColumn(name = "to_user_id")
     private UserLight toUser;
 
@@ -51,7 +56,7 @@ public class Feed implements Serializable {
 
     public List<String> listTags() {
         if (tags == null)
-            return null;
+            return new ArrayList<>();
         return Arrays.stream(tags.split("#"))
                 .skip(1)
                 .collect(Collectors.toList());

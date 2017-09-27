@@ -1,10 +1,12 @@
 package evolution.model.message;
 
+
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import evolution.model.dialog.Dialog;
 import evolution.model.user.UserLight;
+import evolution.service.serialization.CustomMessageSerializerDialog;
 import lombok.*;
-
 import javax.persistence.*;
 import java.util.Date;
 
@@ -24,10 +26,11 @@ public class Message {
 
     @Id
     @Column(name = "message_id", unique = true, nullable = false)
-    @GeneratedValue (strategy = GenerationType.SEQUENCE, generator = "seq_message")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_message")
     @SequenceGenerator(name = "seq_message", sequenceName = "seq_message_id", allocationSize = 1)
     private Long id;
 
+    @JsonSerialize(using = CustomMessageSerializerDialog.class)
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "dialog_id", updatable = false, nullable = false)
     private Dialog dialog;
@@ -76,6 +79,7 @@ public class Message {
         this.message = message;
         this.dateDispatch = dateDispatch;
     }
+
     public Message(UserLight sender, String message, Date dateDispatch, Dialog dialog) {
         this.dialog = dialog;
         this.sender = sender;
@@ -98,7 +102,7 @@ public class Message {
 
     }
 
-    public Message(Long id){
+    public Message(Long id) {
         this.id = id;
     }
 }

@@ -21,7 +21,7 @@ public class UserDataService {
         this.userRepository = userRepository;
     }
 
-    public Optional findUserByUsername(String username) {
+    public Optional<User> findUserByUsername(String username) {
         return Optional.ofNullable(this.userRepository.findUserByUsername(username));
     }
 
@@ -33,7 +33,7 @@ public class UserDataService {
         return this.userRepository.findAll(pageable);
     }
 
-    public Optional findOne(Long id) {
+    public Optional<User> findOne(Long id) {
         return Optional.ofNullable(this.userRepository.findOne(id));
     }
 
