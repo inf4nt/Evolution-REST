@@ -22,11 +22,15 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
 
     private final Log logger = LogFactory.getLog(this.getClass());
 
-    @Autowired
-    private UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
+
+    private final TokenUtil tokenUtil;
 
     @Autowired
-    private TokenUtil tokenUtil;
+    public AuthenticationTokenFilter(UserDetailsService userDetailsService, TokenUtil tokenUtil) {
+        this.userDetailsService = userDetailsService;
+        this.tokenUtil = tokenUtil;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
@@ -42,15 +46,29 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
 
         logger.info("checking authentication für user " + username);
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        //todo: remove after testing
+        username = "com.infant@gmail.com";
+
+        if (SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-            if (this.tokenUtil.validateToken(authToken, userDetails)) {
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
+
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
         }
+
+
+//        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+//            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+//            if (this.tokenUtil.validateToken(authToken, userDetails)) {
+//                UsernamePasswordAuthenticationToken authentication =
+//                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+//                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+//                SecurityContextHolder.getContext().setAuthentication(authentication);
+//            }
+//        }
 
         chain.doFilter(request, response);
     }

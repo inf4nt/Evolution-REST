@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @CrossOrigin
-@RequestMapping(value = "/index")
+@RequestMapping(value = "/rest/index")
 public class IndexRestController {
 
     @GetMapping

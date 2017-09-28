@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by Infant on 26.07.2017.
  */
-public interface FeedRepository extends JpaRepository<Feed, Long> {
+interface FeedRepository extends JpaRepository<Feed, Long> {
 
     @Query(value = " select f from Feed f " +
             " left join fetch f.toUser " +

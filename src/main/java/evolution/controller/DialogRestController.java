@@ -15,7 +15,7 @@ import java.util.Optional;
  */
 @RestController
 @CrossOrigin
-@RequestMapping(value = "/dialog")
+@RequestMapping(value = "/rest/dialog")
 public class DialogRestController {
 
     private final DialogDataService dialogDataService;

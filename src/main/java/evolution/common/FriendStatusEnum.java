@@ -5,13 +5,13 @@ package evolution.common;
  */
 public enum FriendStatusEnum {
 
-    PROGRESS(1),
-    FOLLOWER(2),
-    REQUEST(3);
+    PROGRESS(1L),
+    FOLLOWER(2L),
+    REQUEST(3L);
 
-    public final long id;
+    public final Long id;
 
-    FriendStatusEnum(long i) {
+    FriendStatusEnum(Long i) {
         this.id = i;
     }
 
@@ -19,7 +19,7 @@ public enum FriendStatusEnum {
         return this;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 }

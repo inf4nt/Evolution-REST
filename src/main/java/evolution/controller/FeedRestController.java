@@ -2,7 +2,6 @@ package evolution.controller;
 
 import evolution.data.FeedDataService;
 import evolution.model.feed.Feed;
-import evolution.service.DtoConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,12 +21,9 @@ public class FeedRestController {
 
     private final FeedDataService feedDataService;
 
-    private final DtoConverter dtoConverter;
-
     @Autowired
-    public FeedRestController(FeedDataService feedDataService, DtoConverter dtoConverter) {
+    public FeedRestController(FeedDataService feedDataService) {
         this.feedDataService = feedDataService;
-        this.dtoConverter = dtoConverter;
     }
 
     @GetMapping

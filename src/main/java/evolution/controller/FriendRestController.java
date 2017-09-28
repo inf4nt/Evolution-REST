@@ -2,11 +2,14 @@ package evolution.controller;
 
 import evolution.common.FriendActionEnum;
 import evolution.common.FriendStatusEnum;
+import evolution.common.ServiceStatus;
 import evolution.data.FriendsDataService;
 import evolution.model.friend.Friends;
+import jdk.nashorn.internal.objects.annotations.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,37 +30,72 @@ public class FriendRestController {
         this.friendsDataService = friendsDataService;
     }
 
-    @GetMapping(value = "/user/{user_id}/{status}")
-    public ResponseEntity findFriendsByUserAndStatus(@PathVariable(value = "user_id") Long userId,
+
+    @GetMapping(value = "/user/{userId}/{status}")
+    public ResponseEntity findFriendsByUserAndStatus(@PathVariable Long userId,
                                                      @PathVariable String status) {
         List<Friends> list = friendsDataService.findFriendsByStatusAndUser(userId, FriendStatusEnum.valueOf(status.toUpperCase()));
+
         if (list.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
+
         return ResponseEntity.ok(list);
     }
 
-    @PostMapping(value = "/user/{friend_id}/{action}")
-    public ResponseEntity actionForFriends(@PathVariable(value = "friend_id") Long friendId, String action) {
+    @PostMapping(value = "/action/user/{friendId}/{action}")
+    public ResponseEntity actionForFriends(@PathVariable Long friendId,
+                                           @PathVariable String action) {
         try {
-            if (friendsDataService.actionFriends(friendId, FriendActionEnum.valueOf(action.toUpperCase()).getId()))
+
+            ServiceStatus result = friendsDataService.actionFriends(friendId, FriendActionEnum.valueOf(action.toUpperCase()));
+
+            if (result == ServiceStatus.TRUE)
                 return ResponseEntity.ok().build();
-            else
+            else if (result == ServiceStatus.EXPECTATION_FAILED || result == ServiceStatus.FALSE)
                 return ResponseEntity.status(417).build();
+            else if (result == ServiceStatus.AUTH_NOT_FOUND)
+                return ResponseEntity.status(401).build();
+
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).build();
         }
+        return ResponseEntity.badRequest().build();
     }
 
     @GetMapping
     public ResponseEntity findAll() {
         List<Friends> list = friendsDataService.findAll();
+
         if (list.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
+
         return ResponseEntity.ok(list);
     }
 
+    // todo: replace to POST after testing
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping(value = "/action/user/{user1}/{user2}/{action}/get")
+    public ResponseEntity actionForFriendsAdmin(@PathVariable Long user1,
+                                                @PathVariable Long user2,
+                                                @PathVariable String action) {
+        try {
 
+            ServiceStatus result = friendsDataService.actionFriendsAdminService(user1, user2, FriendActionEnum.valueOf(action.toUpperCase()));
+
+            if (result == ServiceStatus.TRUE)
+                return ResponseEntity.ok().build();
+            else if (result == ServiceStatus.EXPECTATION_FAILED || result == ServiceStatus.FALSE)
+                return ResponseEntity.status(417).build();
+            else if (result == ServiceStatus.AUTH_NOT_FOUND)
+                return ResponseEntity.status(401).build();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
+        return ResponseEntity.badRequest().build();
+    }
 }

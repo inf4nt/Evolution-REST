@@ -5,6 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,39 +24,55 @@ public class UserDataService {
         this.userRepository = userRepository;
     }
 
+    @Transactional(readOnly = true)
     public Optional<User> findUserByUsername(String username) {
-        return Optional.ofNullable(this.userRepository.findUserByUsername(username));
+        return Optional.ofNullable(userRepository.findUserByUsername(username));
     }
 
+    @Transactional(readOnly = true)
     public List<User> findAll() {
-        return this.userRepository.findAll();
+        return userRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public Page<User> findAll(Pageable pageable) {
-        return this.userRepository.findAll(pageable);
+        return userRepository.findAll(pageable);
     }
 
+    @Transactional(readOnly = true)
     public Optional<User> findOne(Long id) {
-        return Optional.ofNullable(this.userRepository.findOne(id));
+        return Optional.ofNullable(userRepository.findOne(id));
     }
 
+    @Transactional
     public User save(User user) {
-        return this.userRepository.save(user);
+        return userRepository.save(user);
     }
 
+    @Transactional
     public List<User> save(List<User> userList) {
-        return this.userRepository.save(userList);
+        return userRepository.save(userList);
     }
 
+    @Transactional
     public void delete(User user) {
-        this.userRepository.delete(user);
+        userRepository.delete(user);
     }
 
+    @Transactional
     public void delete(Long id) {
-        this.userRepository.delete(id);
+        Optional<User> optional = findOne(id);
+        optional.ifPresent(o -> delete(o));
     }
 
+    @Transactional
+    public void deleteListUserId(Collection<Long> collection) {
+        List<User> list = userRepository.findAll(collection);
+        delete(list);
+    }
+
+    @Transactional
     public void delete(List<User> userList) {
-        this.userRepository.delete(userList);
+        userRepository.delete(userList);
     }
 }

@@ -5,12 +5,12 @@ package evolution.common;
  */
 public enum UserRoleEnum {
 
-    USER(1),
-    ADMIN(2);
+    USER(1L),
+    ADMIN(2L);
 
-    public final long id;
+    public final Long id;
 
-    UserRoleEnum(long i) {
+    UserRoleEnum(Long i) {
         this.id = i;
     }
 
@@ -18,7 +18,7 @@ public enum UserRoleEnum {
         return this;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 

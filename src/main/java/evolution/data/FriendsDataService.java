@@ -2,11 +2,9 @@ package evolution.data;
 
 import evolution.common.FriendActionEnum;
 import evolution.common.FriendStatusEnum;
-import evolution.dao.FriendRepository;
-import evolution.dao.FriendsDao;
+import evolution.common.ServiceStatus;
 import evolution.model.friend.Friends;
 import evolution.model.user.UserLight;
-import evolution.model.user.User;
 import evolution.security.model.CustomSecurityUser;
 import evolution.service.SecuritySupportService;
 import org.slf4j.Logger;
@@ -22,6 +20,7 @@ import java.util.Optional;
 /**
  * Created by Infant on 08.08.2017.
  */
+
 @Service
 public class FriendsDataService {
 
@@ -37,6 +36,39 @@ public class FriendsDataService {
         this.securitySupportService = securitySupportService;
     }
 
+    public ServiceStatus actionFriends(Long friendsId, FriendActionEnum action) {
+        Optional<CustomSecurityUser> principal = securitySupportService.getPrincipal();
+
+        if (!principal.isPresent()) {
+            LOGGER.warn("principal is null");
+            return ServiceStatus.EXPECTATION_FAILED;
+        }
+
+        return actionFriendsAdminService(principal.get().getUser().getId(), friendsId, action);
+    }
+
+    public ServiceStatus actionFriendsAdminService(Long user1, Long user2, FriendActionEnum action) {
+        if (FriendActionEnum.ACCEPT_REQUEST == action) {
+
+            return acceptFriendsAdminService(user1, user2);
+
+        } else if (FriendActionEnum.DELETE_FRIEND == action) {
+
+            return deleteFriendAdminService(user1, user2);
+
+        } else if (FriendActionEnum.DELETE_REQUEST == action) {
+
+            return deleteRequestAdminService(user1, user2);
+
+        } else if (FriendActionEnum.REQUEST_FRIEND == action) {
+
+            return requestFriendAdminService(user1, user2);
+
+        }
+        LOGGER.warn("method not found");
+        return ServiceStatus.NOT_STARTED;
+    }
+
     @Transactional(readOnly = true)
     public List<Friends> findAll() {
         return friendRepository.findAll();
@@ -49,102 +81,122 @@ public class FriendsDataService {
 
     @Transactional(readOnly = true)
     public List<Friends> findFriendsByStatusAndUser(Long userId, FriendStatusEnum status) {
-        if (securitySupportService.isAllowed(userId)) {
+        if (securitySupportService.isAllowed(userId) == ServiceStatus.TRUE) {
             return friendRepository.findFriendsByStatusAndUser(userId, status.getId());
         } else {
+            LOGGER.warn("fail");
             return new ArrayList<>();
         }
     }
 
     @Transactional
-    public boolean checkFriends(Long friendId) {
-        Optional<CustomSecurityUser> principal = securitySupportService.getPrincipal();
-        if (principal.isPresent()) {
-            Optional friend = Optional.ofNullable(friendRepository.checkFriends(principal.get().getUser().getId(), friendId, FriendStatusEnum.PROGRESS.getId()));
-            if (friend.isPresent()) {
-                LOGGER.info("friend exist");
-                return true;
-            } else {
-                return false;
-            }
+    public ServiceStatus deleteRequestAdminService(Long senderRequest, Long user2) {
+        Optional<Friends> sender = getFriendsByUserIdAndStatus(senderRequest, user2, FriendStatusEnum.REQUEST.getId());
+
+        if (!sender.isPresent()) {
+            return ServiceStatus.EXPECTATION_FAILED;
         }
-        return true;
+
+        if (!FriendStatusEnum.REQUEST.getId().equals(sender.get().getStatus())) {
+            return ServiceStatus.FALSE;
+        }
+
+        Optional<Friends> other = getFriendsByUserIdAndStatus(user2, senderRequest, FriendStatusEnum.FOLLOWER.getId());
+
+        if (!other.isPresent()) {
+            return ServiceStatus.EXPECTATION_FAILED;
+        }
+
+        if (!FriendStatusEnum.FOLLOWER.getId().equals(other.get().getStatus())) {
+            return ServiceStatus.FALSE;
+        }
+
+        friendRepository.delete(sender.get());
+        friendRepository.delete(other.get());
+
+        return ServiceStatus.TRUE;
     }
 
-    public boolean actionFriends(Long friendsId, int action) {
-        if (FriendActionEnum.ACCEPT_REQUEST.getId() == action) {
+    @Transactional
+    public ServiceStatus deleteFriendAdminService(Long senderRequest, Long user2) {
+        Optional<Friends> sender = getFriendsByUserIdAndStatus(senderRequest, user2, FriendStatusEnum.PROGRESS.getId());
 
-            return acceptFriends(friendsId);
-
-        } else if (FriendActionEnum.DELETE_FRIEND.getId() == action) {
-
-            return false;
-
-        } else if (FriendActionEnum.DELETE_REQUEST.getId() == action) {
-
-            return false;
-
-        } else if (FriendActionEnum.REQUEST_FRIEND.getId() == action) {
-            return requestFriend(friendsId);
+        if (!sender.isPresent()) {
+            return ServiceStatus.EXPECTATION_FAILED;
         }
 
-        return false;
+        if (!FriendStatusEnum.PROGRESS.getId().equals(sender.get().getStatus())) {
+            return ServiceStatus.FALSE;
+        }
+
+        Optional<Friends> removed = getFriendsByUserIdAndStatus(user2, senderRequest, FriendStatusEnum.PROGRESS.getId());
+
+        if (!removed.isPresent()) {
+            return ServiceStatus.EXPECTATION_FAILED;
+        }
+
+        if (!FriendStatusEnum.PROGRESS.getId().equals(removed.get().getStatus())) {
+            return ServiceStatus.FALSE;
+        }
+
+        Friends f1 = sender.get();
+        Friends f2 = removed.get();
+
+        f1.setStatus(FriendStatusEnum.FOLLOWER.getId());
+        f2.setStatus(FriendStatusEnum.REQUEST.getId());
+
+        friendRepository.save(f1);
+        friendRepository.save(f2);
+
+        return ServiceStatus.TRUE;
     }
 
     /**
      * заявка на дружбу
      */
     @Transactional
-    public boolean requestFriend(Long friendId) {
-        Optional<CustomSecurityUser> principal = securitySupportService.getPrincipal();
-        if (principal.isPresent()) {
-            User user = principal.get().getUser();
+    public ServiceStatus requestFriendAdminService(Long senderRequestUserId, Long user2) {
+        if (existFriend(senderRequestUserId, user2) == ServiceStatus.FALSE) {
 
-            if (!checkFriends(friendId)) {
-                Friends f1 = new Friends();
-                f1.setUser(new UserLight(user)); // auth user
-                f1.setFriend(new UserLight(friendId));
-                f1.setStatus(FriendStatusEnum.REQUEST.getId());
+            Friends f1 = new Friends();
+            f1.setUser(new UserLight(senderRequestUserId)); // auth user
+            f1.setFriend(new UserLight(user2));
+            f1.setStatus(FriendStatusEnum.REQUEST.getId());
 
-                Friends f2 = new Friends();
-                f2.setUser(new UserLight(friendId));
-                f2.setFriend(new UserLight(user)); // auth user
-                f2.setStatus(FriendStatusEnum.FOLLOWER.getId());
+            Friends f2 = new Friends();
+            f2.setUser(new UserLight(user2));
+            f2.setFriend(new UserLight(senderRequestUserId)); // auth user
+            f2.setStatus(FriendStatusEnum.FOLLOWER.getId());
 
-                friendRepository.save(f1);
-                friendRepository.save(f2);
+            friendRepository.save(f1);
+            friendRepository.save(f2);
 
-                return true;
-            } else {
-                return false;
-            }
+            return ServiceStatus.TRUE;
         } else {
-            return false;
+            LOGGER.warn("request to friends, failed");
+            return ServiceStatus.FALSE;
         }
+
     }
 
     /**
-     * @param friendId с кем подтверждаю дружбу
+     * @param confirmingUserId
      * @return
      */
     @Transactional
-    public boolean acceptFriends(Long friendId) {
-        Optional<CustomSecurityUser> principal = securitySupportService.getPrincipal();
-        if (!principal.isPresent())
-            return false;
+    public ServiceStatus acceptFriendsAdminService(Long confirmingUserId, Long senderRequestUserId) {
 
-        User user = principal.get().getUser();
+        Optional<Friends> auth = getFriendsByUserIdAndStatus(confirmingUserId, senderRequestUserId, FriendStatusEnum.FOLLOWER.getId());
 
-        Optional<Friends> auth = getFriendsByUserIdAndStatus(user.getId(), friendId, FriendStatusEnum.FOLLOWER.getId());
         if (!auth.isPresent() || !auth.get().getStatus().equals(FriendStatusEnum.FOLLOWER.getId()))
-            return false;
+            return ServiceStatus.EXPECTATION_FAILED;
 
-        Optional<Friends> other = getFriendsByUserIdAndStatus(friendId, user.getId(), FriendStatusEnum.REQUEST.getId());
+        Optional<Friends> other = getFriendsByUserIdAndStatus(senderRequestUserId, confirmingUserId, FriendStatusEnum.REQUEST.getId());
         if (!other.isPresent() || !other.get().getStatus().equals(FriendStatusEnum.REQUEST.getId()))
-            return false;
+            return ServiceStatus.EXPECTATION_FAILED;
 
         Friends f1 = auth.get();
-        Friends f2 = auth.get();
+        Friends f2 = other.get();
 
         f1.setStatus(FriendStatusEnum.PROGRESS.getId());
         f2.setStatus(FriendStatusEnum.PROGRESS.getId());
@@ -152,7 +204,7 @@ public class FriendsDataService {
         friendRepository.save(f1);
         friendRepository.save(f2);
 
-        return true;
+        return ServiceStatus.TRUE;
     }
 
     @Transactional(readOnly = true)
@@ -160,12 +212,12 @@ public class FriendsDataService {
         return Optional.ofNullable(friendRepository.getFriendsByUserIdAndStatus(authUserId, friendId, status));
     }
 
-    public void friendRequest(long authUserId, long id2) {
-        UserLight authUser = new UserLight(authUserId);
-        UserLight user2 = new UserLight(id2);
-        Friends request = new Friends(authUser, user2, FriendStatusEnum.REQUEST.getId());
-        Friends follower = new Friends(user2, authUser, FriendStatusEnum.FOLLOWER.getId());
-        friendRepository.save(follower);
-        friendRepository.save(request);
+    @Transactional(readOnly = true)
+    public ServiceStatus existFriend(Long user1, Long user2) {
+        if (friendRepository.existFriend(user1, user2).size() == 2) {
+            return ServiceStatus.TRUE;
+        } else {
+            return ServiceStatus.FALSE;
+        }
     }
 }

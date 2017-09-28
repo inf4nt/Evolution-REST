@@ -75,7 +75,7 @@ public class Friends implements Serializable{
     public String getStatusValue() {
         return  Arrays
                 .stream(FriendStatusEnum.values())
-                .filter(o -> o.getId() == status)
+                .filter(o -> o.getId().equals(status))
                 .findAny()
                 .orElseThrow(NoSuchElementException::new).name();
     }

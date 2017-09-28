@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by Infant on 04.09.2017.
  */
-public interface MessageRepository extends JpaRepository<Message, Long> {
+interface MessageRepository extends JpaRepository<Message, Long> {
 
     @Query(" select m from Message m " +
             " join m.dialog as d " +

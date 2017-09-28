@@ -95,10 +95,13 @@ public class User {
 
     @JsonProperty(value = "roleValue")
     public String getRole() {
+        if (roleId == null)
+            return UserRoleEnum.USER.name();
+
         return Arrays.stream(UserRoleEnum.values())
-                .filter(r -> r.getId() == this.roleId)
+                .filter(r -> r.getId().equals(this.roleId))
                 .findAny()
-                .orElseThrow(NoSuchElementException::new).name();
+                .orElse(UserRoleEnum.USER).name();
     }
 
     @JsonIgnore

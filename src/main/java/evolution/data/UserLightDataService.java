@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by Infant on 04.09.2017.
@@ -24,14 +25,14 @@ public class UserLightDataService {
     }
 
     public List<UserLight> findAll() {
-        return this.userLightRepository.findAll();
+        return userLightRepository.findAll();
     }
 
     public Page<UserLight> findAll(Pageable pageable) {
-        return this.userLightRepository.findAll(pageable);
+        return userLightRepository.findAll(pageable);
     }
 
-    public UserLight findOne(Long id) {
-        return this.userLightRepository.findOne(id);
+    public Optional<UserLight> findOne(Long id) {
+        return Optional.ofNullable(userLightRepository.findOne(id));
     }
 }

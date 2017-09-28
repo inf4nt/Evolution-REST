@@ -11,6 +11,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.NoSuchElementException;
 
 /**
  * Created by Admin on 24.06.2017.
@@ -72,6 +73,8 @@ public class UserLight {
             return UserRoleEnum.USER.name();
 
         return Arrays.stream(UserRoleEnum.values())
-                .filter(r -> r.getId() == this.roleId).map(Enum::name).findAny().orElse(UserRoleEnum.USER.name());
+                .filter(r -> r.getId().equals(this.roleId))
+                .findAny()
+                .orElse(UserRoleEnum.USER).name();
     }
 }
