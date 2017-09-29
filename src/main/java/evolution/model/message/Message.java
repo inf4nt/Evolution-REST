@@ -25,7 +25,7 @@ import java.util.Date;
 public class Message {
 
     @Id
-    @Column(name = "message_id", unique = true, nullable = false)
+    @Column(name = "message_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_message")
     @SequenceGenerator(name = "seq_message", sequenceName = "seq_message_id", allocationSize = 1)
     private Long id;

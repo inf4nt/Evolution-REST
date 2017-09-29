@@ -38,11 +38,6 @@ public class DialogDataService {
         dialogRepository.delete(dialog);
     }
 
-    /**
-     * Удаляет сообщение. Если сообщений нету, то удалит и диалог
-     *
-     * @param message
-     */
     @Transactional
     public void deleteMessageByDialog(Message message) {
         Optional<Dialog> optional = findOne(message.getDialog().getId());
@@ -57,11 +52,6 @@ public class DialogDataService {
         }
     }
 
-    /**
-     * Перед удалением делает селект, чтоб каскадно удалить все связи
-     *
-     * @param id
-     */
     @Transactional
     public void delete(Long id) {
         Optional<Dialog> optional = findOne(id);
@@ -76,14 +66,6 @@ public class DialogDataService {
         return Optional.ofNullable(dialogRepository.findOne(id));
     }
 
-    /**
-     * метод сохраняет сообщения, проверит существует ли диалог, если не существует создаст новый
-     *
-     * @param text
-     * @param senderUserId
-     * @param secondUserId
-     * @return
-     */
     @Transactional
     public Dialog save(String text, Long senderUserId, Long secondUserId) {
 

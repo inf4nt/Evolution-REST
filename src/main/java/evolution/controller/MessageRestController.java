@@ -32,7 +32,6 @@ public class MessageRestController {
 
     @GetMapping(value = "/{id}")
     public ResponseEntity findOne(@PathVariable Long id) {
-//        Optional optional = this.messageDataService.findOne(id);
         Optional optional = this.messageDataService.findOneRepairDialog(id);
         System.out.println(optional);
         if (!optional.isPresent()) {
@@ -44,44 +43,25 @@ public class MessageRestController {
     @GetMapping
     public ResponseEntity findAllMessage() {
         List<Message> messages = this.messageDataService.findAll();
-//        List<Message> messages = this.messageDataService.findAllAfterRepairDialog();
         if (messages.isEmpty())
             return ResponseEntity.noContent().build();
         return ResponseEntity.ok(messages);
     }
 
     @GetMapping(value = "/last_from_my_dialog")
-    public ResponseEntity findLastMessageForDialog(@AuthenticationPrincipal CustomSecurityUser customSecurityUser) {
-        List<Message> dialogList = this.messageDataService.findLastMessageForDialogByUser(customSecurityUser.getUser().getId());
-        if (dialogList.isEmpty())
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
-        return new ResponseEntity<>(dialogList, HttpStatus.OK);
-    }
-
-    @GetMapping(value = "/last_from_my_dialog/repair_dialog")
-    public ResponseEntity findLastMessageForDialogRepairDialog(@AuthenticationPrincipal CustomSecurityUser customSecurityUser) {
-        List<Message> dialogList = this.messageDataService.findLastMessageForDialogAfterRepairDialogByUser(customSecurityUser.getUser().getId());
-        if (dialogList.isEmpty())
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
-        return new ResponseEntity<>(dialogList, HttpStatus.OK);
-    }
-
-    @GetMapping(value = "/user/{id}")
-    public ResponseEntity findMessageByUserId(@PathVariable Long id,
-                                              @AuthenticationPrincipal CustomSecurityUser customSecurityUser) {
-        List<Message> list = messageDataService.findMessageByUsers(customSecurityUser.getUser().getId(), id, new PageRequest(0, 7));
+    public ResponseEntity findLastMessageForMyDialog() {
+        List<Message> list = messageDataService.findLastMessageForDialogAfterRepairDialog();
         if (list.isEmpty())
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
-        return new ResponseEntity<>(list, HttpStatus.OK);
+            return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(list);
     }
 
-    @GetMapping(value = "/user/{id}/repair_dialog")
-    public ResponseEntity findMessageByUserIdRepairDialog(@PathVariable Long id,
-                                                          @AuthenticationPrincipal CustomSecurityUser customSecurityUser) {
-        List<Message> list = messageDataService.findMessageByUsersRepairDialog(customSecurityUser.getUser().getId(), id, new PageRequest(0, 7));
+    @GetMapping(value = "/user/{interlocutorUserId}")
+    public ResponseEntity findMessageByUserId(@PathVariable Long interlocutorUserId) {
+        List<Message> list = messageDataService.findMessageByUsersRepairDialog(interlocutorUserId, new PageRequest(0, 7));
         if (list.isEmpty())
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
-        return new ResponseEntity<>(list, HttpStatus.OK);
+            return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(list);
     }
 
     @PostMapping

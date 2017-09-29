@@ -151,9 +151,6 @@ public class FriendsDataService {
         return ServiceStatus.TRUE;
     }
 
-    /**
-     * заявка на дружбу
-     */
     @Transactional
     public ServiceStatus requestFriendAdminService(Long senderRequestUserId, Long user2) {
         if (existFriend(senderRequestUserId, user2) == ServiceStatus.FALSE) {

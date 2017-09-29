@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -39,14 +40,6 @@ public class MessageDataService {
         this.technicalDataService = technicalDataService;
     }
 
-    /**
-     * метод сохраняет сообщения, проверит существует ли диалог, если не существует создаст новый
-     *
-     * @param text       текс сообщения
-     * @param senderUser кто пишет сообщение
-     * @param secondUser кому пишет сообщение
-     * @return
-     */
     @Transactional
     public Message save(String text, UserLight senderUser, UserLight secondUser) {
         Optional<Dialog> optional = dialogDataService.findDialogByUsers(senderUser.getId(), secondUser.getId());
@@ -67,31 +60,34 @@ public class MessageDataService {
         return this.messageRepository.saveAndFlush(message);
     }
 
+    @Transactional(readOnly = true)
+    public List<Message> findLastMessageForDialogAfterRepairDialog() {
+        Optional<CustomSecurityUser> principal = securitySupportService.getPrincipal();
+        if (principal.isPresent()) {
+            List<Message> list = findLastMessageForDialogByUser(principal.get().getUser().getId());
+            return technicalDataService.repairDialogForMessageList(list);
+        } else
+            return new ArrayList<>();
+    }
+
     @Transactional
     public Message save(Message message) {
         return save(message.getMessage(), message.getSender(), message.getDialog().getSecond());
     }
 
     @Transactional(readOnly = true)
-    public List<Message> findMessageByUsers(Long userId1, Long userId2, Pageable pageable) {
-        return messageRepository.findMessageByUsers(userId1, userId2, pageable);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Message> findMessageByUsersRepairDialog(Long userId1, Long userId2, Pageable pageable) {
-        List<Message> list = messageRepository.findMessageByUsers(userId1, userId2, pageable);
-        return technicalDataService.repairDialogForMessageList(list);
+    public List<Message> findMessageByUsersRepairDialog(Long interlocutor, Pageable pageable) {
+        Optional<CustomSecurityUser> principal = securitySupportService.getPrincipal();
+        if (principal.isPresent()) {
+            return technicalDataService
+                    .repairDialogForMessageList(messageRepository.findMessageByUsers(principal.get().getUser().getId(), interlocutor, pageable));
+        } else
+            return new ArrayList<>();
     }
 
     @Transactional(readOnly = true)
     public List<Message> findLastMessageForDialogByUser(Long userId) {
         return messageRepository.findLastMessageForDialog(userId);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Message> findLastMessageForDialogAfterRepairDialogByUser(Long userId) {
-        List<Message> list = findLastMessageForDialogByUser(userId);
-        return technicalDataService.repairDialogForMessageList(list);
     }
 
     @Transactional(readOnly = true)
@@ -102,12 +98,6 @@ public class MessageDataService {
     @Transactional(readOnly = true)
     public List<Message> findAll() {
         return messageRepository.findAll();
-    }
-
-    @Transactional(readOnly = true)
-    public List<Message> findAllAfterRepairDialog() {
-        List<Message> list = messageRepository.findAll();
-        return technicalDataService.repairDialogForMessageList(list);
     }
 
     @Transactional(readOnly = true)
@@ -123,7 +113,7 @@ public class MessageDataService {
     @Transactional(readOnly = true)
     public Optional<Message> findOneRepairDialog(Long id) {
         Message message = messageRepository.findOne(id);
-        if(message == null) {
+        if (message == null) {
             return Optional.empty();
         } else {
             return Optional.of(technicalDataService.repairDialog(message));
@@ -145,13 +135,6 @@ public class MessageDataService {
         dialogDataService.deleteMessageByDialog(new Message(id));
     }
 
-    /**
-     * delete the message, but before delete check authorities
-     * <p>
-     * метод удаляет сообщение. Проверит можно ли его удалить. Проверит по аутентифицикации
-     *
-     * @param messageId
-     */
     @Transactional
     public void deleteByAuthentication(Long messageId) {
         Optional<CustomSecurityUser> principal = securitySupportService.getPrincipal();
@@ -163,7 +146,7 @@ public class MessageDataService {
 
     @Transactional
     public void delete(List<Message> messageList) {
-        this.messageRepository.delete(messageList);
+        messageList.forEach(o -> delete(o));
     }
 
     @Transactional
