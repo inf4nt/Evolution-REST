@@ -41,7 +41,7 @@ public class Dialog {
     private UserLight second;
 
     @JsonSerialize(using = CustomDialogSerializerMessageList.class)
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "dialog", cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "dialog", cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private List<Message> messageList = new ArrayList<>();
 
     public Dialog(Long id) {
@@ -56,5 +56,20 @@ public class Dialog {
     public Dialog(UserLight first, UserLight second) {
         this.first = first;
         this.second = second;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Dialog dialog = (Dialog) o;
+
+        return id != null ? id.equals(dialog.id) : dialog.id == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 }

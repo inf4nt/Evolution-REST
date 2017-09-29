@@ -15,7 +15,7 @@ import java.util.List;
  * Created by Infant on 24.09.2017.
  */
 @RestController
-@RequestMapping(value = "/rest/feed")
+@RequestMapping(value = "/feed")
 @CrossOrigin
 public class FeedRestController {
 

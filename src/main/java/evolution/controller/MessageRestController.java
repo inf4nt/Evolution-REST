@@ -20,7 +20,7 @@ import java.util.Optional;
  */
 @RestController
 @CrossOrigin
-@RequestMapping(value = "/rest/message")
+@RequestMapping(value = "/message")
 public class MessageRestController {
 
     private final MessageDataService messageDataService;

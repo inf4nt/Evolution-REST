@@ -127,12 +127,12 @@ public class MessageDataService {
 
     @Transactional
     public void delete(Message message) {
-        dialogDataService.deleteMessageByDialog(message);
+        dialogDataService.deleteMessageInDialog(message);
     }
 
     @Transactional
     public void delete(Long id) {
-        dialogDataService.deleteMessageByDialog(new Message(id));
+        dialogDataService.deleteMessageInDialog(new Message(id));
     }
 
     @Transactional
@@ -140,7 +140,7 @@ public class MessageDataService {
         Optional<CustomSecurityUser> principal = securitySupportService.getPrincipal();
         if (principal.isPresent()) {
             Optional<Message> message = findOne(messageId, principal.get().getUser().getId());
-            message.ifPresent(this::delete);
+            message.ifPresent(o -> dialogDataService.deleteMessageInDialog(o));
         }
     }
 
@@ -152,6 +152,6 @@ public class MessageDataService {
     @Transactional
     public void deleteListMessageById(List<Long> messageListIds) {
         messageListIds
-                .forEach(id -> dialogDataService.deleteMessageByDialog(new Message(id)));
+                .forEach(id -> dialogDataService.deleteMessageInDialog(new Message(id)));
     }
 }

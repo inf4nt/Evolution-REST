@@ -19,7 +19,7 @@ import java.util.List;
  */
 
 @RestController
-@RequestMapping(value = "/rest/friend")
+@RequestMapping(value = "/friend")
 @CrossOrigin
 public class FriendRestController {
 

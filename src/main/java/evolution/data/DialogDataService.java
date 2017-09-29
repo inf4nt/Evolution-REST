@@ -4,10 +4,13 @@ import evolution.model.dialog.Dialog;
 import evolution.model.message.Message;
 import evolution.model.user.UserLight;
 import evolution.service.TechnicalDataService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.acl.LastOwnerException;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,14 +20,19 @@ import java.util.Optional;
 @Service
 public class DialogDataService {
 
+    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+
     private final DialogRepository dialogRepository;
 
     private final TechnicalDataService technicalDataService;
 
+    private final MessageRepository messageRepository;
+
     @Autowired
-    public DialogDataService(DialogRepository dialogRepository, TechnicalDataService technicalDataService) {
+    public DialogDataService(DialogRepository dialogRepository, TechnicalDataService technicalDataService, MessageRepository messageRepository) {
         this.dialogRepository = dialogRepository;
         this.technicalDataService = technicalDataService;
+        this.messageRepository = messageRepository;
     }
 
     @Transactional(readOnly = true)
@@ -39,17 +47,21 @@ public class DialogDataService {
     }
 
     @Transactional
-    public void deleteMessageByDialog(Message message) {
+    public void deleteMessageInDialog(Message message) {
         Optional<Dialog> optional = findOne(message.getDialog().getId());
 
         if (optional.isPresent()) {
             Dialog dialog = optional.get();
             if (dialog.getMessageList().isEmpty() || dialog.getMessageList().size() == 1) {
+                LOGGER.info("delete dialog " + dialog);
                 dialogRepository.delete(dialog);
             } else {
                 dialog.getMessageList().remove(message);
+                dialogRepository.save(dialog);
+                LOGGER.info("delete message " + message);
             }
         }
+
     }
 
     @Transactional
@@ -93,7 +105,7 @@ public class DialogDataService {
     @Transactional(readOnly = true)
     public Optional<Dialog> findDialogByUsers(Long userid1, Long userid2) {
         Dialog dialog = dialogRepository.findDialogByUsers(userid1, userid2);
-        if(dialog != null) {
+        if (dialog != null) {
             return Optional.of(technicalDataService.repairDialog(dialog));
         } else {
             return Optional.empty();

@@ -80,6 +80,20 @@ public class Friends implements Serializable{
                 .orElseThrow(NoSuchElementException::new).name();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Friends friends = (Friends) o;
+
+        return id != null ? id.equals(friends.id) : friends.id == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
 }
 
 

@@ -16,7 +16,7 @@ import java.util.Optional;
  * Created by Infant on 29.09.2017.
  */
 @RestController
-@RequestMapping("/rest/user")
+@RequestMapping("/user")
 @CrossOrigin
 public class UserRestController {
 
