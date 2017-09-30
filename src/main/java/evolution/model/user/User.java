@@ -3,18 +3,16 @@ package evolution.model.user;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.oracle.webservices.internal.api.message.PropertySet;
 import evolution.common.UserRoleEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
 import javax.persistence.*;
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.NoSuchElementException;
+
 
 /**
  * Created by Admin on 09.03.2017.
