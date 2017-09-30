@@ -1,5 +1,6 @@
 package evolution.model.feed;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import evolution.model.user.UserLight;
 import lombok.*;
@@ -50,10 +51,7 @@ public class Feed implements Serializable {
     @Column
     private String tags;
 
-    public String dateFormat() {
-        return DateFormat.getInstance().format(date);
-    }
-
+    @JsonGetter(value = "listTags")
     public List<String> listTags() {
         if (tags == null)
             return new ArrayList<>();

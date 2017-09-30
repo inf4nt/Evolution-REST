@@ -4,10 +4,7 @@ import evolution.data.FeedDataService;
 import evolution.model.feed.Feed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -34,5 +31,14 @@ public class FeedRestController {
         }
         return ResponseEntity.ok(list);
     }
+
+    @GetMapping(value = "/user/{id}")
+    public ResponseEntity findFeedByUSer(@PathVariable Long id) {
+        List<Feed> list = feedDataService.findMyFeeds(id);
+        if(list.isEmpty())
+            return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(list);
+    }
+
 
 }
