@@ -26,24 +26,32 @@ public class DialogRestController {
     }
 
     @GetMapping
-    public ResponseEntity findAll() {
-        List<Dialog> dialogs = dialogDataService.findAll();
-        if(dialogs.isEmpty()) {
+    public ResponseEntity<List<Dialog>> findAll() {
+        List<Dialog> dialogs = dialogDataService.findAllAndRepair();
+        if (dialogs.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(dialogs);
     }
 
+    @GetMapping(value = "/user/{id}")
+    public ResponseEntity<List<Dialog>> findDialogsByUser(@PathVariable Long id) {
+        List<Dialog> list = dialogDataService.findDialogByUser(id);
+        if(list.isEmpty())
+            return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(list);
+    }
+
     @GetMapping(value = "/{id}")
-    public ResponseEntity findOne(@PathVariable Long id) {
-        Optional optional = dialogDataService.findOne(id);
+    public ResponseEntity<Dialog> findOne(@PathVariable Long id) {
+        Optional<Dialog> optional = dialogDataService.findOneAndRepair(id);
         if (!optional.isPresent())
             return ResponseEntity.noContent().build();
         return ResponseEntity.ok(optional.get());
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity deleteById(@PathVariable Long id) {
+    public ResponseEntity<HttpStatus> deleteById(@PathVariable Long id) {
         try {
             dialogDataService.delete(new Dialog(id));
         } catch (Exception e) {
@@ -54,7 +62,7 @@ public class DialogRestController {
     }
 
     @GetMapping(value = "/delete/{id}")
-    public ResponseEntity deleteByIdGET(@PathVariable Long id) {
+    public ResponseEntity<HttpStatus> deleteByIdGET(@PathVariable Long id) {
         try {
             dialogDataService.delete(id);
         } catch (Exception e) {

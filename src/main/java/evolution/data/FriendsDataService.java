@@ -13,7 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +33,9 @@ public class FriendsDataService {
     private final FriendRepository friendRepository;
 
     private final SecuritySupportService securitySupportService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
     public FriendsDataService(FriendRepository friendRepository, SecuritySupportService securitySupportService) {
@@ -67,6 +74,17 @@ public class FriendsDataService {
         }
         LOGGER.warn("method not found");
         return ServiceStatus.NOT_STARTED;
+    }
+
+    @Transactional(readOnly = true)
+    public String findFriendStatusByUsers(Long user1, Long user2) {
+
+        Long status = friendRepository.findFriendStatusByUsers(user1, user2);
+        return  Arrays
+                .stream(FriendStatusEnum.values())
+                .filter(o -> o.getId().equals(status))
+                .findAny()
+                .orElse(FriendStatusEnum.NOT_FOUND).name().toLowerCase();
     }
 
     @Transactional(readOnly = true)

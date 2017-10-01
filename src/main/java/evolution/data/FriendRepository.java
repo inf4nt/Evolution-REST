@@ -5,6 +5,7 @@ import evolution.model.friend.Friends;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
 import java.util.List;
 
 /**
@@ -40,6 +41,12 @@ interface FriendRepository extends JpaRepository<Friends, Long> {
             " where (f.user.id =:user1 and f.friend.id =:user2) " +
             " or (f.user.id =:user2 and f.friend.id =:user1) ")
     List existFriend(@Param("user1") Long user1, @Param("user2") Long user2);
+
+    @Query(value = " select f.status " +
+            " from Friends f " +
+            " where f.user.id =:user1 " +
+            " and f.friend.id =:user2 ")
+    Long findFriendStatusByUsers(@Param("user1") Long user1, @Param("user2") Long user2);
 
 
 //    //todo: in future repair this

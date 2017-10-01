@@ -65,7 +65,7 @@ public class MessageDataService {
         Optional<CustomSecurityUser> principal = securitySupportService.getPrincipal();
         if (principal.isPresent()) {
             List<Message> list = findLastMessageForDialogByUser(principal.get().getUser().getId());
-            return technicalDataService.repairDialogForMessageList(list);
+            return technicalDataService.repairDialogForMessageList(list, principal.get().getUser());
         } else
             return new ArrayList<>();
     }
@@ -79,8 +79,8 @@ public class MessageDataService {
     public List<Message> findMessageByUsersRepairDialog(Long interlocutor, Pageable pageable) {
         Optional<CustomSecurityUser> principal = securitySupportService.getPrincipal();
         if (principal.isPresent()) {
-            return technicalDataService
-                    .repairDialogForMessageList(messageRepository.findMessageByUsers(principal.get().getUser().getId(), interlocutor, pageable));
+            List<Message> list = messageRepository.findMessageByUsers(principal.get().getUser().getId(), interlocutor, pageable);
+            return technicalDataService.repairDialogForMessageList(list, principal.get().getUser());
         } else
             return new ArrayList<>();
     }
@@ -113,10 +113,11 @@ public class MessageDataService {
     @Transactional(readOnly = true)
     public Optional<Message> findOneRepairDialog(Long id) {
         Message message = messageRepository.findOne(id);
-        if (message == null) {
+        Optional<CustomSecurityUser> principal = securitySupportService.getPrincipal();
+        if (message == null || !principal.isPresent()) {
             return Optional.empty();
         } else {
-            return Optional.of(technicalDataService.repairDialog(message));
+            return Optional.of(technicalDataService.repairDialog(message, principal.get().getUser()));
         }
     }
 

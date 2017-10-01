@@ -9,6 +9,7 @@ import evolution.security.model.CustomSecurityUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,18 +27,6 @@ public class TechnicalDataService {
         this.securitySupportService = securitySupportService;
     }
 
-    public Message repairDialog(Message message) {
-        message.setDialog(repairDialog(message.getDialog()));
-        return message;
-    }
-
-    public List<Message> repairDialogForMessageList(List<Message> list) {
-        return list
-                .stream()
-                .map(o -> repairDialog(o))
-                .collect(Collectors.toList());
-    }
-
     public Dialog repairDialog(Dialog dialog) {
         Optional<CustomSecurityUser> principal = securitySupportService.getPrincipal();
         if (principal.isPresent() && dialog != null) {
@@ -50,10 +39,49 @@ public class TechnicalDataService {
         return dialog;
     }
 
+    public Message repairDialog(Message message) {
+        message.setDialog(repairDialog(message.getDialog()));
+        return message;
+    }
+
+    public List<Dialog> repairDialogForDialogList(List<Dialog> dialog, User auth) {
+        return dialog
+                .stream()
+                .map(o -> repairDialog(o, auth))
+                .collect(Collectors.toList());
+    }
+
+    public List<Message> repairDialogForMessageList(List<Message> list) {
+        return list
+                .stream()
+                .map(o -> repairDialog(o))
+                .collect(Collectors.toList());
+    }
+
     public List<Dialog> repairDialogForDialogList(List<Dialog> dialog) {
         return dialog
                 .stream()
                 .map(o -> repairDialog(o))
                 .collect(Collectors.toList());
+    }
+
+    public List<Message> repairDialogForMessageList(List<Message> list, User auth) {
+        return list
+                .stream()
+                .map(o -> repairDialog(o, auth))
+                .collect(Collectors.toList());
+    }
+
+    public Dialog repairDialog(Dialog dialog, User authUser) {
+        if (!dialog.getFirst().getId().equals(authUser.getId())) {
+            dialog.setSecond(dialog.getFirst());
+            dialog.setFirst(new UserLight(authUser));
+        }
+        return dialog;
+    }
+
+    public Message repairDialog(Message message, User auth) {
+        message.setDialog(repairDialog(message.getDialog(), auth));
+        return message;
     }
 }

@@ -5,7 +5,6 @@ import evolution.common.FriendStatusEnum;
 import evolution.common.ServiceStatus;
 import evolution.data.FriendsDataService;
 import evolution.model.friend.Friends;
-import jdk.nashorn.internal.objects.annotations.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,10 +29,9 @@ public class FriendRestController {
         this.friendsDataService = friendsDataService;
     }
 
-
     @GetMapping(value = "/user/{userId}/{status}")
-    public ResponseEntity findFriendsByUserAndStatus(@PathVariable Long userId,
-                                                     @PathVariable String status) {
+    public ResponseEntity<List<Friends>> findFriendsByUserAndStatus(@PathVariable Long userId,
+                                                                    @PathVariable String status) {
         List<Friends> list = friendsDataService.findFriendsByStatusAndUser(userId, FriendStatusEnum.valueOf(status.toUpperCase()));
 
         if (list.isEmpty()) {
@@ -43,9 +41,16 @@ public class FriendRestController {
         return ResponseEntity.ok(list);
     }
 
+    @GetMapping(value = "/status/{user1}/{user2}")
+    public ResponseEntity<String> findFriendStatusByUsers(@PathVariable Long user1,
+                                                          @PathVariable Long user2) {
+
+        return ResponseEntity.ok(friendsDataService.findFriendStatusByUsers(user1, user2));
+    }
+
     @PostMapping(value = "/action/user/{friendId}/{action}")
-    public ResponseEntity actionForFriends(@PathVariable Long friendId,
-                                           @PathVariable String action) {
+    public ResponseEntity<HttpStatus> actionForFriends(@PathVariable Long friendId,
+                                                       @PathVariable String action) {
         try {
 
             ServiceStatus result = friendsDataService.actionFriends(friendId, FriendActionEnum.valueOf(action.toUpperCase()));
@@ -65,7 +70,7 @@ public class FriendRestController {
     }
 
     @GetMapping
-    public ResponseEntity findAll() {
+    public ResponseEntity<List<Friends>> findAll() {
         List<Friends> list = friendsDataService.findAll();
 
         if (list.isEmpty()) {
@@ -78,9 +83,9 @@ public class FriendRestController {
     // todo: replace to POST after testing
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(value = "/action/user/{user1}/{user2}/{action}/get")
-    public ResponseEntity actionForFriendsAdmin(@PathVariable Long user1,
-                                                @PathVariable Long user2,
-                                                @PathVariable String action) {
+    public ResponseEntity<HttpStatus> actionForFriendsAdmin(@PathVariable Long user1,
+                                                            @PathVariable Long user2,
+                                                            @PathVariable String action) {
         try {
 
             ServiceStatus result = friendsDataService.actionFriendsAdminService(user1, user2, FriendActionEnum.valueOf(action.toUpperCase()));

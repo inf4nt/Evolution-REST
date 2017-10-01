@@ -77,7 +77,7 @@ public class Friends implements Serializable{
                 .stream(FriendStatusEnum.values())
                 .filter(o -> o.getId().equals(status))
                 .findAny()
-                .orElseThrow(NoSuchElementException::new).name();
+                .orElse(FriendStatusEnum.NOT_FOUND).name();
     }
 
     @Override

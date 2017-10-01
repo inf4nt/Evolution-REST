@@ -3,6 +3,8 @@ package evolution.data;
 import evolution.model.dialog.Dialog;
 import evolution.model.message.Message;
 import evolution.model.user.UserLight;
+import evolution.security.model.CustomSecurityUser;
+import evolution.service.SecuritySupportService;
 import evolution.service.TechnicalDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,17 +30,34 @@ public class DialogDataService {
 
     private final MessageRepository messageRepository;
 
+    private final SecuritySupportService securitySupportService;
+
     @Autowired
-    public DialogDataService(DialogRepository dialogRepository, TechnicalDataService technicalDataService, MessageRepository messageRepository) {
+    public DialogDataService(DialogRepository dialogRepository, TechnicalDataService technicalDataService, MessageRepository messageRepository, SecuritySupportService securitySupportService) {
         this.dialogRepository = dialogRepository;
         this.technicalDataService = technicalDataService;
         this.messageRepository = messageRepository;
+        this.securitySupportService = securitySupportService;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Dialog> findDialogByUser(Long userId) {
+        return dialogRepository.findDialogByUser(userId);
     }
 
     @Transactional(readOnly = true)
     public List<Dialog> findAll() {
-        return technicalDataService
-                .repairDialogForDialogList(dialogRepository.findAll());
+        return dialogRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Dialog> findAllAndRepair() {
+        List<Dialog> list = dialogRepository.findAll();
+        Optional<CustomSecurityUser> principal = securitySupportService.getPrincipal();
+        if (!list.isEmpty() && principal.isPresent())
+            return technicalDataService.repairDialogForDialogList(list, principal.get().getUser());
+        else
+            return list;
     }
 
     @Transactional
@@ -78,6 +97,16 @@ public class DialogDataService {
         return Optional.ofNullable(dialogRepository.findOne(id));
     }
 
+    @Transactional(readOnly = true)
+    public Optional<Dialog> findOneAndRepair(Long id) {
+        Dialog dialog = dialogRepository.findOne(id);
+        Optional<CustomSecurityUser> principal = securitySupportService.getPrincipal();
+        if (dialog != null && principal.isPresent()) {
+            return Optional.of(technicalDataService.repairDialog(dialog, principal.get().getUser()));
+        } else
+            return Optional.empty();
+    }
+
     @Transactional
     public Dialog save(String text, Long senderUserId, Long secondUserId) {
 
@@ -87,11 +116,9 @@ public class DialogDataService {
         Message message = new Message();
         Dialog dialog;
 
-        if (optional.isPresent()) {
-            dialog = optional.get();  // dialog exist
-        } else {
-            dialog = new Dialog(new UserLight(senderUserId), new UserLight(secondUserId)); // dialog not exist
-        }
+        // dialog exist
+        // dialog not exist
+        dialog = optional.orElseGet(() -> new Dialog(new UserLight(senderUserId), new UserLight(secondUserId)));
 
         message.setMessage(text);
         message.setDialog(dialog);
@@ -99,16 +126,22 @@ public class DialogDataService {
 
         dialog.getMessageList().add(message);
 
-        return this.dialogRepository.saveAndFlush(dialog);
+        return this.dialogRepository.save(dialog);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Dialog> findDialogByUsersAndRepair(Long userid1, Long userid2) {
+        Dialog dialog = dialogRepository.findDialogByUsers(userid1, userid2);
+        Optional<CustomSecurityUser> principal = securitySupportService.getPrincipal();
+        if (dialog != null && principal.isPresent()) {
+            return Optional.of(technicalDataService.repairDialog(dialog, principal.get().getUser()));
+        } else
+            return Optional.empty();
     }
 
     @Transactional(readOnly = true)
     public Optional<Dialog> findDialogByUsers(Long userid1, Long userid2) {
         Dialog dialog = dialogRepository.findDialogByUsers(userid1, userid2);
-        if (dialog != null) {
-            return Optional.of(technicalDataService.repairDialog(dialog));
-        } else {
-            return Optional.empty();
-        }
+        return Optional.ofNullable(dialog);
     }
 }

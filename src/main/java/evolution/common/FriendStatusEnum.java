@@ -7,7 +7,8 @@ public enum FriendStatusEnum {
 
     PROGRESS(1L),
     FOLLOWER(2L),
-    REQUEST(3L);
+    REQUEST(3L),
+    NOT_FOUND(4L);
 
     public final Long id;
 

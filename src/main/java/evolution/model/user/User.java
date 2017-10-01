@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import javax.persistence.*;
-import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -37,6 +36,7 @@ public class User {
     @Column(name = "password", unique = true, nullable = false)
     private String password;
 
+    @JsonIgnore
     @Column(name = "role_id")
     private Long roleId;
 
@@ -78,33 +78,12 @@ public class User {
         this.lastName = lastName;
     }
 
-    //todo: in future delete this
-
-    @JsonIgnore
-    public void updateFields(User user) {
-//        this.id = user.id;
-//        this.login = user.login;
-//        this.password = user.password;
-//        this.firstName = user.firstName;
-//        this.lastName = user.lastName;
-//        this.roleId = user.roleId;
-//        this.registrationDate = user.registrationDate;
-    }
-
     @JsonProperty(value = "roleValue")
     public String getRole() {
-        if (roleId == null)
-            return UserRoleEnum.USER.name();
-
         return Arrays.stream(UserRoleEnum.values())
                 .filter(r -> r.getId().equals(this.roleId))
                 .findAny()
                 .orElse(UserRoleEnum.USER).name();
-    }
-
-    @JsonIgnore
-    public String getDateFormatRegistrationDate() {
-        return DateFormat.getInstance().format(registrationDate);
     }
 
     @Override

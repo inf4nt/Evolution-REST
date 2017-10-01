@@ -32,7 +32,7 @@ public class MessageRestController {
 
     @GetMapping(value = "/{id}")
     public ResponseEntity findOne(@PathVariable Long id) {
-        Optional optional = this.messageDataService.findOneRepairDialog(id);
+        Optional optional = messageDataService.findOneRepairDialog(id);
         System.out.println(optional);
         if (!optional.isPresent()) {
             return ResponseEntity.noContent().build();
@@ -42,7 +42,7 @@ public class MessageRestController {
 
     @GetMapping
     public ResponseEntity findAllMessage() {
-        List<Message> messages = this.messageDataService.findAll();
+        List<Message> messages = messageDataService.findAll();
         if (messages.isEmpty())
             return ResponseEntity.noContent().build();
         return ResponseEntity.ok(messages);
