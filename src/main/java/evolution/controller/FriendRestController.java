@@ -42,10 +42,10 @@ public class FriendRestController {
     }
 
     @GetMapping(value = "/status/{user1}/{user2}")
-    public ResponseEntity<String> findFriendStatusByUsers(@PathVariable Long user1,
+    public ResponseEntity<Friends> findFriendStatusByUsers(@PathVariable Long user1,
                                                           @PathVariable Long user2) {
-
-        return ResponseEntity.ok(friendsDataService.findFriendStatusByUsers(user1, user2));
+        Friends friends = friendsDataService.findFriendStatusByUsers(user1, user2);
+        return ResponseEntity.ok(friends);
     }
 
     @PostMapping(value = "/action/user/{friendId}/{action}")

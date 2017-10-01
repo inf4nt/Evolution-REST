@@ -34,9 +34,6 @@ public class FriendsDataService {
 
     private final SecuritySupportService securitySupportService;
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
     @Autowired
     public FriendsDataService(FriendRepository friendRepository, SecuritySupportService securitySupportService) {
         this.friendRepository = friendRepository;
@@ -77,14 +74,9 @@ public class FriendsDataService {
     }
 
     @Transactional(readOnly = true)
-    public String findFriendStatusByUsers(Long user1, Long user2) {
+    public Friends findFriendStatusByUsers(Long user1, Long user2) {
 
-        Long status = friendRepository.findFriendStatusByUsers(user1, user2);
-        return  Arrays
-                .stream(FriendStatusEnum.values())
-                .filter(o -> o.getId().equals(status))
-                .findAny()
-                .orElse(FriendStatusEnum.NOT_FOUND).name().toLowerCase();
+        return friendRepository.findFriendStatusByUsers(user1, user2);
     }
 
     @Transactional(readOnly = true)
