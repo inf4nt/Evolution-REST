@@ -3,6 +3,7 @@ package evolution.data;
 import evolution.common.FriendActionEnum;
 import evolution.common.FriendStatusEnum;
 import evolution.common.ServiceStatus;
+import evolution.dto.FriendsDTO;
 import evolution.model.friend.Friends;
 import evolution.model.user.UserLight;
 import evolution.security.model.CustomSecurityUser;
@@ -74,9 +75,11 @@ public class FriendsDataService {
     }
 
     @Transactional(readOnly = true)
-    public Friends findFriendStatusByUsers(Long user1, Long user2) {
-
-        return friendRepository.findFriendStatusByUsers(user1, user2);
+    public FriendsDTO findFriendStatusByUsers(Long user1, Long user2) {
+        Long status = friendRepository.findFriendStatusByUsers(user1, user2);
+        FriendsDTO friendsDTO = new FriendsDTO(user1, user2);
+        friendsDTO.setStatus(status);
+        return friendsDTO;
     }
 
     @Transactional(readOnly = true)

@@ -4,13 +4,18 @@ import evolution.common.FriendActionEnum;
 import evolution.common.FriendStatusEnum;
 import evolution.common.ServiceStatus;
 import evolution.data.FriendsDataService;
+import evolution.dto.FriendsDTO;
 import evolution.model.friend.Friends;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.acl.LastOwnerException;
 import java.util.List;
 
 /**
@@ -18,9 +23,11 @@ import java.util.List;
  */
 
 @RestController
-@RequestMapping(value = "/friend")
 @CrossOrigin
+@RequestMapping(value = "/friend")
 public class FriendRestController {
+
+    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     private final FriendsDataService friendsDataService;
 
@@ -42,22 +49,22 @@ public class FriendRestController {
     }
 
     @GetMapping(value = "/status/{user1}/{user2}")
-    public ResponseEntity<Friends> findFriendStatusByUsers(@PathVariable Long user1,
-                                                          @PathVariable Long user2) {
-        Friends friends = friendsDataService.findFriendStatusByUsers(user1, user2);
-        return ResponseEntity.ok(friends);
+    public ResponseEntity<FriendsDTO> findFriendStatusByUsers(@PathVariable Long user1,
+                                                              @PathVariable Long user2) {
+        FriendsDTO friendsDTO = friendsDataService.findFriendStatusByUsers(user1, user2);
+        return ResponseEntity.ok(friendsDTO);
     }
 
     @PostMapping(value = "/action/user/{friendId}/{action}")
-    public ResponseEntity<HttpStatus> actionForFriends(@PathVariable Long friendId,
-                                                       @PathVariable String action) {
+    public ResponseEntity actionForFriends(@PathVariable Long friendId,
+                                           @PathVariable String action) {
         try {
 
             ServiceStatus result = friendsDataService.actionFriends(friendId, FriendActionEnum.valueOf(action.toUpperCase()));
 
-            if (result == ServiceStatus.TRUE)
-                return ResponseEntity.ok().build();
-            else if (result == ServiceStatus.EXPECTATION_FAILED || result == ServiceStatus.FALSE)
+            if (result == ServiceStatus.TRUE) {
+                return ResponseEntity.ok(HttpStatus.OK);
+            } else if (result == ServiceStatus.EXPECTATION_FAILED || result == ServiceStatus.FALSE)
                 return ResponseEntity.status(417).build();
             else if (result == ServiceStatus.AUTH_NOT_FOUND)
                 return ResponseEntity.status(401).build();
@@ -80,27 +87,27 @@ public class FriendRestController {
         return ResponseEntity.ok(list);
     }
 
-    // todo: replace to POST after testing
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping(value = "/action/user/{user1}/{user2}/{action}/get")
-    public ResponseEntity<HttpStatus> actionForFriendsAdmin(@PathVariable Long user1,
-                                                            @PathVariable Long user2,
-                                                            @PathVariable String action) {
-        try {
-
-            ServiceStatus result = friendsDataService.actionFriendsAdminService(user1, user2, FriendActionEnum.valueOf(action.toUpperCase()));
-
-            if (result == ServiceStatus.TRUE)
-                return ResponseEntity.ok().build();
-            else if (result == ServiceStatus.EXPECTATION_FAILED || result == ServiceStatus.FALSE)
-                return ResponseEntity.status(417).build();
-            else if (result == ServiceStatus.AUTH_NOT_FOUND)
-                return ResponseEntity.status(401).build();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).build();
-        }
-        return ResponseEntity.badRequest().build();
-    }
+//    // todo: replace to POST after testing
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    @GetMapping(value = "./action/user/{user1}/{user2}/{action}/get")
+//    public ResponseEntity actionForFriendsAdmin(@PathVariable Long user1,
+//                                                @PathVariable Long user2,
+//                                                @PathVariable String action) {
+//        try {
+//
+//            ServiceStatus result = friendsDataService.actionFriendsAdminService(user1, user2, FriendActionEnum.valueOf(action.toUpperCase()));
+//
+//            if (result == ServiceStatus.TRUE)
+//                return ResponseEntity.ok().build();
+//            else if (result == ServiceStatus.EXPECTATION_FAILED || result == ServiceStatus.FALSE)
+//                return ResponseEntity.status(417).build();
+//            else if (result == ServiceStatus.AUTH_NOT_FOUND)
+//                return ResponseEntity.status(401).build();
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return ResponseEntity.status(500).build();
+//        }
+//        return ResponseEntity.badRequest().build();
+//    }
 }

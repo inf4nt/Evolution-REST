@@ -40,5 +40,4 @@ public class FeedRestController {
         return ResponseEntity.ok(list);
     }
 
-
 }
