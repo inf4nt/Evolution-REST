@@ -86,6 +86,15 @@ public class MessageDataService {
     }
 
     @Transactional(readOnly = true)
+    public List<Message> findMessageByUsers(Long interlocutor, Pageable pageable) {
+        Optional<CustomSecurityUser> principal = securitySupportService.getPrincipal();
+        if (principal.isPresent()) {
+            return messageRepository.findMessageByUsers(principal.get().getUser().getId(), interlocutor, pageable);
+        } else
+            return new ArrayList<>();
+    }
+
+    @Transactional(readOnly = true)
     public List<Message> findLastMessageForDialogByUser(Long userId) {
         return messageRepository.findLastMessageForDialog(userId);
     }
@@ -119,6 +128,36 @@ public class MessageDataService {
         } else {
             return Optional.of(technicalDataService.repairDialog(message, principal.get().getUser()));
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List<Message> findMessageListByDialogId(Long dialogId, Pageable pageable) {
+        Optional<CustomSecurityUser> principal = securitySupportService.getPrincipal();
+        if (principal.isPresent()) {
+            return messageRepository.findMessageByDialogIdAndSomeDialogUserId(dialogId, principal.get().getUser().getId(), pageable);
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public List<Message> findMessageListByDialogId(Long dialogId) {
+        Optional<CustomSecurityUser> principal = securitySupportService.getPrincipal();
+        if (principal.isPresent()) {
+            return messageRepository.findMessageByDialogIdAndSomeDialogUserId(dialogId, principal.get().getUser().getId());
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public List<Message> findMessageListByDialogIdAdmin(Long dialogId, Pageable pageable) {
+        return messageRepository.findMessageByDialogId(dialogId, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Message> findMessageListByDialogIdAdmin(Long dialogId) {
+        return messageRepository.findMessageByDialogId(dialogId);
     }
 
     @Transactional

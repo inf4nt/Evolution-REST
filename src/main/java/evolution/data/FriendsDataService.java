@@ -224,7 +224,7 @@ public class FriendsDataService {
 
     @Transactional(readOnly = true)
     public ServiceStatus existFriend(Long user1, Long user2) {
-        if (friendRepository.existFriend(user1, user2).size() == 2) {
+        if (friendRepository.existFriend(user1, user2).size() >= 2) {
             return ServiceStatus.TRUE;
         } else {
             return ServiceStatus.FALSE;

@@ -58,7 +58,7 @@ public class MessageRestController {
 
     @GetMapping(value = "/user/{interlocutorUserId}")
     public ResponseEntity findMessageByUserId(@PathVariable Long interlocutorUserId) {
-        List<Message> list = messageDataService.findMessageByUsersRepairDialog(interlocutorUserId, new PageRequest(0, 7));
+        List<Message> list = messageDataService.findMessageByUsers(interlocutorUserId, new PageRequest(0, 7));
         if (list.isEmpty())
             return ResponseEntity.noContent().build();
         return ResponseEntity.ok(list);
@@ -73,6 +73,15 @@ public class MessageRestController {
             e.printStackTrace();
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping(value = "/dialog/{id}")
+    public ResponseEntity<List<Message>> findMessageByDialogId(@PathVariable Long id) {
+        List<Message> list = messageDataService.findMessageListByDialogId(id, new PageRequest(0, 7));
+        if(list.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(list);
     }
 
     @DeleteMapping(value = "/{id}")
