@@ -75,10 +75,11 @@ public class MessageRestController {
         }
     }
 
-    @GetMapping(value = "/dialog/{id}")
-    public ResponseEntity<List<Message>> findMessageByDialogId(@PathVariable Long id) {
-        List<Message> list = messageDataService.findMessageListByDialogId(id, new PageRequest(0, 7));
-        if(list.isEmpty()) {
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping(value = "/dialog/{id}/admin")
+    public ResponseEntity<List<Message>> findMessageByDialogIdAdmin(@PathVariable Long id) {
+        List<Message> list = messageDataService.findMessageListByDialogId(id);
+        if (list.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(list);

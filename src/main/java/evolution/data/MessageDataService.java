@@ -131,32 +131,7 @@ public class MessageDataService {
     }
 
     @Transactional(readOnly = true)
-    public List<Message> findMessageListByDialogId(Long dialogId, Pageable pageable) {
-        Optional<CustomSecurityUser> principal = securitySupportService.getPrincipal();
-        if (principal.isPresent()) {
-            return messageRepository.findMessageByDialogIdAndSomeDialogUserId(dialogId, principal.get().getUser().getId(), pageable);
-        } else {
-            return new ArrayList<>();
-        }
-    }
-
-    @Transactional(readOnly = true)
     public List<Message> findMessageListByDialogId(Long dialogId) {
-        Optional<CustomSecurityUser> principal = securitySupportService.getPrincipal();
-        if (principal.isPresent()) {
-            return messageRepository.findMessageByDialogIdAndSomeDialogUserId(dialogId, principal.get().getUser().getId());
-        } else {
-            return new ArrayList<>();
-        }
-    }
-
-    @Transactional(readOnly = true)
-    public List<Message> findMessageListByDialogIdAdmin(Long dialogId, Pageable pageable) {
-        return messageRepository.findMessageByDialogId(dialogId, pageable);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Message> findMessageListByDialogIdAdmin(Long dialogId) {
         return messageRepository.findMessageByDialogId(dialogId);
     }
 
