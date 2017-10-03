@@ -8,6 +8,7 @@ import evolution.model.user.UserLight;
 import evolution.security.model.CustomSecurityUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
 import java.util.List;
@@ -83,5 +84,14 @@ public class TechnicalDataService {
     public Message repairDialog(Message message, User auth) {
         message.setDialog(repairDialog(message.getDialog(), auth));
         return message;
+    }
+
+    // for now i have a cascading delete in database
+    @Transactional
+    public void deleteUser(Long userId) {
+        // find row in database by this user
+        // find dialog/message
+        // find feed
+        // find friend
     }
 }

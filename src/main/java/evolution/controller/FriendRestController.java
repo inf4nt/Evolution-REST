@@ -76,6 +76,7 @@ public class FriendRestController {
         return ResponseEntity.badRequest().build();
     }
 
+
     @GetMapping
     public ResponseEntity<List<Friends>> findAll() {
         List<Friends> list = friendsDataService.findAll();
@@ -86,28 +87,4 @@ public class FriendRestController {
 
         return ResponseEntity.ok(list);
     }
-
-//    // todo: replace to POST after testing
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
-//    @GetMapping(value = "./action/user/{user1}/{user2}/{action}/get")
-//    public ResponseEntity actionForFriendsAdmin(@PathVariable Long user1,
-//                                                @PathVariable Long user2,
-//                                                @PathVariable String action) {
-//        try {
-//
-//            ServiceStatus result = friendsDataService.actionFriendsAdminService(user1, user2, FriendActionEnum.valueOf(action.toUpperCase()));
-//
-//            if (result == ServiceStatus.TRUE)
-//                return ResponseEntity.ok().build();
-//            else if (result == ServiceStatus.EXPECTATION_FAILED || result == ServiceStatus.FALSE)
-//                return ResponseEntity.status(417).build();
-//            else if (result == ServiceStatus.AUTH_NOT_FOUND)
-//                return ResponseEntity.status(401).build();
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return ResponseEntity.status(500).build();
-//        }
-//        return ResponseEntity.badRequest().build();
-//    }
 }
