@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 /**
  * Created by Infant on 03.10.2017.
  */
-@NoArgsConstructor @AllArgsConstructor
+@AllArgsConstructor
 public enum GenderEnum {
 
     MALE,

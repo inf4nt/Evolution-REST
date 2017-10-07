@@ -95,13 +95,3 @@ public class Friends implements Serializable{
         return id != null ? id.hashCode() : 0;
     }
 }
-
-
-//    @Formula("(SELECT count(1) from friends f join user_data u on f.user_id = u.id WHERE f.user_id = friend_id and f.status = 1)")
-//    private Long countFriends;
-//
-//    @Formula("(SELECT count(1) from friends f join user_data u on f.user_id = u.id WHERE f.user_id = friend_id and f.status = 2)")
-//    private Long countFollowers;
-//
-//    @Formula("(SELECT count(1) from friends f join user_data u on f.user_id = u.id WHERE f.user_id = friend_id and f.status = 3)")
-//    private Long countRequests;

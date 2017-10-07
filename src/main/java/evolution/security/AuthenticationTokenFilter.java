@@ -59,7 +59,6 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
 
         }
 
-
 //        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 //            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 //            if (this.tokenUtil.validateToken(authToken, userDetails)) {

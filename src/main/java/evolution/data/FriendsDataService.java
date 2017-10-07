@@ -217,12 +217,12 @@ public class FriendsDataService {
         return ServiceStatus.TRUE;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public Optional<Friends> getFriendsByUserIdAndStatus(Long authUserId, Long friendId, Long status) {
         return Optional.ofNullable(friendRepository.getFriendsByUserIdAndStatus(authUserId, friendId, status));
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public ServiceStatus existFriend(Long user1, Long user2) {
         if (friendRepository.existFriend(user1, user2).size() >= 2) {
             return ServiceStatus.TRUE;

@@ -36,10 +36,16 @@ interface FriendRepository extends JpaRepository<Friends, Long> {
             " and f.status =:status ")
     Friends getFriendsByUserIdAndStatus(@Param("authUserId") Long authUserId, @Param("friendUserId") Long friendUserId, @Param("status") Long status);
 
-    @Query("select 1 " +
-            " from Friends f " +
-            " where (f.user.id =:user1 and f.friend.id =:user2) " +
-            " or (f.user.id =:user2 and f.friend.id =:user1) ")
+//    @Query("select 1 " +
+//            " from Friends f " +
+//            " where (f.user.id =:user1 and f.friend.id =:user2) " +
+//            " or (f.user.id =:user2 and f.friend.id =:user1) ")
+//    List existFriend(@Param("user1") Long user1, @Param("user2") Long user2);
+
+
+    @Query(value = "select 1 from friends " +
+            "WHERE (user_id = :user1 and friend_id = :user2) " +
+            "or (user_id = :user2 and friend_id = :user1) for UPDATE NOWAIT ", nativeQuery = true)
     List existFriend(@Param("user1") Long user1, @Param("user2") Long user2);
 
     @Query(value = " select f.status " +
