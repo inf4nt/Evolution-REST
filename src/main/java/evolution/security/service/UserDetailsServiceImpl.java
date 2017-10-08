@@ -2,7 +2,7 @@ package evolution.security.service;
 
 
 import evolution.data.UserDataService;
-import evolution.model.user.User;
+import evolution.model.User;
 import evolution.security.model.CustomSecurityUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +14,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.NoResultException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -40,7 +38,6 @@ public class UserDetailsServiceImpl
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional optional = userDataService.findUserByUsername(username);
-        LOGGER.info(" loadUserByUsername " + optional);
         if (!optional.isPresent()) {
             LOGGER.info("\nuser  username = " + username + ", not found");
             throw new UsernameNotFoundException("user " + username + " not found");
@@ -49,8 +46,8 @@ public class UserDetailsServiceImpl
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole()));
         return new CustomSecurityUser(
-                user.getUsername(),
-                user.getPassword(),
+                user.getUserAdditionalData().getUsername(),
+                user.getUserAdditionalData().getPassword(),
                 true,
                 true,
                 true,

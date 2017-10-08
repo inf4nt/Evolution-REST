@@ -1,9 +1,12 @@
 package evolution.data;
 
-import evolution.model.user.User;
+
+
+import evolution.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,9 +22,12 @@ public class UserDataService {
 
     private final UserRepository userRepository;
 
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
-    public UserDataService(UserRepository userRepository) {
+    public UserDataService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional(readOnly = true)
@@ -35,6 +41,14 @@ public class UserDataService {
     }
 
     @Transactional(readOnly = true)
+    public List<User> findAll(boolean lazy) {
+        if (lazy) {
+            return userRepository.findAllInitializeLazy();
+        }
+        return userRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
     public Page<User> findAll(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
@@ -44,8 +58,21 @@ public class UserDataService {
         return Optional.ofNullable(userRepository.findOne(id));
     }
 
+    @Transactional(readOnly = true)
+    public Optional<User> findOneInitializeLazy(Long id) {
+        return Optional.ofNullable(userRepository.findOneInitializeLazy(id));
+    }
+
     @Transactional
     public User save(User user) {
+        if (user != null && user.getUserAdditionalData() != null
+                && user.getUserAdditionalData().getId() == null
+                && user.getId() == null) {
+
+            String code = passwordEncoder.encode(user.getUserAdditionalData().getPassword());
+            System.out.println(code);
+            user.getUserAdditionalData().setPassword(code);
+        }
         return userRepository.save(user);
     }
 

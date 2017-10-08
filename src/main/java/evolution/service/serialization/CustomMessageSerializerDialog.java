@@ -3,8 +3,7 @@ package evolution.service.serialization;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import evolution.model.dialog.Dialog;
-import evolution.model.message.Message;
+import evolution.model.Dialog;
 
 import java.io.IOException;
 

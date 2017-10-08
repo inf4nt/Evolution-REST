@@ -1,6 +1,7 @@
 package evolution.security.model;
 
-import evolution.model.user.User;
+
+import evolution.model.User;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;

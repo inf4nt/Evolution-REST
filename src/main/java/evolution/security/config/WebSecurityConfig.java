@@ -3,6 +3,7 @@ package evolution.security.config;
 import evolution.security.AuthenticationEntryPointImpl;
 import evolution.security.AuthenticationTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -12,6 +13,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -25,25 +28,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
 
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
-    public WebSecurityConfig(AuthenticationEntryPointImpl unauthorizedHandler, AuthenticationTokenFilter authenticationTokenFilter, UserDetailsService userDetailsService) {
+    public WebSecurityConfig(AuthenticationEntryPointImpl unauthorizedHandler, AuthenticationTokenFilter authenticationTokenFilter, UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
         this.unauthorizedHandler = unauthorizedHandler;
         this.authenticationTokenFilter = authenticationTokenFilter;
         this.userDetailsService = userDetailsService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Autowired
     public void configureAuthentication(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         authenticationManagerBuilder
                 .userDetailsService(this.userDetailsService)
-//                .passwordEncoder(passwordEncoder())
-        ;
+                .passwordEncoder(passwordEncoder);
     }
-
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {

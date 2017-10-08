@@ -1,7 +1,6 @@
 package evolution.controller;
 
 import evolution.dao.FeedServiceDao;
-import evolution.model.feed.Feed;
 import evolution.model.user.UserLight;
 import evolution.model.user.StockUser;
 import evolution.security.model.CustomSecurityUser;

@@ -1,6 +1,6 @@
 package evolution.security.controller;
 
-import evolution.model.user.UserLight;
+import evolution.model.User;
 import evolution.security.TokenUtil;
 import evolution.security.model.AuthenticationRequest;
 import evolution.security.model.AuthenticationResponse;
@@ -46,13 +46,13 @@ public class AuthController {
                         authenticationRequest.getPassword()
                 )
         );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         CustomSecurityUser userDetails = (CustomSecurityUser) this.userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-
         String token = this.tokenUtils.generateToken(userDetails);
 
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
         System.out.println("TOKEN " + token);
-        return ResponseEntity.ok(new AuthenticationResponse(token, new UserLight(userDetails)));
+        return ResponseEntity.ok(new AuthenticationResponse(token, new User(userDetails)));
     }
 }

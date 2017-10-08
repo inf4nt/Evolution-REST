@@ -3,7 +3,7 @@ package evolution.service;
 import evolution.common.ServiceStatus;
 import evolution.common.UserRoleEnum;
 import evolution.data.UserDataService;
-import evolution.model.user.User;
+import evolution.model.User;
 import evolution.security.model.CustomSecurityUser;
 import evolution.security.service.UserDetailsServiceImpl;
 import org.slf4j.Logger;
@@ -44,8 +44,9 @@ public class SecuritySupportService {
         User user = principal.get().getUser();
         LOGGER.info("principal is = " + user);
 
-        if (user.getRoleId().equals(UserRoleEnum.ADMIN.getId()) || user.getId().equals(id))
-            return ServiceStatus.TRUE;
+        //todo: fix
+//        if (user.getRoleId().equals(UserRoleEnum.ADMIN.getId()) || user.getId().equals(id))
+//            return ServiceStatus.TRUE;
 
         return ServiceStatus.FALSE;
     }

@@ -3,7 +3,6 @@ package evolution.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import evolution.dao.MessageDataServiceDeprecated;
 import evolution.dao.UserDaoService;
-import evolution.model.dialog.Dialog;
 import evolution.model.message.Message;
 import evolution.security.model.CustomSecurityUser;
 import org.slf4j.Logger;

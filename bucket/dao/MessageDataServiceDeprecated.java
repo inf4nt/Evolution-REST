@@ -1,6 +1,5 @@
 package evolution.dao;
 
-import evolution.model.dialog.Dialog;
 import evolution.model.message.Message;
 import evolution.model.user.UserLight;
 import evolution.model.user.User;
