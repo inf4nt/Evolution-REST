@@ -5,6 +5,7 @@ import evolution.common.FriendStatusEnum;
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -13,34 +14,64 @@ import java.util.Date;
 @Entity
 @Table(name = "friends")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Friend {
 
-    @Id
-    @Column(columnDefinition = "bigint")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_friends")
-    @SequenceGenerator(name = "seq_friends", sequenceName = "seq_friends_id", allocationSize = 1)
-    private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", columnDefinition = "bigint", nullable = false)
-    private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "friend_id", columnDefinition = "bigint", nullable = false)
-    private User friend;
+    @EmbeddedId
+    private FriendEmbeddable pk;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private FriendStatusEnum status;
 
-    @Column(name = "date_create", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date date;
-
-    @Column(name = "is_active")
-    private boolean isActive;
+    @ManyToOne
+    @JoinColumn(name = "action_user_id", columnDefinition = "bigint", nullable = false)
+    private User actionUser;
 
     @Version
     @Column(columnDefinition = "bigint")
     private Long version;
+
+    public Friend(User first, User second, FriendStatusEnum status, User actionUser) {
+        this.pk = new FriendEmbeddable(first, second);
+        this.status = status;
+        this.actionUser = actionUser;
+    }
+
+    @PrePersist
+    @PreUpdate
+    public void prePersistUpdate() {
+        if (pk.getSecond().getId() > pk.getFirst().getId()) {
+            throw new UnsupportedOperationException("firstUserId always must be > secondUserId");
+        }
+    }
+
+    @Embeddable
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class FriendEmbeddable implements Serializable {
+
+        /*
+            FIRST_ID ALWAYS > SECOND_ID !!!!
+                FIRST_ID ALWAYS > SECOND_ID !!!!
+                    FIRST_ID ALWAYS > SECOND_ID !!!!
+                        FIRST_ID ALWAYS > SECOND_ID !!!!
+                            FIRST_ID ALWAYS > SECOND_ID !!!!
+                                FIRST_ID ALWAYS > SECOND_ID !!!!
+                                    FIRST_ID ALWAYS > SECOND_ID !!!!
+
+         */
+
+        @ManyToOne(fetch = FetchType.EAGER)
+        @JoinColumn(name = "first_user_id", columnDefinition = "bigint", nullable = false)
+        private User first;
+
+        @ManyToOne(fetch = FetchType.EAGER)
+        @JoinColumn(name = "second_user_id", columnDefinition = "bigint", nullable = false)
+        private User second;
+    }
 }

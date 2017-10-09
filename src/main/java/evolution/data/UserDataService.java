@@ -3,6 +3,7 @@ package evolution.data;
 
 
 import evolution.model.User;
+import evolution.service.UserTechnicalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.naming.OperationNotSupportedException;
+import javax.transaction.NotSupportedException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -24,10 +27,13 @@ public class UserDataService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final UserTechnicalService userTechnicalService;
+
     @Autowired
-    public UserDataService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserDataService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserTechnicalService userTechnicalService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.userTechnicalService = userTechnicalService;
     }
 
     @Transactional(readOnly = true)
@@ -41,11 +47,8 @@ public class UserDataService {
     }
 
     @Transactional(readOnly = true)
-    public List<User> findAll(boolean lazy) {
-        if (lazy) {
-            return userRepository.findAllInitializeLazy();
-        }
-        return userRepository.findAll();
+    public List<User> findAllInitializeLazy() {
+        return userRepository.findAllInitializeLazy();
     }
 
     @Transactional(readOnly = true)
@@ -65,14 +68,12 @@ public class UserDataService {
 
     @Transactional
     public User save(User user) {
-        if (user != null && user.getUserAdditionalData() != null
-                && user.getUserAdditionalData().getId() == null
-                && user.getId() == null) {
-
-            String code = passwordEncoder.encode(user.getUserAdditionalData().getPassword());
-            System.out.println(code);
-            user.getUserAdditionalData().setPassword(code);
+        if (user.getId() == null || user.getId().equals(0L)) {
+            // throw new UnsupportedOperationException(" If you want create new user, use class UserTechnicalService, method createNewUser");
+            User u = userTechnicalService.encodePassword(user);
+            return userRepository.save(u);
         }
+
         return userRepository.save(user);
     }
 
@@ -88,7 +89,7 @@ public class UserDataService {
 
     @Transactional
     public void delete(Long id) {
-        Optional<User> optional = findOne(id);
+        Optional<User> optional = findOneInitializeLazy(id);
         optional.ifPresent(o -> delete(o));
     }
 

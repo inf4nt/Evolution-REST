@@ -37,7 +37,7 @@ public class UserRestController {
     @GetMapping(value = "/{id}")
     public ResponseEntity findById(@PathVariable Long id) {
         Optional<User> optional = userDataService.findOne(id);
-        if(optional.isPresent()) {
+        if (optional.isPresent()) {
             return ResponseEntity.ok(optional.get());
         } else {
             return ResponseEntity.noContent().build();
@@ -48,7 +48,7 @@ public class UserRestController {
     @GetMapping(value = "/{id}/admin")
     public ResponseEntity findByIdAdmin(@PathVariable Long id) {
         Optional<User> optional = userDataService.findOneInitializeLazy(id);
-        if(optional.isPresent()) {
+        if (optional.isPresent()) {
             return ResponseEntity.ok(optional.get());
         } else {
             return ResponseEntity.noContent().build();
@@ -58,8 +58,8 @@ public class UserRestController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(value = "/admin")
     public ResponseEntity findAllLazy() {
-        List<User> list = this.userDataService.findAll(true);
-        if(list.isEmpty())
+        List<User> list = this.userDataService.findAllInitializeLazy();
+        if (list.isEmpty())
             return ResponseEntity.noContent().build();
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
@@ -67,32 +67,37 @@ public class UserRestController {
     @GetMapping
     public ResponseEntity findAll() {
         List<User> list = this.userDataService.findAll();
-        if(list.isEmpty())
+        if (list.isEmpty())
             return ResponseEntity.noContent().build();
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/save")
+
+    @GetMapping(value = "/save/test")
     public ResponseEntity save() {
-        User user = new User();
-        user.setFirstName("Maksim");
-        user.setLastName("Lukaretskiy");
-        user.setNickname("Infant");
-        user.setRole(UserRoleEnum.ADMIN);
 
-        UserAdditionalData userAdditionalData = new UserAdditionalData();
-        userAdditionalData.setActive(true);
-        userAdditionalData.setPassword("77788877");
-        userAdditionalData.setGenderEnum(GenderEnum.MALE);
-        userAdditionalData.setRegistrationDate(new Date());
-        userAdditionalData.setUsername("com.infant@gmail.com");
+        for (int i = 1; i < 10; i++) {
+            User user = new User();
+            user.setFirstName("TEST_USER_" + i);
+            user.setLastName("TEST_USER_" + i);
+            user.setNickname("TEST_USER_" + i);
+            user.setRole(UserRoleEnum.USER);
+
+            UserAdditionalData userAdditionalData = new UserAdditionalData();
+            userAdditionalData.setActive(true);
+            userAdditionalData.setPassword("user_" + i);
+            userAdditionalData.setGenderEnum(GenderEnum.MALE);
+            userAdditionalData.setRegistrationDate(new Date());
+            userAdditionalData.setUsername("user" + i + "@mail.ru");
 
 
-        user.setUserAdditionalData(userAdditionalData);
+            user.setUserAdditionalData(userAdditionalData);
 
-        userDataService.save(user);
+            userDataService.save(user);
+        }
 
         return ResponseEntity.ok().build();
     }
+
 
 }

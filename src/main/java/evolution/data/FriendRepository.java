@@ -1,74 +1,92 @@
-//package evolution.data;
+package evolution.data;
+
+import evolution.common.FriendStatusEnum;
+import evolution.model.Friend;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+/**
+ * Created by Infant on 09.10.2017.
+ */
+public interface FriendRepository extends JpaRepository<Friend, Friend.FriendEmbeddable> {
+
+//-- получить подписчиков пользователя с ид = ???
 //
+//    SELECT *
+//    FROM friends f
+//    WHERE f.status = 'REQUEST'
+//    AND f.action_user_id <> :user_id
+//    AND (f.first_user_id = :user_id OR f.second_user_id = :user_id);
+
+    @Query("select f " +
+            " from Friend f  " +
+            " where f.status =:status " +
+            " and f.actionUser.id <>:userId " +
+            " and (f.pk.first.id =:userId or f.pk.second.id =:userId)")
+    Friend findFollowerByUser(@Param("userId") Long userId, @Param("status") FriendStatusEnum requestStatus);
+
+//-- получить заявки исходящие от пользователя с ид = ???
 //
-//import evolution.model.friend.Friends;
-//import org.springframework.data.jpa.repository.JpaRepository;
-//import org.springframework.data.jpa.repository.Query;
-//import org.springframework.data.repository.query.Param;
+//    SELECT *
+//    FROM friends f
+//    WHERE f.status = 'REQUEST'
+//    AND f.action_user_id = :user_id;
+
+    @Query("select f " +
+            " from Friend f " +
+            " where f.status =:status " +
+            " and f.actionUser.id =:userId ")
+    Friend findRequestFromUser(@Param("userId") Long userId, @Param("status") FriendStatusEnum requestStatus);
+
+//-- получить друзей пользователя с ид = ???
 //
-//import java.util.List;
+//    SELECT *
+//    FROM friends f
+//    WHERE f.status = 'PROGRESS'
+//    AND (f.first_user_id = :user_id OR f.second_user_id = :user_id);
+
+    @Query("select f" +
+            " from Friend f" +
+            " where f.status =:status" +
+            " and (f.pk.first.id =:userId or f.pk.second.id =:userId)")
+    Friend findProgressByUser(@Param("userId") Long userId, @Param("status") FriendStatusEnum progressStatus);
+
+//-- проверить можно ли кинуть заявку на дружбу
 //
-///**
-// * Created by Infant on 08.08.2017.
-// */
-//interface FriendRepository extends JpaRepository<Friends, Long> {
+//    SELECT *
+//    FROM friends f
+//    WHERE f.first_user_id = :first_id
+//    AND f.second_user_id = :second_id;
+
+    @Query("select 1 from Friend f " +
+            " where f.pk.first.id =:first " +
+            " and f.pk.second.id =:second ")
+    Long isExist(Long first, Long second);
+
+    @Query("select f from Friend f " +
+            " where f.pk.first.id =:first " +
+            " and f.pk.second.id =:second ")
+    Friend findFriendsByUsers();
+
+//-- проверить могу ли я подтвердить дружбу, если да вернуть строчку
 //
-//    @Query(" select f " +
-//            " from Friends f " +
-//            " join fetch f.friend " +
-//            " join fetch f.user ")
-//    List<Friends> findAll();
-//
-//    @Query(" select f " +
-//            " from Friends f " +
-//            " join fetch f.user " +
-//            " join fetch f.friend " +
-//            " where f.user.id =:userId " +
-//            " and f.status =:status ")
-//    List<Friends> findFriendsByStatusAndUser(@Param("userId") Long userId, @Param("status") Long status);
-//
-//    @Query(" select f " +
-//            " from Friends f " +
-//            " join fetch f.user " +
-//            " join fetch f.friend " +
-//            " where f.user.id =:authUserId " +
-//            " and f.friend.id =:friendUserId " +
-//            " and f.status =:status ")
-//    Friends getFriendsByUserIdAndStatus(@Param("authUserId") Long authUserId, @Param("friendUserId") Long friendUserId, @Param("status") Long status);
-//
-////    @Query("select 1 " +
-////            " from Friends f " +
-////            " where (f.user.id =:user1 and f.friend.id =:user2) " +
-////            " or (f.user.id =:user2 and f.friend.id =:user1) ")
-////    List existFriend(@Param("user1") Long user1, @Param("user2") Long user2);
-//
-//
-//    @Query(value = "select 1 from friends " +
-//            "WHERE (user_id = :user1 and friend_id = :user2) " +
-//            "or (user_id = :user2 and friend_id = :user1) for UPDATE NOWAIT ", nativeQuery = true)
-//    List existFriend(@Param("user1") Long user1, @Param("user2") Long user2);
-//
-//    @Query(value = " select f.status " +
-//            " from Friends f " +
-//            " where f.user.id =:user1 " +
-//            " and f.friend.id =:user2 ")
-//    Long findFriendStatusByUsers(@Param("user1") Long user1, @Param("user2") Long user2);
-//
-//
-////    //todo: in future repair this
-////    @Query(" FROM Friends f, StandardUser u " +
-////            " where u.id = f.friend.id and f.user.id = :authUserId" +
-////            " and u.id = :id ")
-////    Friends findUserAndFriendStatus(@Param("authUserId") Long authUserId, @Param("id") Long id);
-////
-////
-////    @Query("select count(f) from Friends f where f.user.id = :user_id and f.status = :status_id")
-////    Long countFriendsByStatus(@Param("user_id") Long userId, @Param("status_id") Long statusId);
-////
-////    @Query(" select f " +
-////            " from  Friends f " +
-////            " where f.user.id = :user_id " +
-////            " and f.status = :status_id "  +
-////            " order by rand() ")
-////    List<User> randomFriends(@Param("user_id") Long userId, @Param("status_id") Long statusId, Pageable pageable);
-//}
+//    SELECT *
+//    FROM friends f
+//    WHERE f.status = 'REQUEST'
+//    AND f.action_user_id <> :accepted_user
+//    AND f.first_user_id = :first_id
+//    AND f.second_user_id = :second_id;
+
+    @Query("select f " +
+            " from Friend f " +
+            " where f.status =:status " +
+            " and f.actionUser.id =:action_user_id " +
+            " and f.pk.first.id =:first_id " +
+            " and f.pk.second.id =:second_id ")
+    Friend findByAllParams(@Param("first_id") Long firstUserId, @Param("second_id") Long secondUserId,
+                           @Param("action_user_id") Long actionUserId, @Param("status") FriendStatusEnum status);
+
+
+}
+
