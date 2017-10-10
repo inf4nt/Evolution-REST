@@ -62,31 +62,11 @@ public interface FriendRepository extends JpaRepository<Friend, Friend.FriendEmb
     @Query("select 1 from Friend f " +
             " where f.pk.first.id =:first " +
             " and f.pk.second.id =:second ")
-    Long isExist(Long first, Long second);
+    Long isExistByPk(Long first, Long second);
 
     @Query("select f from Friend f " +
             " where f.pk.first.id =:first " +
             " and f.pk.second.id =:second ")
-    Friend findFriendsByUsers();
-
-//-- проверить могу ли я подтвердить дружбу, если да вернуть строчку
-//
-//    SELECT *
-//    FROM friends f
-//    WHERE f.status = 'REQUEST'
-//    AND f.action_user_id <> :accepted_user
-//    AND f.first_user_id = :first_id
-//    AND f.second_user_id = :second_id;
-
-    @Query("select f " +
-            " from Friend f " +
-            " where f.status =:status " +
-            " and f.actionUser.id =:action_user_id " +
-            " and f.pk.first.id =:first_id " +
-            " and f.pk.second.id =:second_id ")
-    Friend findByAllParams(@Param("first_id") Long firstUserId, @Param("second_id") Long secondUserId,
-                           @Param("action_user_id") Long actionUserId, @Param("status") FriendStatusEnum status);
-
-
+    Friend findOne(@Param("first") Long first, @Param("second") Long second);
 }
 

@@ -55,6 +55,10 @@ public class User {
     @Column(columnDefinition = "bigint")
     private Long version;
 
+    public User(Long id) {
+        this.id = id;
+    }
+
     public User(Long id, String firstName, String lastName, String nickname, UserRoleEnum role) {
         this.id = id;
         this.firstName = firstName;

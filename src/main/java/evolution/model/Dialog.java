@@ -9,6 +9,7 @@ import evolution.service.serialization.CustomDialogSerializerMessageList;
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -40,14 +41,7 @@ public class Dialog {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDate;
 
-    @Column(name = "is_active")
-    private boolean isActive;
-
     @JsonSerialize(using = CustomDialogSerializerMessageList.class)
     @OneToMany(mappedBy = "dialog", fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     private List<Message> messageList;
-
-    @Version
-    @Column(columnDefinition = "bigint")
-    private Long version;
 }
