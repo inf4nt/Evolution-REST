@@ -6,10 +6,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 /**
  * Created by Infant on 09.10.2017.
  */
-public interface FriendRepository extends JpaRepository<Friend, Friend.FriendEmbeddable> {
+interface FriendRepository extends JpaRepository<Friend, Friend.FriendEmbeddable> {
 
 //-- получить подписчиков пользователя с ид = ???
 //
@@ -24,7 +26,7 @@ public interface FriendRepository extends JpaRepository<Friend, Friend.FriendEmb
             " where f.status =:status " +
             " and f.actionUser.id <>:userId " +
             " and (f.pk.first.id =:userId or f.pk.second.id =:userId)")
-    Friend findFollowerByUser(@Param("userId") Long userId, @Param("status") FriendStatusEnum requestStatus);
+    List<Friend> findFollowerByUser(@Param("userId") Long userId, @Param("status") FriendStatusEnum requestStatus);
 
 //-- получить заявки исходящие от пользователя с ид = ???
 //
@@ -37,7 +39,7 @@ public interface FriendRepository extends JpaRepository<Friend, Friend.FriendEmb
             " from Friend f " +
             " where f.status =:status " +
             " and f.actionUser.id =:userId ")
-    Friend findRequestFromUser(@Param("userId") Long userId, @Param("status") FriendStatusEnum requestStatus);
+    List<Friend> findRequestFromUser(@Param("userId") Long userId, @Param("status") FriendStatusEnum requestStatus);
 
 //-- получить друзей пользователя с ид = ???
 //
@@ -50,19 +52,8 @@ public interface FriendRepository extends JpaRepository<Friend, Friend.FriendEmb
             " from Friend f" +
             " where f.status =:status" +
             " and (f.pk.first.id =:userId or f.pk.second.id =:userId)")
-    Friend findProgressByUser(@Param("userId") Long userId, @Param("status") FriendStatusEnum progressStatus);
+    List<Friend> findProgressByUser(@Param("userId") Long userId, @Param("status") FriendStatusEnum progressStatus);
 
-//-- проверить можно ли кинуть заявку на дружбу
-//
-//    SELECT *
-//    FROM friends f
-//    WHERE f.first_user_id = :first_id
-//    AND f.second_user_id = :second_id;
-
-    @Query("select 1 from Friend f " +
-            " where f.pk.first.id =:first " +
-            " and f.pk.second.id =:second ")
-    Long isExistByPk(Long first, Long second);
 
     @Query("select f from Friend f " +
             " where f.pk.first.id =:first " +
