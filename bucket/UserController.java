@@ -129,7 +129,7 @@ public class UserController {
 //                        @PathVariable Long id,
 //                        @SessionAttribute User user,
 //                        @AuthenticationPrincipal UserDetailsServiceImpl.CustomUser customUser,
-//                        HttpServletRequest request) throws IOException {
+//                        HttpServletRequest sendRequest) throws IOException {
 //
 //        User userRequest = (User) jacksonService.jsonToObject(json, User.class);
 //        // self update
@@ -140,7 +140,7 @@ public class UserController {
 //            userRequest.setRoleId(customUser.getUser().getRoleId());
 //        }
 //        //other update
-//        else if (request.isUserInRole("ROLE_ADMIN")) {
+//        else if (sendRequest.isUserInRole("ROLE_ADMIN")) {
 //            userRequest.setId(user.getId());
 //            userRequest.setRegistrationDate(user.getRegistrationDate());
 //
@@ -181,15 +181,15 @@ public class UserController {
 //    @RequestMapping(value = "/{id}/put/view", method = RequestMethod.GET)
 //    public String profile(@PathVariable Long id,
 //                          @AuthenticationPrincipal UserDetailsServiceImpl.CustomUser customUser,
-//                          HttpServletRequest request,
+//                          HttpServletRequest sendRequest,
 //                          Model model) {
 //
-//        LOGGER.info("session user\n" + request.getSession().getAttribute("user"));
+//        LOGGER.info("session user\n" + sendRequest.getSession().getAttribute("user"));
 //
 //        if (id.equals(customUser.getUser().getId())) {
 //            model.addAttribute("user", customUser.getUser());
 //            return "user/form-my-profile";
-//        } else if (request.isUserInRole("ROLE_ADMIN")) {
+//        } else if (sendRequest.isUserInRole("ROLE_ADMIN")) {
 //            model.addAttribute("user", userDaoService.findOne(id));
 //            return "admin/admin-form-profile";
 //        }
@@ -328,7 +328,7 @@ public class UserController {
 //                        @PathVariable Long id,
 //                        @SessionAttribute User user,
 //                        @AuthenticationPrincipal UserDetailsServiceImpl.CustomUser customUser,
-//                        HttpServletRequest request) throws IOException {
+//                        HttpServletRequest sendRequest) throws IOException {
 //
 //        User userRequest = (User) jacksonService.jsonToObject(json, User.class);
 //        // self update
@@ -339,7 +339,7 @@ public class UserController {
 //            userRequest.setRoleId(customUser.getUser().getRoleId());
 //        }
 //        //other update
-//        else if (request.isUserInRole("ROLE_ADMIN")) {
+//        else if (sendRequest.isUserInRole("ROLE_ADMIN")) {
 //            userRequest.setId(user.getId());
 //            userRequest.setRegistrationDate(user.getRegistrationDate());
 //
@@ -380,15 +380,15 @@ public class UserController {
 //    @RequestMapping(value = "/{id}/put/view", method = RequestMethod.GET)
 //    public String profile(@PathVariable Long id,
 //                          @AuthenticationPrincipal UserDetailsServiceImpl.CustomUser customUser,
-//                          HttpServletRequest request,
+//                          HttpServletRequest sendRequest,
 //                          Model model) {
 //
-//        LOGGER.info("session user\n" + request.getSession().getAttribute("user"));
+//        LOGGER.info("session user\n" + sendRequest.getSession().getAttribute("user"));
 //
 //        if (id.equals(customUser.getUser().getId())) {
 //            model.addAttribute("user", customUser.getUser());
 //            return "user/form-my-profile";
-//        } else if (request.isUserInRole("ROLE_ADMIN")) {
+//        } else if (sendRequest.isUserInRole("ROLE_ADMIN")) {
 //            model.addAttribute("user", userDaoService.findOne(id));
 //            return "admin/admin-form-profile";
 //        }

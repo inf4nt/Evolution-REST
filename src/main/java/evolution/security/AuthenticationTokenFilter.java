@@ -64,7 +64,7 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
 //            if (this.tokenUtil.validateToken(authToken, userDetails)) {
 //                UsernamePasswordAuthenticationToken authentication =
 //                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-//                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+//                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(sendRequest));
 //                SecurityContextHolder.getContext().setAuthentication(authentication);
 //            }
 //        }

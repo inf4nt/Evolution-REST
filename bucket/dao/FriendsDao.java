@@ -209,7 +209,7 @@ public class FriendsDao {
         Map<String, List<Friends>> map = new HashMap<>();
         map.put("progress", findFriend(authUserId, limit, offset));
         map.put("follower", findFollower(authUserId, limit, offset));
-        map.put("request", findRequest(authUserId, limit, offset));
+        map.put("sendRequest", findRequest(authUserId, limit, offset));
         return map;
     }
 

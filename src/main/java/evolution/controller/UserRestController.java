@@ -3,6 +3,7 @@ package evolution.controller;
 import evolution.common.GenderEnum;
 import evolution.common.UserRoleEnum;
 import evolution.data.UserDataService;
+import evolution.manager.UserManager;
 import evolution.model.User;
 import evolution.model.UserAdditionalData;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -25,18 +27,18 @@ import java.util.Optional;
 @CrossOrigin
 public class UserRestController {
 
-    private final UserDataService userDataService;
-
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
+    private final UserManager userManager;
+
     @Autowired
-    public UserRestController(UserDataService userDataService) {
-        this.userDataService = userDataService;
+    public UserRestController(UserManager userManager) {
+        this.userManager = userManager;
     }
 
     @GetMapping(value = "/{id}")
     public ResponseEntity findById(@PathVariable Long id) {
-        Optional<User> optional = userDataService.findOne(id);
+        Optional<User> optional = userManager.findOne(id);
         if (optional.isPresent()) {
             return ResponseEntity.ok(optional.get());
         } else {
@@ -47,7 +49,7 @@ public class UserRestController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(value = "/{id}/admin")
     public ResponseEntity findByIdAdmin(@PathVariable Long id) {
-        Optional<User> optional = userDataService.findOneInitializeLazy(id);
+        Optional<User> optional = userManager.findOneInitializeLazy(id);
         if (optional.isPresent()) {
             return ResponseEntity.ok(optional.get());
         } else {
@@ -58,7 +60,7 @@ public class UserRestController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(value = "/admin")
     public ResponseEntity findAllLazy() {
-        List<User> list = this.userDataService.findAllInitializeLazy();
+        List<User> list = this.userManager.findAllInitializeLazy();
         if (list.isEmpty())
             return ResponseEntity.noContent().build();
         return new ResponseEntity<>(list, HttpStatus.OK);
@@ -66,7 +68,7 @@ public class UserRestController {
 
     @GetMapping
     public ResponseEntity findAll() {
-        List<User> list = this.userDataService.findAll();
+        List<User> list = this.userManager.findAll();
         if (list.isEmpty())
             return ResponseEntity.noContent().build();
         return new ResponseEntity<>(list, HttpStatus.OK);
@@ -93,7 +95,7 @@ public class UserRestController {
 
             user.setUserAdditionalData(userAdditionalData);
 
-            userDataService.save(user);
+            userManager.save(user);
         }
 
         return ResponseEntity.ok().build();

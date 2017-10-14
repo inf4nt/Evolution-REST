@@ -27,7 +27,7 @@ public class TechnicalDataService {
     }
 
     public Dialog repairDialog(Dialog dialog) {
-        Optional<CustomSecurityUser> principal = securitySupportService.getPrincipal();
+//        Optional<CustomSecurityUser> principal = securitySupportService.getPrincipal();
         //todo: fix
 //        if (principal.isPresent() && dialog != null) {
 //            User auth = principal.get().getUser();

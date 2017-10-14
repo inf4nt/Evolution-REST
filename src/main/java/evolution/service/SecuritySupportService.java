@@ -3,6 +3,7 @@ package evolution.service;
 import evolution.common.ServiceStatus;
 import evolution.common.UserRoleEnum;
 import evolution.data.UserDataService;
+import evolution.exception.AuthenticationPrincipalNotFoundException;
 import evolution.model.User;
 import evolution.security.model.CustomSecurityUser;
 import evolution.security.service.UserDetailsServiceImpl;
@@ -22,6 +23,7 @@ public class SecuritySupportService {
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
+    @Deprecated
     public Optional<CustomSecurityUser> getPrincipal() {
         Object object = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (!(object instanceof String) && object instanceof CustomSecurityUser) {
@@ -31,6 +33,15 @@ public class SecuritySupportService {
             LOGGER.info("fail instanceof for object = " + object);
         }
         return Optional.empty();
+    }
+
+    public CustomSecurityUser getAuthenticationPrincipal() {
+        Object object = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!(object instanceof String) && object instanceof CustomSecurityUser) {
+            return (CustomSecurityUser) object;
+        } else {
+            throw new AuthenticationPrincipalNotFoundException("not found authentication in security context");
+        }
     }
 
     public ServiceStatus isAllowed(Long id) {

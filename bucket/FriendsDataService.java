@@ -183,7 +183,7 @@
 //
 //            return ServiceStatus.TRUE;
 //        } else {
-//            LOGGER.warn("request to friends, failed");
+//            LOGGER.warn("sendRequest to friends, failed");
 //            return ServiceStatus.FALSE;
 //        }
 //

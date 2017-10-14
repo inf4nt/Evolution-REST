@@ -1,7 +1,6 @@
 package evolution.data;
 
 
-
 import evolution.model.User;
 import evolution.service.UserTechnicalService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,14 +24,11 @@ public class UserDataService {
 
     private final UserRepository userRepository;
 
-    private final PasswordEncoder passwordEncoder;
-
     private final UserTechnicalService userTechnicalService;
 
     @Autowired
-    public UserDataService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserTechnicalService userTechnicalService) {
+    public UserDataService(UserRepository userRepository, UserTechnicalService userTechnicalService) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
         this.userTechnicalService = userTechnicalService;
     }
 
@@ -68,12 +64,6 @@ public class UserDataService {
 
     @Transactional
     public User save(User user) {
-        if (user.getId() == null || user.getId().equals(0L)) {
-            // throw new UnsupportedOperationException(" If you want create new user, use class UserTechnicalService, method createNewUser");
-            User u = userTechnicalService.encodePassword(user);
-            return userRepository.save(u);
-        }
-
         return userRepository.save(user);
     }
 

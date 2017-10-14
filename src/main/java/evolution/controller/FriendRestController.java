@@ -1,15 +1,12 @@
 package evolution.controller;
 
-import evolution.common.FriendActionEnum;
-import evolution.common.FriendStatusEnum;
-import evolution.data.FriendDataService;
+
 import evolution.model.Friend;
+import evolution.rest.FriendRestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Created by Infant on 09.10.2017.
@@ -19,83 +16,61 @@ import java.util.Optional;
 @CrossOrigin
 public class FriendRestController {
 
-    private final FriendDataService friendDataService;
+    private final FriendRestService friendRestService;
 
     @Autowired
-    public FriendRestController(FriendDataService friendDataService) {
-        this.friendDataService = friendDataService;
+    public FriendRestController(FriendRestService friendRestService) {
+        this.friendRestService = friendRestService;
     }
 
-    @GetMapping(value = "/status/{userId}/{status}")
-    public ResponseEntity<List<Friend>> findByStatus(@PathVariable Long userId, @PathVariable String status) {
-        List<Friend> list = friendDataService.findByStatus(FriendStatusEnum.valueOf(status.toUpperCase()), userId);
-        if (!list.isEmpty()) {
-            return ResponseEntity.ok(list);
-        } else {
-            return ResponseEntity.noContent().build();
-        }
+    @GetMapping
+    public ResponseEntity<List<Friend>> findAll(@RequestParam(required = false) Integer page,
+                                                @RequestParam(required = false) Integer size) {
+        return friendRestService.findAll(page, size);
     }
 
-    @GetMapping(value = "/action/{otherId}/{action}")
-    public ResponseEntity<Friend> actionFriend(@PathVariable String action, @PathVariable Long otherId) {
-        Optional<Friend> optional = friendDataService.actionFriend(FriendActionEnum.valueOf(action.toUpperCase()), otherId);
-        if (optional.isPresent()) {
-            return ResponseEntity.ok(optional.get());
-        } else {
-            return ResponseEntity.status(500).build();
-        }
+    @GetMapping(value = "/{userId}/status/follower")
+    public ResponseEntity<List<Friend>> findUserFollowers(@PathVariable Long userId,
+                                                          @RequestParam(required = false) Integer page,
+                                                          @RequestParam(required = false) Integer size) {
+        return friendRestService.findUserFollower(userId, page, size);
     }
 
 
-//    @GetMapping(value = "/{id}/follower")
-//    public List<Friend> findFollowerByUser(@PathVariable Long id) {
-//        return friendRepository.findFollowerByUser(id, FriendStatusEnum.REQUEST);
-//    }
-//
-//    @GetMapping(value = "/{id}/request")
-//    public List<Friend> findRequestFromUser(@PathVariable Long id) {
-//        return friendRepository.findRequestFromUser(id, FriendStatusEnum.REQUEST);
-//    }
-//
-//    @GetMapping(value = "/{id}/progress")
-//    public List<Friend> finProgressByUser(@PathVariable Long id) {
-//        return friendRepository.findProgressByUser(id, FriendStatusEnum.PROGRESS);
-//    }
-
-//    @GetMapping(value = "/action/{otherUserId}/accept")
-//    public ResponseEntity<Friend> actionFriendAccept(@PathVariable Long otherUserId) {
-//        Optional<Friend> friend = friendDataService.acceptRequest(otherUserId);
-//        if (friend.isPresent()) {
-//            return ResponseEntity.ok(friend.get());
-//        } else {
-//            return ResponseEntity.status(417).build();
-//        }
-//    }
-//
-//    @GetMapping(value = "/action/{otherUserId}/remove")
-//    public ResponseEntity<Friend> actionFriendRemove(@PathVariable Long otherUserId) {
-//        Optional<Friend> friend = friendDataService.removeFriend(otherUserId);
-//        if (friend.isPresent()) {
-//            return ResponseEntity.ok(friend.get());
-//        } else {
-//            return ResponseEntity.status(417).build();
-//        }
-//    }
-//
-//    @GetMapping(value = "/action/{otherUserId}/remove_request")
-//    public ResponseEntity<Friend> actionRemoveRequest(@PathVariable Long otherUserId) {
-//        Optional<Friend> friend = friendDataService.removeRequest(otherUserId);
-//        if (friend.isPresent()) {
-//            return ResponseEntity.ok(friend.get());
-//        } else {
-//            return ResponseEntity.status(417).build();
-//        }
-//    }
+    @GetMapping(value = "/{userId}/status/request")
+    public ResponseEntity<List<Friend>> findUserRequests(@PathVariable Long userId,
+                                                         @RequestParam(required = false) Integer page,
+                                                         @RequestParam(required = false) Integer size) {
+        return friendRestService.findUserRequest(userId, page, size);
+    }
 
 
-//
-//    @GetMapping(value = "/action/{firstUserId}/{secondUserId}/{actionUserId}")
-//    public Object actionFriend(@PathVariable Long firstUserId, @PathVariable Long secondUserId, @PathVariable Long actionUserId) {
-//        return friendDataService.acceptRequest(firstUserId, secondUserId, actionUserId);
-//    }
+    @GetMapping(value = "/{userId}/status/progress")
+    public ResponseEntity<List<Friend>> findUserProgress(@PathVariable Long userId,
+                                                         @RequestParam(required = false) Integer page,
+                                                         @RequestParam(required = false) Integer size) {
+
+        return friendRestService.findUserProgress(userId, page, size);
+    }
+
+    @GetMapping(value = "/action/{userId}/sendRequest")
+    public ResponseEntity<Friend> sendRequest(@PathVariable Long userId) {
+        return friendRestService.sendRequest(userId);
+    }
+
+    @GetMapping(value = "/action/{userId}/removeRequest")
+    public ResponseEntity<Friend> removeRequest(@PathVariable Long userId) {
+        return friendRestService.removeRequest(userId);
+    }
+
+    @GetMapping(value = "/action/{userId}/removeFriend")
+    public ResponseEntity<Friend> removeFriend(@PathVariable Long userId) {
+        return friendRestService.removeFriend(userId);
+    }
+
+    @GetMapping(value = "/action/{userId}/acceptRequest")
+    public ResponseEntity<Friend> acceptRequest(@PathVariable Long userId) {
+        return friendRestService.acceptRequest(userId);
+    }
+
 }
