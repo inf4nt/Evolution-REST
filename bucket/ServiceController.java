@@ -62,7 +62,7 @@ public class ServiceController {
             LOGGER.info("update user");
             ((UserToken)entityToken).getUser().setPassword(newPassword);
 
-//            userDaoService.save(((UserToken) entityToken).getUser());
+//            userDaoService.createNewUser(((UserToken) entityToken).getUser());
 
             LOGGER.info("send notification");
             notificationUser.successUserForgot((UserToken) entityToken);
@@ -89,7 +89,7 @@ public class ServiceController {
 
 
             User user = ((UserToken)entityToken).getUser();
-//            userDaoService.save(user);
+//            userDaoService.createNewUser(user);
             notificationUser.successUserRegistration((UserToken) entityToken);
 
             LOGGER.info("User is valid, success registration");

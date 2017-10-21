@@ -37,8 +37,8 @@
 //    }
 //
 //    @Transactional
-//    public Feed save(Feed feed) {
-//        return feedRepository.save(feed);
+//    public Feed createNewUser(Feed feed) {
+//        return feedRepository.createNewUser(feed);
 //    }
 //
 //    @Transactional
@@ -55,7 +55,7 @@
 //
 //    @Transactional
 //    public Feed update(Feed feed) {
-//        return feedRepository.save(feed);
+//        return feedRepository.createNewUser(feed);
 //    }
 //
 //    @Transactional(readOnly = true)

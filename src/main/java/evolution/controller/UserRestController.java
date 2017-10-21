@@ -1,105 +1,90 @@
 package evolution.controller;
 
-import evolution.common.GenderEnum;
-import evolution.common.UserRoleEnum;
-import evolution.data.UserDataService;
-import evolution.manager.UserManager;
 import evolution.model.User;
-import evolution.model.UserAdditionalData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import evolution.rest.UserRestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 /**
- * Created by Infant on 29.09.2017.
+ * Created by Infant on 21.10.2017.
  */
 @RestController
-@RequestMapping("/user")
 @CrossOrigin
+@RequestMapping(value = "/user")
 public class UserRestController {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
-
-    private final UserManager userManager;
+    private final UserRestService userRestService;
 
     @Autowired
-    public UserRestController(UserManager userManager) {
-        this.userManager = userManager;
-    }
-
-    @GetMapping(value = "/{id}")
-    public ResponseEntity findById(@PathVariable Long id) {
-        Optional<User> optional = userManager.findOne(id);
-        if (optional.isPresent()) {
-            return ResponseEntity.ok(optional.get());
-        } else {
-            return ResponseEntity.noContent().build();
-        }
-    }
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping(value = "/{id}/admin")
-    public ResponseEntity findByIdAdmin(@PathVariable Long id) {
-        Optional<User> optional = userManager.findOneInitializeLazy(id);
-        if (optional.isPresent()) {
-            return ResponseEntity.ok(optional.get());
-        } else {
-            return ResponseEntity.noContent().build();
-        }
-    }
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping(value = "/admin")
-    public ResponseEntity findAllLazy() {
-        List<User> list = this.userManager.findAllInitializeLazy();
-        if (list.isEmpty())
-            return ResponseEntity.noContent().build();
-        return new ResponseEntity<>(list, HttpStatus.OK);
+    public UserRestController(UserRestService userRestService) {
+        this.userRestService = userRestService;
     }
 
     @GetMapping
-    public ResponseEntity findAll() {
-        List<User> list = this.userManager.findAll();
-        if (list.isEmpty())
-            return ResponseEntity.noContent().build();
-        return new ResponseEntity<>(list, HttpStatus.OK);
+    public ResponseEntity<List<User>> findAll(@RequestParam(required = false) Integer page,
+                                              @RequestParam(required = false) Integer size,
+                                              @RequestParam(required = false) String sort,
+                                              @RequestParam(required = false) List<String> sortProperties) {
+        return userRestService.findAll(page, size, sort, sortProperties);
     }
 
-
-    @GetMapping(value = "/save/test")
-    public ResponseEntity save() {
-
-        for (int i = 1; i < 10; i++) {
-            User user = new User();
-            user.setFirstName("TEST_USER_" + i);
-            user.setLastName("TEST_USER_" + i);
-            user.setNickname("TEST_USER_" + i);
-            user.setRole(UserRoleEnum.USER);
-
-            UserAdditionalData userAdditionalData = new UserAdditionalData();
-            userAdditionalData.setActive(true);
-            userAdditionalData.setPassword("user_" + i);
-            userAdditionalData.setGenderEnum(GenderEnum.MALE);
-            userAdditionalData.setRegistrationDate(new Date());
-            userAdditionalData.setUsername("user" + i + "@mail.ru");
-
-
-            user.setUserAdditionalData(userAdditionalData);
-
-            userManager.save(user);
-        }
-
-        return ResponseEntity.ok().build();
+    @GetMapping(value = "/lazy")
+    public ResponseEntity<List<User>> findAllLoadLazy(@RequestParam(required = false) Integer page,
+                                                      @RequestParam(required = false) Integer size,
+                                                      @RequestParam(required = false) String sort,
+                                                      @RequestParam(required = false) List<String> sortProperties) {
+        return userRestService.findAllLoadLazy(page, size, sort, sortProperties);
     }
 
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<User> findOne(@PathVariable Long id) {
+        return userRestService.findOne(id);
+    }
 
+    @GetMapping(value = "/{id}/lazy")
+    public ResponseEntity<User> findOneLoadLazy(@PathVariable Long id) {
+        return userRestService.findOneLoadLazy(id);
+    }
+
+    @PostMapping
+    public ResponseEntity<HttpStatus> save(@RequestBody User user) {
+        return userRestService.createNewUser(user);
+    }
+
+    @PutMapping
+    public ResponseEntity<HttpStatus> update(@RequestBody User user) {
+        return userRestService.update(user);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<HttpStatus> deleteById(@PathVariable Long id) {
+        return userRestService.delete(id);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping(value = "/block/{id}")
+    public ResponseEntity<HttpStatus> blockUser(@PathVariable Long id) {
+        return userRestService.block(id);
+    }
+
+    @GetMapping(value = "/anBlock/{id}")
+    public ResponseEntity<HttpStatus> anBlockUser(@PathVariable Long id) {
+        return userRestService.anBlock(id);
+    }
+
+    @GetMapping(value = "/activated/{key}")
+    public ResponseEntity<HttpStatus> anBlockUser(@PathVariable String key) {
+        return userRestService.activated(key);
+    }
+
+    @GetMapping(value = "/exist/{username}")
+    public ResponseEntity<HttpStatus> exist(@PathVariable String username) {
+        return userRestService.exist(username);
+    }
 }

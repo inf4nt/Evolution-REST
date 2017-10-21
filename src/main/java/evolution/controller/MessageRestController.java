@@ -68,7 +68,7 @@
 //    @PostMapping
 //    public ResponseEntity postMessage(@RequestBody Message message) {
 //        try {
-////            Message result = messageDataService.save(message);
+////            Message result = messageDataService.createNewUser(message);
 ////            return ResponseEntity.ok(result);
 //            return new ResponseEntity(HttpStatus.OK);
 //        } catch (Exception e) {

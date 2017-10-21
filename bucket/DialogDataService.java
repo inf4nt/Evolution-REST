@@ -75,7 +75,7 @@
 //                dialogRepository.delete(dialog);
 //            } else {
 //                dialog.getMessageList().remove(message);
-//                dialogRepository.save(dialog);
+//                dialogRepository.createNewUser(dialog);
 //                LOGGER.info("delete message " + message);
 //            }
 //        }
@@ -108,7 +108,7 @@
 //
 //    // todo: fix
 ////    @Transactional
-////    public Dialog save(String text, Long senderUserId, Long secondUserId) {
+////    public Dialog createNewUser(String text, Long senderUserId, Long secondUserId) {
 ////
 ////        UserLight authUser = new UserLight(senderUserId);
 ////
@@ -126,7 +126,7 @@
 ////
 ////        dialog.getMessageList().add(message);
 ////
-////        return this.dialogRepository.save(dialog);
+////        return this.dialogRepository.createNewUser(dialog);
 ////    }
 //
 //    @Transactional(readOnly = true)

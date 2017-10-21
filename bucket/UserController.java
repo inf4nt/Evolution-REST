@@ -149,7 +149,7 @@ public class UserController {
 //        }
 //
 //        if (validator.userValidator(userRequest)) {
-//            userDaoService.save(userRequest);
+//            userDaoService.createNewUser(userRequest);
 //            if (customUser.getUser().getId().equals(id))
 //                customUser.getUser().updateFields(userRequest);
 //            return true;
@@ -164,7 +164,7 @@ public class UserController {
 //        User user = (User) jacksonService.jsonToObject(json, User.class);
 //        user.setRoleId(UserRoleEnum.USER.getId());
 //        if (validator.userValidator(user)) {
-//            return userDaoService.save(user);
+//            return userDaoService.createNewUser(user);
 //        }
 //        return null;
 //    }
@@ -348,7 +348,7 @@ public class UserController {
 //        }
 //
 //        if (validator.userValidator(userRequest)) {
-//            userDaoService.save(userRequest);
+//            userDaoService.createNewUser(userRequest);
 //            if (customUser.getUser().getId().equals(id))
 //                customUser.getUser().updateFields(userRequest);
 //            return true;
@@ -363,7 +363,7 @@ public class UserController {
 //        User user = (User) jacksonService.jsonToObject(json, User.class);
 //        user.setRoleId(UserRoleEnum.USER.getId());
 //        if (validator.userValidator(user)) {
-//            return userDaoService.save(user);
+//            return userDaoService.createNewUser(user);
 //        }
 //        return null;
 //    }

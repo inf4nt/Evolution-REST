@@ -40,7 +40,7 @@
 //    }
 //
 ////    @Transactional
-////    public Message save(String text, UserLight senderUser, UserLight secondUser) {
+////    public Message createNewUser(String text, UserLight senderUser, UserLight secondUser) {
 ////        Optional<Dialog> optional = dialogDataService.findDialogByUsers(senderUser.getId(), secondUser.getId());
 ////        Message message = new Message();
 ////        Dialog dialog;
@@ -70,8 +70,8 @@
 //    }
 //
 ////    @Transactional
-////    public Message save(Message message) {
-////        return save(message.getMessage(), message.getSender(), message.getDialog().getSecond());
+////    public Message createNewUser(Message message) {
+////        return createNewUser(message.getMessage(), message.getSender(), message.getDialog().getSecond());
 ////    }
 //
 //    @Transactional(readOnly = true)
@@ -135,8 +135,8 @@
 //    }
 //
 //    @Transactional
-//    public List<Message> save(List<Message> messageList) {
-//        return this.messageRepository.save(messageList);
+//    public List<Message> createNewUser(List<Message> messageList) {
+//        return this.messageRepository.createNewUser(messageList);
 //    }
 //
 //    @Transactional

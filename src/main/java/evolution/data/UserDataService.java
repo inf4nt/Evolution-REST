@@ -2,17 +2,13 @@ package evolution.data;
 
 
 import evolution.model.User;
-import evolution.service.UserTechnicalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.naming.OperationNotSupportedException;
-import javax.transaction.NotSupportedException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,12 +20,9 @@ public class UserDataService {
 
     private final UserRepository userRepository;
 
-    private final UserTechnicalService userTechnicalService;
-
     @Autowired
-    public UserDataService(UserRepository userRepository, UserTechnicalService userTechnicalService) {
+    public UserDataService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.userTechnicalService = userTechnicalService;
     }
 
     @Transactional(readOnly = true)
@@ -43,8 +36,18 @@ public class UserDataService {
     }
 
     @Transactional(readOnly = true)
-    public List<User> findAllInitializeLazy() {
-        return userRepository.findAllInitializeLazy();
+    public List<User> findAllLoadLazy() {
+        return userRepository.findAllLoadLazy();
+    }
+
+    @Transactional(readOnly = true)
+    public List<User> findAllLoadLazy(Pageable page) {
+        return userRepository.findAllLoadLazy(page);
+    }
+
+    @Transactional(readOnly = true)
+    public List<User> findAllLoadLazy(Sort sort) {
+        return userRepository.findAllLoadLazy(sort);
     }
 
     @Transactional(readOnly = true)
@@ -53,18 +56,28 @@ public class UserDataService {
     }
 
     @Transactional(readOnly = true)
+    public List<User> findAll(Sort sort) {
+        return userRepository.findAll(sort);
+    }
+
+    @Transactional(readOnly = true)
     public Optional<User> findOne(Long id) {
         return Optional.ofNullable(userRepository.findOne(id));
     }
 
     @Transactional(readOnly = true)
-    public Optional<User> findOneInitializeLazy(Long id) {
-        return Optional.ofNullable(userRepository.findOneInitializeLazy(id));
+    public Optional<User> findOneLoadLazy(Long id) {
+        return Optional.ofNullable(userRepository.findOneLoadLazy(id));
     }
 
     @Transactional
     public User save(User user) {
         return userRepository.save(user);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean exist(String username) {
+        return userRepository.exist(username) != null;
     }
 
     @Transactional
@@ -78,19 +91,13 @@ public class UserDataService {
     }
 
     @Transactional
-    public void delete(Long id) {
-        Optional<User> optional = findOneInitializeLazy(id);
-        optional.ifPresent(o -> delete(o));
-    }
-
-    @Transactional
-    public void deleteListUserId(Collection<Long> collection) {
-        List<User> list = userRepository.findAll(collection);
-        delete(list);
-    }
-
-    @Transactional
     public void delete(List<User> userList) {
         userRepository.delete(userList);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<User> findOneBySecretKeyLoadLazy(String secretKey) {
+        User user = userRepository.findOneBySecretKey(secretKey);
+        return Optional.ofNullable(user);
     }
 }

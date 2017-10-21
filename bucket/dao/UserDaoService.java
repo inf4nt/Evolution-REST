@@ -68,8 +68,8 @@ public class UserDaoService {
 //    }
 //
 //    @Transactional
-//    public User save(User user) {
-//        return userRepositoryDeprecated.save(user);
+//    public User createNewUser(User user) {
+//        return userRepositoryDeprecated.createNewUser(user);
 //    }
 //
 //    @Transactional

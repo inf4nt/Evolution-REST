@@ -158,8 +158,8 @@
 //        f1.setStatus(FriendStatusEnum.FOLLOWER.getId());
 //        f2.setStatus(FriendStatusEnum.REQUEST.getId());
 //
-//        friendRepository.save(f1);
-//        friendRepository.save(f2);
+//        friendRepository.createNewUser(f1);
+//        friendRepository.createNewUser(f2);
 //
 //        return ServiceStatus.TRUE;
 //    }
@@ -178,8 +178,8 @@
 //            f2.setFriend(new UserLight(senderRequestUserId)); // auth user
 //            f2.setStatus(FriendStatusEnum.FOLLOWER.getId());
 //
-//            friendRepository.save(f1);
-//            friendRepository.save(f2);
+//            friendRepository.createNewUser(f1);
+//            friendRepository.createNewUser(f2);
 //
 //            return ServiceStatus.TRUE;
 //        } else {
@@ -211,8 +211,8 @@
 //        f1.setStatus(FriendStatusEnum.PROGRESS.getId());
 //        f2.setStatus(FriendStatusEnum.PROGRESS.getId());
 //
-//        friendRepository.save(f1);
-//        friendRepository.save(f2);
+//        friendRepository.createNewUser(f1);
+//        friendRepository.createNewUser(f2);
 //
 //        return ServiceStatus.TRUE;
 //    }

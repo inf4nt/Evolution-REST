@@ -2,6 +2,9 @@ package evolution.data;
 
 
 import evolution.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,13 +25,37 @@ interface UserRepository extends JpaRepository<User, Long> {
     @Query("select u " +
             "from User u " +
             "join fetch u.userAdditionalData ")
-    List<User> findAllInitializeLazy();
+    List<User> findAllLoadLazy();
 
-    @Query("select u from User u where u.id =:id")
+    @Query("select u " +
+            "from User u " +
+            "join fetch u.userAdditionalData ")
+    List<User> findAllLoadLazy(Pageable pageable);
+
+    @Query("select u " +
+            "from User u " +
+            "join fetch u.userAdditionalData ")
+    List<User> findAllLoadLazy(Sort sort);
+
+    @Query("select u " +
+            "from User u " +
+            "where u.id =:id")
     User findOne(@Param("id") Long id);
 
-    @Query("select u from User u " +
-            "join fetch u.userAdditionalData " +
+    @Query("select u " +
+            "from User u " +
+            "join u.userAdditionalData " +
             "where u.id =:id")
-    User findOneInitializeLazy(@Param("id") Long id);
+    User findOneLoadLazy(@Param("id") Long id);
+
+    @Query(" select 1 " +
+            "from User u " +
+            "where u.userAdditionalData.username =:username ")
+    Long exist(@Param("username") String username);
+
+    @Query(" select u " +
+            " from User u " +
+            " join fetch u.userAdditionalData uad " +
+            " where uad.secretKey =:secretKey ")
+    User findOneBySecretKey(@Param("secretKey") String secretKey);
 }

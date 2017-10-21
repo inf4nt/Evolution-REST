@@ -44,22 +44,8 @@ public class SecuritySupportService {
         }
     }
 
-    public ServiceStatus isAllowed(Long id) {
-        Optional<CustomSecurityUser> principal = getPrincipal();
-
-        if (!principal.isPresent()) {
-            LOGGER.warn("principal is null");
-            return ServiceStatus.EXPECTATION_FAILED;
-        }
-
-        User user = principal.get().getUser();
-        LOGGER.info("principal is = " + user);
-
-        //todo: fix
-//        if (user.getRoleId().equals(UserRoleEnum.ADMIN.getId()) || user.getId().equals(id))
-//            return ServiceStatus.TRUE;
-
-        return ServiceStatus.FALSE;
+    public boolean isAllowed(Long id) {
+        User user = getAuthenticationPrincipal().getUser();
+        return user.getRole().name().equals(UserRoleEnum.ADMIN.name()) || user.getId().equals(id);
     }
-
 }

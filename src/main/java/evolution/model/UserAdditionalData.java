@@ -1,6 +1,5 @@
 package evolution.model;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import evolution.common.GenderEnum;
@@ -8,6 +7,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * Created by Infant on 03.10.2017.
@@ -52,6 +52,9 @@ public class UserAdditionalData {
 
     @Column(name = "is_active")
     private boolean isActive;
+
+    @Column(name = "secret_key", columnDefinition = "varchar(255)", unique = true)
+    private String secretKey;
 
     //Additional data
     //Additional data

@@ -73,7 +73,7 @@ public class MessageController {
 
         Dialog dialog = messageDataServiceDeprecated.selectDialogIdByFirstAndSecond(customUser.getUser().getId(), sel);
         if (dialog != null) {
-            LOGGER.info("Dialog exist. Run save message");
+            LOGGER.info("Dialog exist. Run createNewUser message");
             messageDataServiceDeprecated.save(new Message(customUser.getUser().getId(), message, new Date(), dialog.getId()));
         } else {
             LOGGER.info("create new dialog");
