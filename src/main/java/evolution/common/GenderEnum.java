@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 public enum GenderEnum {
 
     MALE,
-    FAMALE
+    FEMALE
 
 }

@@ -24,11 +24,11 @@ public class Message {
     private Long id;
 
     @JsonSerialize(using = CustomMessageSerializerDialog.class)
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "dialog_id", updatable = false, nullable = false, columnDefinition = "bigint")
     private Dialog dialog;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "sender_id", columnDefinition = "bigint")
     private User sender;
 

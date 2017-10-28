@@ -23,14 +23,13 @@ public class SecuritySupportService {
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
-    @Deprecated
     public Optional<CustomSecurityUser> getPrincipal() {
         Object object = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (!(object instanceof String) && object instanceof CustomSecurityUser) {
             CustomSecurityUser customSecurityUser = (CustomSecurityUser) object;
             return Optional.of(customSecurityUser);
         } else {
-            LOGGER.info("fail instanceof for object = " + object);
+            LOGGER.info("fail instanceof for object = " + object + ". Maybe authentication not exist");
         }
         return Optional.empty();
     }

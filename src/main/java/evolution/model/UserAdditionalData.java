@@ -32,8 +32,7 @@ public class UserAdditionalData {
     @Column(name = "username", unique = true, nullable = false, columnDefinition = "varchar(255)")
     private String username;
 
-    @JsonIgnore
-    @Column(name = "password", unique = true, nullable = false, columnDefinition = "varchar(255)")
+    @Column(name = "password", nullable = false, columnDefinition = "varchar(255)")
     private String password;
 
     @Column(name = "registration_date")
@@ -48,9 +47,12 @@ public class UserAdditionalData {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "gender")
-    private GenderEnum genderEnum;
+    private GenderEnum gender;
 
-    @Column(name = "is_active")
+    @Column(name = "is_block", columnDefinition = "boolean default false")
+    private boolean isBlock;
+
+    @Column(name = "is_active", columnDefinition = "boolean default true")
     private boolean isActive;
 
     @Column(name = "secret_key", columnDefinition = "varchar(255)", unique = true)

@@ -29,11 +29,11 @@ public class Dialog {
     @SequenceGenerator(name = "seq_dialog", sequenceName = "seq_dialog_id", allocationSize = 1)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "first", updatable = false, nullable = false, columnDefinition = "bigint")
     private User first;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "second", updatable = false, nullable = false, columnDefinition = "bigint")
     private User second;
 

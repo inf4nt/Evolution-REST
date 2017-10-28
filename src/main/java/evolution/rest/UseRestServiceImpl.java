@@ -1,5 +1,6 @@
 package evolution.rest;
 
+import evolution.common.UserRoleEnum;
 import evolution.data.UserDataService;
 import evolution.model.User;
 import evolution.service.SecuritySupportService;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -53,6 +55,10 @@ public class UseRestServiceImpl implements UserRestService {
         } else if (page != null && size != null && sort != null && sortProperties != null && !sortProperties.isEmpty()) {
 
             list = userDataService.findAll(new PageRequest(page, size, new Sort(Sort.Direction.valueOf(sort), sortProperties))).getContent();
+
+        } else if (page != null && size != null && sort == null) {
+
+            list = userDataService.findAll(new PageRequest(page, size)).getContent();
 
         } else {
             list = userDataService.findAll();
@@ -123,11 +129,19 @@ public class UseRestServiceImpl implements UserRestService {
             return ResponseEntity.status(417).build();
         }
 
+        logger.info(user.toString());
+
         String password = passwordEncoder.encode(user.getUserAdditionalData().getPassword());
+        user.setRole(UserRoleEnum.USER);
+        user.getUserAdditionalData().setRegistrationDate(new Date());
         user.getUserAdditionalData().setPassword(password);
-        user.getUserAdditionalData().setActive(false);
+//        user.getUserAdditionalData().setActive(false);
+        user.getUserAdditionalData().setActive(true);
         // set secret key
         user.getUserAdditionalData().setSecretKey(UUID.randomUUID().toString());
+        user.getUserAdditionalData().setBlock(false);
+
+        logger.info(user.toString());
 
         try {
             userDataService.save(user);
@@ -177,7 +191,7 @@ public class UseRestServiceImpl implements UserRestService {
 
         if (optional.isPresent()) {
             User user = optional.get();
-            user.getUserAdditionalData().setActive(false);
+            user.getUserAdditionalData().setBlock(true);
             userDataService.save(user);
             return ResponseEntity.status(200).build();
         }
@@ -191,7 +205,7 @@ public class UseRestServiceImpl implements UserRestService {
 
         if (optional.isPresent()) {
             User user = optional.get();
-            user.getUserAdditionalData().setActive(true);
+            user.getUserAdditionalData().setBlock(false);
             userDataService.save(user);
             return ResponseEntity.status(200).build();
         }
