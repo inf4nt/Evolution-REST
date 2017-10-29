@@ -1,13 +1,12 @@
 package evolution.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import evolution.common.GenderEnum;
+import evolution.service.serialization.CustomUserAdditionalDataSerializerUser;
 import lombok.*;
-
 import javax.persistence.*;
 import java.util.Date;
-import java.util.UUID;
 
 /**
  * Created by Infant on 03.10.2017.
@@ -58,6 +57,11 @@ public class UserAdditionalData {
     @Column(name = "secret_key", columnDefinition = "varchar(255)", unique = true)
     private String secretKey;
 
+    // todo create custom json serialization
+    @JsonSerialize(using = CustomUserAdditionalDataSerializerUser.class)
+    @OneToOne(mappedBy = "userAdditionalData", fetch = FetchType.LAZY)
+    private User user;
+
     //Additional data
     //Additional data
     //Additional data
@@ -66,4 +70,21 @@ public class UserAdditionalData {
     @Version
     @Column(columnDefinition = "bigint")
     private Long version;
+
+    @Override
+    public String toString() {
+        return "UserAdditionalData{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", registrationDate=" + registrationDate +
+                ", country='" + country + '\'' +
+                ", state='" + state + '\'' +
+                ", gender=" + gender +
+                ", isBlock=" + isBlock +
+                ", isActive=" + isActive +
+                ", secretKey='" + secretKey + '\'' +
+                ", version=" + version +
+                '}';
+    }
 }

@@ -1,15 +1,11 @@
 package evolution.service;
 
-import evolution.common.ServiceStatus;
 import evolution.common.UserRoleEnum;
-import evolution.data.UserDataService;
 import evolution.exception.AuthenticationPrincipalNotFoundException;
 import evolution.model.User;
 import evolution.security.model.CustomSecurityUser;
-import evolution.security.service.UserDetailsServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +32,7 @@ public class SecuritySupportService {
 
     public CustomSecurityUser getAuthenticationPrincipal() {
         Object object = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (!(object instanceof String) && object instanceof CustomSecurityUser) {
+        if (object instanceof CustomSecurityUser) {
             return (CustomSecurityUser) object;
         } else {
             throw new AuthenticationPrincipalNotFoundException("not found authentication in security context");

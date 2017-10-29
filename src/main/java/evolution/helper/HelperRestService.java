@@ -20,11 +20,11 @@ public class HelperRestService<T> {
         return ResponseEntity.ok(page);
     }
 
-    public ResponseEntity<List<T>> getResponseForList(List<T> List) {
-        if (List == null ||  List.isEmpty()) {
+    public ResponseEntity<List<T>> getResponseForList(List<T> list) {
+        if (list == null ||  list.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(List);
+        return ResponseEntity.ok(list);
     }
 
     public ResponseEntity<T> getResponseForOptional(Optional<T> optional) {

@@ -1,79 +1,64 @@
 package evolution.rest;
 
 import evolution.data.FriendDataService;
+import evolution.helper.HelperDataService;
+import evolution.helper.HelperRestService;
 import evolution.model.Friend;
+import evolution.model.Message;
 import evolution.model.User;
 import evolution.service.SecuritySupportService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 import java.util.Optional;
 
 /**
- * Created by Infant on 14.10.2017.
+ * Created by Infant on 29.10.2017.
  */
 @Service
 public class FriendRestServiceImpl implements FriendRestService {
 
-    private final SecuritySupportService securitySupportService;
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final FriendDataService friendDataService;
 
+    private final HelperDataService helperDataService;
+
+    private final HelperRestService<Friend> helperRestService;
+
+    private final SecuritySupportService securitySupportService;
+
     @Autowired
-    public FriendRestServiceImpl(SecuritySupportService securitySupportService, FriendDataService friendDataService) {
-        this.securitySupportService = securitySupportService;
+    public FriendRestServiceImpl(FriendDataService friendDataService, HelperDataService helperDataService, HelperRestService<Friend> helperRestService, SecuritySupportService securitySupportService) {
         this.friendDataService = friendDataService;
+        this.helperDataService = helperDataService;
+        this.helperRestService = helperRestService;
+        this.securitySupportService = securitySupportService;
     }
 
     @Override
-    public ResponseEntity<List<Friend>> findUserFollower(Long userId, Integer page, Integer size) {
-        List<Friend> list;
-        if (page == null || size == null) {
-            list = friendDataService.findUserFollowers(userId);
-        } else {
-            list = friendDataService.findUserFollowers(userId, new PageRequest(page, size)).getContent();
-        }
-
-        if (list.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(list);
-        }
+    public ResponseEntity<Page<Friend>> findUserFollower(Long userId, Integer page, Integer size) {
+        Pageable pageable = helperDataService.getPageableForFriend(page, size);
+        Page<Friend> p = friendDataService.findUserFollowers(userId, pageable);
+        return helperRestService.getResponseForPage(p);
     }
 
     @Override
-    public ResponseEntity<List<Friend>> findUserRequest(Long userId, Integer page, Integer size) {
-        List<Friend> list;
-        if (page == null || size == null) {
-            list = friendDataService.findUserRequests(userId);
-        } else {
-            list = friendDataService.findUserRequests(userId, new PageRequest(page, size)).getContent();
-        }
-
-        if (list.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(list);
-        }
+    public ResponseEntity<Page<Friend>> findUserRequest(Long userId, Integer page, Integer size) {
+        Pageable pageable = helperDataService.getPageableForFriend(page, size);
+        Page<Friend> p = friendDataService.findUserRequests(userId, pageable);
+        return helperRestService.getResponseForPage(p);
     }
 
     @Override
-    public ResponseEntity<List<Friend>> findUserProgress(Long userId, Integer page, Integer size) {
-        List<Friend> list;
-        if (page == null || size == null) {
-            list = friendDataService.findUserProgress(userId);
-        } else {
-            list = friendDataService.findUserProgress(userId, new PageRequest(page, size)).getContent();
-        }
-
-        if (list.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(list);
-        }
+    public ResponseEntity<Page<Friend>> findUserProgress(Long userId, Integer page, Integer size) {
+        Pageable pageable = helperDataService.getPageableForFriend(page, size);
+        Page<Friend> p = friendDataService.findUserProgress(userId, pageable);
+        return helperRestService.getResponseForPage(p);
     }
 
     @Override
@@ -121,18 +106,9 @@ public class FriendRestServiceImpl implements FriendRestService {
     }
 
     @Override
-    public ResponseEntity<List<Friend>> findAll(Integer page, Integer size) {
-        List<Friend> list;
-        if (page == null || size == null) {
-            list = friendDataService.findAll();
-        } else {
-            list = friendDataService.findAll(new PageRequest(page, size)).getContent();
-        }
-
-        if (list.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(list);
-        }
+    public ResponseEntity<Page<Friend>> findAll(Integer page, Integer size) {
+        Pageable pageable = helperDataService.getPageableForFriend(page, size);
+        Page<Friend> p = friendDataService.findAll(pageable);
+        return helperRestService.getResponseForPage(p);
     }
 }

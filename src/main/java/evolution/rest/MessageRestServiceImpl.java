@@ -5,7 +5,6 @@ import evolution.data.MessageDataService;
 import evolution.helper.HelperRestService;
 import evolution.model.Message;
 import evolution.model.User;
-import evolution.security.model.CustomSecurityUser;
 import evolution.service.SecuritySupportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,26 +44,26 @@ public class MessageRestServiceImpl implements MessageRestService {
         this.helperRestService = helperRestService;
     }
 
+
+    private ResponseEntity<Page<Message>> serviceResultAndRepair(Page<Message> page) {
+        Page<Message> result = helperDataService.repairPageMessage(page);
+
+        return helperRestService.getResponseForPage(result);
+    }
+
+
     @Override
     public ResponseEntity<Page<Message>> findAllMessage(Integer page, Integer size, String sort, List<String> sortProperties) {
         Pageable pageable = helperDataService.getPageableForMessage(page, size, sort, sortProperties);
 
-        Page<Message> p = messageDataService.findAll(pageable);
-
-        Page<Message> result = helperDataService.repairMessage(p);
-
-        return helperRestService.getResponseForPage(result);
+        return serviceResultAndRepair(messageDataService.findAll(pageable));
     }
 
     @Override
     public ResponseEntity<Page<Message>> findMessageByDialog(Long dialogId, Integer page, Integer size, String sort, List<String> sortProperties) {
         Pageable pageable = helperDataService.getPageableForMessage(page, size, sort, sortProperties);
 
-        Page<Message> p = messageDataService.findMessageByDialog(dialogId, pageable);
-
-        Page<Message> result = helperDataService.repairMessage(p);
-
-        return helperRestService.getResponseForPage(result);
+        return serviceResultAndRepair(messageDataService.findMessageByDialog(dialogId, pageable));
     }
 
     @Override
@@ -72,11 +71,7 @@ public class MessageRestServiceImpl implements MessageRestService {
         Pageable pageable = helperDataService.getPageableForMessage(page, size, sort, sortProperties);
         User auth = securitySupportService.getAuthenticationPrincipal().getUser();
 
-        Page<Message> p = messageDataService.findMessageByUser(auth.getId(), pageable);
-
-        Page<Message> result = helperDataService.repairMessage(p);
-
-        return helperRestService.getResponseForPage(result);
+        return serviceResultAndRepair(messageDataService.findMessageByUser(auth.getId(), pageable));
     }
 
     @Override
@@ -89,12 +84,7 @@ public class MessageRestServiceImpl implements MessageRestService {
     public ResponseEntity<Page<Message>> findLastMessageInDialog(Long userId, Integer page, Integer size, String sort, List<String> sortProperties) {
         Pageable pageable = helperDataService.getPageableForMessage(page, size, sort, sortProperties);
 
-
-        Page<Message> p = messageDataService.findLastUserMessageInDialogWhereUserId(userId, pageable);
-
-        Page<Message> result = helperDataService.repairMessage(p);
-
-        return helperRestService.getResponseForPage(result);
+        return serviceResultAndRepair(messageDataService.findLastUserMessageInDialogWhereUserId(userId, pageable));
     }
 
     @Override
@@ -104,29 +94,23 @@ public class MessageRestServiceImpl implements MessageRestService {
             return ResponseEntity.noContent().build();
         }
 
-        Optional<CustomSecurityUser> customSecurityUser = securitySupportService.getPrincipal();
-        if (!customSecurityUser.isPresent()) {
-            return ResponseEntity.noContent().build();
-        }
+        User auth = securitySupportService.getAuthenticationPrincipal().getUser();
 
-        Message message = helperDataService.repairDialog(optional.get(), customSecurityUser.get().getUser());
+        Message message = helperDataService.repairDialog(optional.get(), auth);
 
         return ResponseEntity.ok(message);
     }
 
     @Override
     public ResponseEntity<Message> findOneMessageByAuthSender(Long id) {
-        Optional<CustomSecurityUser> customSecurityUser = securitySupportService.getPrincipal();
-        if (!customSecurityUser.isPresent()) {
-            return ResponseEntity.noContent().build();
-        }
+        User auth = securitySupportService.getAuthenticationPrincipal().getUser();
 
-        Optional<Message> optional = messageDataService.findOne(id, customSecurityUser.get().getUser().getId());
+        Optional<Message> optional = messageDataService.findOne(id, auth.getId());
         if (!optional.isPresent()) {
             return ResponseEntity.noContent().build();
         }
 
-        Message message = helperDataService.repairDialog(optional.get(), customSecurityUser.get().getUser());
+        Message message = helperDataService.repairDialog(optional.get(), auth);
 
         return ResponseEntity.ok(message);
     }
@@ -174,6 +158,7 @@ public class MessageRestServiceImpl implements MessageRestService {
         User auth = securitySupportService.getAuthenticationPrincipal().getUser();
         if (optional.isPresent()) {
             Message m = optional.get();
+
             // check sender
             if (!m.getSender().getId().equals(auth.getId())) {
                 return ResponseEntity.status(417).build();

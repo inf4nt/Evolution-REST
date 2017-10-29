@@ -2,8 +2,10 @@ package evolution.model;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import evolution.common.UserRoleEnum;
 import evolution.security.model.CustomSecurityUser;
+import evolution.service.serialization.CustomUserSerializerUserAdditionalData;
 import lombok.*;
 
 import javax.persistence.*;
@@ -47,6 +49,7 @@ public class User {
     // default data
     // default data
 
+    @JsonSerialize(using = CustomUserSerializerUserAdditionalData.class)
     @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REMOVE})
     @JoinColumn(name = "user_additional_data_id", columnDefinition = "bigint")
     private UserAdditionalData userAdditionalData;

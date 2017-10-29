@@ -1,31 +1,27 @@
-package evolution.rest;
+package evolution.rest.old;
 
 import evolution.model.User;
-import evolution.model.UserAdditionalData;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 /**
- * Created by Infant on 29.10.2017.
+ * Created by Infant on 21.10.2017.
  */
 public interface UserRestService {
 
-    ResponseEntity<Page<User>> findAll(Integer page, Integer size, String sortType, List<String> sortProperties);
+    ResponseEntity<List<User>> findAll(Integer page, Integer size, String sort, List<String> sortProperties);
 
-    ResponseEntity<User> findOne(Long userId);
+    ResponseEntity<List<User>> findAllLoadLazy(Integer page, Integer size, String sort, List<String> sortProperties);
 
-    ResponseEntity<User> findByUsername(String username);
+    ResponseEntity<User> findOneLoadLazy(Long id);
 
-    ResponseEntity<List<User>> findAll(String sortType, List<String> sortProperties);
+    ResponseEntity<User> findOne(Long id);
 
     ResponseEntity<HttpStatus> createNewUser(User user);
 
     ResponseEntity<HttpStatus> update(User user);
-
-    ResponseEntity<HttpStatus> updateAuthUser(User user);
 
     ResponseEntity<HttpStatus> delete(Long id);
 

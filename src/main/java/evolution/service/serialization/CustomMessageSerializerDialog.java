@@ -27,6 +27,4 @@ public class CustomMessageSerializerDialog extends StdSerializer<Dialog> {
             generator.writeObject(dialog);
         }
     }
-
-
 }

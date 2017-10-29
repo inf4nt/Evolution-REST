@@ -1,7 +1,7 @@
 package evolution.controller;
 
 import evolution.model.User;
-import evolution.rest.UserRestService;
+import evolution.rest.old.UserRestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

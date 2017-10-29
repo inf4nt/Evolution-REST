@@ -4,6 +4,7 @@ package evolution.controller;
 import evolution.model.Friend;
 import evolution.rest.FriendRestService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -24,13 +25,13 @@ public class FriendRestController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Friend>> findAll(@RequestParam(required = false) Integer page,
+    public ResponseEntity<Page<Friend>> findAll(@RequestParam(required = false) Integer page,
                                                 @RequestParam(required = false) Integer size) {
         return friendRestService.findAll(page, size);
     }
 
     @GetMapping(value = "/{userId}/status/follower")
-    public ResponseEntity<List<Friend>> findUserFollowers(@PathVariable Long userId,
+    public ResponseEntity<Page<Friend>> findUserFollowers(@PathVariable Long userId,
                                                           @RequestParam(required = false) Integer page,
                                                           @RequestParam(required = false) Integer size) {
         return friendRestService.findUserFollower(userId, page, size);
@@ -38,7 +39,7 @@ public class FriendRestController {
 
 
     @GetMapping(value = "/{userId}/status/request")
-    public ResponseEntity<List<Friend>> findUserRequests(@PathVariable Long userId,
+    public ResponseEntity<Page<Friend>> findUserRequests(@PathVariable Long userId,
                                                          @RequestParam(required = false) Integer page,
                                                          @RequestParam(required = false) Integer size) {
         return friendRestService.findUserRequest(userId, page, size);
@@ -46,7 +47,7 @@ public class FriendRestController {
 
 
     @GetMapping(value = "/{userId}/status/progress")
-    public ResponseEntity<List<Friend>> findUserProgress(@PathVariable Long userId,
+    public ResponseEntity<Page<Friend>> findUserProgress(@PathVariable Long userId,
                                                          @RequestParam(required = false) Integer page,
                                                          @RequestParam(required = false) Integer size) {
 

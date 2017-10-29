@@ -5,6 +5,9 @@ import evolution.model.Message;
 import evolution.model.User;
 import evolution.security.model.CustomSecurityUser;
 import evolution.service.SecuritySupportService;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -43,13 +46,17 @@ public class HelperDataService {
     @Value("${model.dialog.defaultsortproperties}")
     private String defaultDialogSortProperties;
 
-    private Integer page;
+    @Value("${model.friend.maxfetch}")
+    private Integer friendMaxFetch;
 
-    private Integer size;
+    @Value("${model.user.maxfetch}")
+    private Integer userMaxFetch;
 
-    private String sortType;
+    @Value("${model.user.defaultsort}")
+    private String defaultUserSortType;
 
-    private List<String> sortProperties;
+    @Value("${model.user.defaultsortproperties}")
+    private String defaultUserSortProperties;
 
     private final SecuritySupportService securitySupportService;
 
@@ -66,44 +73,83 @@ public class HelperDataService {
                 .collect(Collectors.toList());
     }
 
-    private void setDefaultValuesForMessageRestService(Integer page, Integer size, String sortType, List<String> sortProperties) {
+
+    private Pageable getPageableForRestService(Integer page, Integer size, String sortType, List<String> sortProperties,
+                                              Integer defaultMaxFetch, String defaultSortType, String defaultSortProperties) {
+        Integer pageResult = page;
+        Integer sizeResult = size;
+        String sortTypeResult = sortType;
+        List<String> sortPropertiesResult = sortProperties;
+
         if (page == null || size == null) {
-            this.page = 0;
-            this.size = messageMaxFetch;
+            sizeResult = defaultMaxFetch;
         }
 
         if (sortType == null || sortType.isEmpty()) {
-            this.sortType = defaultMessageSortType.toUpperCase();
+            sortTypeResult = defaultSortType.toUpperCase();
         }
 
         if (sortProperties == null || !sortProperties.isEmpty()) {
-            this.sortProperties = getDefaultSortProperties(defaultMessageSortProperties);
+            sortPropertiesResult = getDefaultSortProperties(defaultSortProperties);
         }
+
+        return new PageRequest(pageResult, sizeResult, new Sort(Sort.Direction.valueOf(sortTypeResult), sortPropertiesResult));
     }
 
-    private void setDefaultValuesForDialogRestService(Integer page, Integer size, String sortType, List<String> sortProperties) {
-        if (page == null || size == null) {
-            this.page = 0;
-            this.size = dialogMaxFetch;
-        }
+    private Sort getSortForRestService(String sortType, List<String> sortProperties,
+                                               String defaultSortType, String defaultSortProperties) {
+
+        String sortTypeResult = sortType;
+        List<String> sortPropertiesResult = sortProperties;
 
         if (sortType == null || sortType.isEmpty()) {
-            this.sortType = defaultDialogSortType.toUpperCase();
+            sortTypeResult = defaultSortType.toUpperCase();
         }
 
         if (sortProperties == null || !sortProperties.isEmpty()) {
-            this.sortProperties = getDefaultSortProperties(defaultDialogSortProperties);
+            sortPropertiesResult = getDefaultSortProperties(defaultSortProperties);
         }
+
+        return new Sort(Sort.Direction.valueOf(sortTypeResult), sortPropertiesResult);
     }
+
+    private Pageable getPageableForRestService(Integer page, Integer size,
+                                              Integer defaultMaxFetch) {
+        Integer pageResult = 0;
+        Integer sizeResult = 0;
+
+        if (page == null || size == null) {
+            sizeResult = defaultMaxFetch;
+        }
+
+        return new PageRequest(pageResult, sizeResult);
+    }
+
+
 
     public Pageable getPageableForMessage(Integer page, Integer size, String sortType, List<String> sortProperties) {
-        setDefaultValuesForMessageRestService(page, size, sortType, sortProperties);
-        return new PageRequest(this.page, this.size, new Sort(Sort.Direction.valueOf(this.sortType), this.sortProperties));
+        return getPageableForRestService(page, size, sortType, sortProperties,
+                this.messageMaxFetch, this.defaultMessageSortType, this.defaultMessageSortProperties);
     }
 
     public Pageable getPageableForDialog(Integer page, Integer size, String sortType, List<String> sortProperties) {
-        setDefaultValuesForDialogRestService(page, size, sortType, sortProperties);
-        return new PageRequest(this.page, this.size, new Sort(Sort.Direction.valueOf(this.sortType), this.sortProperties));
+        return getPageableForRestService(page, size, sortType, sortProperties,
+                this.dialogMaxFetch, this.defaultDialogSortType, this.defaultDialogSortProperties);
+    }
+
+    public Pageable getPageableForUser(Integer page, Integer size, String sortType, List<String> sortProperties) {
+        return getPageableForRestService(page, size, sortType, sortProperties,
+                this.userMaxFetch, this.defaultUserSortType, this.defaultUserSortProperties);
+    }
+
+    public Sort getSortForUser(String sortType, List<String> sortProperties) {
+        return getSortForRestService(sortType, sortProperties,
+                this.defaultUserSortType, this.defaultUserSortProperties);
+    }
+
+    public Pageable getPageableForFriend(Integer page, Integer size) {
+        return getPageableForRestService(page, size,
+                this.friendMaxFetch);
     }
 
     public List repairDialog(List list, User auth, Class clazz) {
@@ -143,7 +189,7 @@ public class HelperDataService {
     }
 
 
-    public Page<Message> repairMessage(Page<Message> page) {
+    public Page<Message> repairPageMessage(Page<Message> page) {
 
         Optional<CustomSecurityUser> optional = securitySupportService.getPrincipal();
         if (page != null && !page.getContent().isEmpty()) {
@@ -155,7 +201,7 @@ public class HelperDataService {
         return page;
     }
 
-    public Page<Dialog> repairDialog(Page<Dialog> page) {
+    public Page<Dialog> repairPageDialog(Page<Dialog> page) {
 
         Optional<CustomSecurityUser> optional = securitySupportService.getPrincipal();
         if (page != null && !page.getContent().isEmpty()) {

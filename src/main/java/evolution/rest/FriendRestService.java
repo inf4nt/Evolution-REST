@@ -1,6 +1,7 @@
 package evolution.rest;
 
 import evolution.model.Friend;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -10,11 +11,11 @@ import java.util.List;
  */
 public interface FriendRestService {
 
-    ResponseEntity<List<Friend>> findUserFollower(Long userId, Integer page, Integer size);
+    ResponseEntity<Page<Friend>> findUserFollower(Long userId, Integer page, Integer size);
 
-    ResponseEntity<List<Friend>> findUserRequest(Long userId, Integer page, Integer size);
+    ResponseEntity<Page<Friend>> findUserRequest(Long userId, Integer page, Integer size);
 
-    ResponseEntity<List<Friend>> findUserProgress(Long userId, Integer page, Integer size);
+    ResponseEntity<Page<Friend>> findUserProgress(Long userId, Integer page, Integer size);
 
     ResponseEntity<Friend> sendRequest(Long userId);
 
@@ -24,5 +25,5 @@ public interface FriendRestService {
 
     ResponseEntity<Friend> acceptRequest(Long userId);
 
-    ResponseEntity<List<Friend>> findAll(Integer page, Integer size);
+    ResponseEntity<Page<Friend>> findAll(Integer page, Integer size);
 }
