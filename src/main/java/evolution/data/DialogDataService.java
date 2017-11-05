@@ -56,6 +56,11 @@ public class DialogDataService {
     }
 
     @Transactional(readOnly = true)
+    public Optional<Dialog> findDialogByIdAndSomeUser(Long dialogId, Long someUserId) {
+        return dialogRepository.findDialogByIdAndSomeUser(dialogId, someUserId);
+    }
+
+    @Transactional(readOnly = true)
     public Page<Dialog> findAllDialogByUser(Long userId, Pageable pageable) {
         return dialogRepository.findAllDialogByUser(userId, pageable);
     }

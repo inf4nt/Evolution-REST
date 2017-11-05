@@ -14,7 +14,7 @@ public interface MessageRestService {
 
     ResponseEntity<Page<Message>> findAllMessage(Integer page, Integer size, String sort, List<String> sortProperties);
 
-    ResponseEntity<Page<Message>> findMessageByDialog(Long dialogId, Integer page, Integer size, String sort, List<String> sortProperties);
+//    ResponseEntity<Page<Message>> findMessageByDialog(Long dialogId, Integer page, Integer size, String sort, List<String> sortProperties);
 
 //    ResponseEntity<Page<Dialog>> findAllDialogByAuthUser(Integer page, Integer size, String sort, List<String> sortProperties);
 

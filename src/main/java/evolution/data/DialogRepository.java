@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by Infant on 22.10.2017.
@@ -29,6 +30,9 @@ interface DialogRepository extends JpaRepository<Dialog, Long> {
             " from Dialog d " +
             " where d.second.id =:userid or d.first.id =:userid")
     Page<Dialog> findAllDialogByUserLoadLazy(@Param("userid") Long userId, Pageable pageable);
+
+    @Query("select d from Dialog d where d.id =:dialogId and (d.first.id =:someUserId or d.second.id =:someUserId)")
+    Optional<Dialog> findDialogByIdAndSomeUser(@Param("dialogId") Long dialogId, @Param("someUserId") Long someUserId);
 
     @Query(" select d " +
             " from Dialog d " +

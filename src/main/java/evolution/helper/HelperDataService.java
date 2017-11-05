@@ -88,6 +88,8 @@ public class HelperDataService {
 
         if (sortType == null || sortType.isEmpty()) {
             sortTypeResult = defaultSortType.toUpperCase();
+        } else {
+            sortTypeResult = sortTypeResult.toUpperCase();
         }
 
         if (sortProperties == null || !sortProperties.isEmpty()) {
@@ -170,6 +172,7 @@ public class HelperDataService {
     }
 
     public Message repairDialog(Message message, User auth) {
+        auth.setUserAdditionalData(null);
         message.setDialog(repairDialog(message.getDialog(), auth));
         return message;
     }

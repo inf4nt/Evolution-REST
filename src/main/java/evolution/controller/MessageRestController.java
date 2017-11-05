@@ -31,5 +31,4 @@ public class MessageRestController {
                                                  @RequestParam(required = false) List<String> sortProperties) {
         return messageRestService.findAllMessage(page, size, sortType, sortProperties);
     }
-
 }

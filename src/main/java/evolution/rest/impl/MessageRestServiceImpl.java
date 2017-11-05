@@ -38,20 +38,19 @@ public class MessageRestServiceImpl implements MessageRestService {
     @Autowired
     public MessageRestServiceImpl(SecuritySupportService securitySupportService,
                                   MessageDataService messageDataService,
-                                  HelperDataService helperDataService, HelperRestService<Message> helperRestService) {
+                                  HelperDataService helperDataService,
+                                  HelperRestService<Message> helperRestService) {
         this.securitySupportService = securitySupportService;
         this.messageDataService = messageDataService;
         this.helperDataService = helperDataService;
         this.helperRestService = helperRestService;
     }
 
-
     private ResponseEntity<Page<Message>> serviceResultAndRepair(Page<Message> page) {
         Page<Message> result = helperDataService.repairPageMessage(page);
 
         return helperRestService.getResponseForPage(result);
     }
-
 
     @Override
     public ResponseEntity<Page<Message>> findAllMessage(Integer page, Integer size, String sort, List<String> sortProperties) {
@@ -60,12 +59,12 @@ public class MessageRestServiceImpl implements MessageRestService {
         return serviceResultAndRepair(messageDataService.findAll(pageable));
     }
 
-    @Override
-    public ResponseEntity<Page<Message>> findMessageByDialog(Long dialogId, Integer page, Integer size, String sort, List<String> sortProperties) {
-        Pageable pageable = helperDataService.getPageableForMessage(page, size, sort, sortProperties);
-
-        return serviceResultAndRepair(messageDataService.findMessageByDialog(dialogId, pageable));
-    }
+//    @Override
+//    public ResponseEntity<Page<Message>> findMessageByDialog(Long dialogId, Integer page, Integer size, String sort, List<String> sortProperties) {
+//        Pageable pageable = helperDataService.getPageableForMessage(page, size, sort, sortProperties);
+//
+//        return serviceResultAndRepair(messageDataService.findMessageByDialog(dialogId, pageable));
+//    }
 
     @Override
     public ResponseEntity<Page<Message>> findMessageByAuthUser(Integer page, Integer size, String sort, List<String> sortProperties) {
