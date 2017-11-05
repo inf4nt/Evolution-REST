@@ -1,4 +1,4 @@
-package evolution.rest;
+package evolution.rest.api;
 
 import evolution.model.Friend;
 import org.springframework.data.domain.Page;

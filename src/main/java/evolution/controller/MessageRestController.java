@@ -1,14 +1,12 @@
 package evolution.controller;
 
 import evolution.model.Message;
-import evolution.rest.MessageRestService;
+import evolution.rest.api.MessageRestService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 
 /**

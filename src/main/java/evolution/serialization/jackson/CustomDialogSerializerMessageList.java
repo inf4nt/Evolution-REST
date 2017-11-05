@@ -1,4 +1,4 @@
-package evolution.service.serialization;
+package evolution.serialization.jackson;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;

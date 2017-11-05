@@ -3,7 +3,7 @@
 //import evolution.data.FriendDataService;
 //import evolution.model.Friend;
 //import evolution.model.User;
-//import evolution.rest.FriendRestService;
+//import evolution.rest.api.FriendRestService;
 //import evolution.service.SecuritySupportService;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.data.domain.PageRequest;

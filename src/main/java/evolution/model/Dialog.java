@@ -3,13 +3,10 @@ package evolution.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import evolution.model.Message;
-import evolution.model.User;
-import evolution.service.serialization.CustomDialogSerializerMessageList;
+import evolution.serialization.jackson.CustomDialogSerializerMessageList;
 import lombok.*;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 

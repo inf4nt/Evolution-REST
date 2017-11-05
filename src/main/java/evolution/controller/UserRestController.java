@@ -3,6 +3,7 @@ package evolution.controller;
 import evolution.model.User;
 import evolution.rest.old.UserRestService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,29 +27,18 @@ public class UserRestController {
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> findAll(@RequestParam(required = false) Integer page,
+    public ResponseEntity<Page<User>> findAll(@RequestParam(required = false) Integer page,
                                               @RequestParam(required = false) Integer size,
                                               @RequestParam(required = false) String sort,
-                                              @RequestParam(required = false) List<String> sortProperties) {
-        return userRestService.findAll(page, size, sort, sortProperties);
+                                              @RequestParam(required = false) List<String> sortProperties,
+                                              @RequestParam(required = false) boolean lazy) {
+        return userRestService.findAll(page, size, sort, sortProperties, lazy);
     }
 
-    @GetMapping(value = "/lazy")
-    public ResponseEntity<List<User>> findAllLoadLazy(@RequestParam(required = false) Integer page,
-                                                      @RequestParam(required = false) Integer size,
-                                                      @RequestParam(required = false) String sort,
-                                                      @RequestParam(required = false) List<String> sortProperties) {
-        return userRestService.findAllLoadLazy(page, size, sort, sortProperties);
-    }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<User> findOne(@PathVariable Long id) {
-        return userRestService.findOne(id);
-    }
-
-    @GetMapping(value = "/{id}/lazy")
-    public ResponseEntity<User> findOneLoadLazy(@PathVariable Long id) {
-        return userRestService.findOneLoadLazy(id);
+    public ResponseEntity<User> findOne(@PathVariable Long id, @RequestParam(required = false) boolean lazy) {
+        return userRestService.findOne(id, lazy);
     }
 
     @PostMapping

@@ -1,10 +1,15 @@
 package evolution.model;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import evolution.common.GenderEnum;
-import evolution.service.serialization.CustomUserAdditionalDataSerializerUser;
+import evolution.serialization.jackson.CustomUserAdditionalDataSerializerUser;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -59,6 +64,7 @@ public class UserAdditionalData {
 
     // todo create custom json serialization
     @JsonSerialize(using = CustomUserAdditionalDataSerializerUser.class)
+//    @JsonIgnore
     @OneToOne(mappedBy = "userAdditionalData", fetch = FetchType.LAZY)
     private User user;
 
@@ -70,6 +76,15 @@ public class UserAdditionalData {
     @Version
     @Column(columnDefinition = "bigint")
     private Long version;
+
+    @JsonGetter
+    public User getUser() {
+        if (user != null && user.getUserAdditionalData() != null) {
+            User u = new User(user.getId());
+            user.getUserAdditionalData().setUser(u);
+        }
+        return user;
+    }
 
     @Override
     public String toString() {

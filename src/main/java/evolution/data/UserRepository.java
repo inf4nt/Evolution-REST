@@ -27,10 +27,10 @@ interface UserRepository extends JpaRepository<User, Long> {
             "join fetch u.userAdditionalData ")
     List<User> findAllLoadLazy();
 
-    @Query("select u " +
+    @Query(value = "select u " +
             "from User u " +
-            "join fetch u.userAdditionalData ")
-    List<User> findAllLoadLazy(Pageable pageable);
+            "join fetch u.userAdditionalData ", countQuery = "select count(u) from User u")
+    Page<User> findAllLoadLazy(Pageable pageable);
 
     @Query("select u " +
             "from User u " +
@@ -44,7 +44,7 @@ interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("select u " +
             "from User u " +
-            "join u.userAdditionalData " +
+            "join fetch u.userAdditionalData " +
             "where u.id =:id")
     User findOneLoadLazy(@Param("id") Long id);
 

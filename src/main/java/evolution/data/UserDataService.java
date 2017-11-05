@@ -41,7 +41,7 @@ public class UserDataService {
     }
 
     @Transactional(readOnly = true)
-    public List<User> findAllLoadLazy(Pageable page) {
+    public Page<User> findAllLoadLazy(Pageable page) {
         return userRepository.findAllLoadLazy(page);
     }
 

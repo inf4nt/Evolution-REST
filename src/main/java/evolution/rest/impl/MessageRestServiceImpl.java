@@ -1,10 +1,11 @@
-package evolution.rest;
+package evolution.rest.impl;
 
 import evolution.helper.HelperDataService;
 import evolution.data.MessageDataService;
 import evolution.helper.HelperRestService;
 import evolution.model.Message;
 import evolution.model.User;
+import evolution.rest.api.MessageRestService;
 import evolution.service.SecuritySupportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

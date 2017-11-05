@@ -2,12 +2,16 @@ package evolution.rest.old;
 
 import evolution.common.UserRoleEnum;
 import evolution.data.UserDataService;
+import evolution.helper.HelperDataService;
+import evolution.helper.HelperRestService;
 import evolution.model.User;
 import evolution.service.SecuritySupportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,88 +37,40 @@ public class UseRestServiceImpl implements UserRestService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final HelperDataService helperDataService;
+
+    private final HelperRestService<User> helperRestService;
+
     @Autowired
-    public UseRestServiceImpl(UserDataService userDataService, SecuritySupportService securitySupportService, PasswordEncoder passwordEncoder) {
+    public UseRestServiceImpl(UserDataService userDataService, SecuritySupportService securitySupportService, PasswordEncoder passwordEncoder, HelperDataService helperDataService, HelperRestService<User> helperRestService) {
         this.userDataService = userDataService;
         this.securitySupportService = securitySupportService;
         this.passwordEncoder = passwordEncoder;
+        this.helperDataService = helperDataService;
+        this.helperRestService = helperRestService;
     }
 
     @Override
-    public ResponseEntity<List<User>> findAll(Integer page, Integer size, String sort, List<String> sortProperties) {
-        List<User> list;
-
-        if (sort != null && !sort.isEmpty()) {
-            sort = sort.toUpperCase();
-        }
-
-        if (page == null && size == null && sort != null && sortProperties != null && !sortProperties.isEmpty()) {
-
-            list = userDataService.findAll(new Sort(Sort.Direction.valueOf(sort), sortProperties));
-
-        } else if (page != null && size != null && sort != null && sortProperties != null && !sortProperties.isEmpty()) {
-
-            list = userDataService.findAll(new PageRequest(page, size, new Sort(Sort.Direction.valueOf(sort), sortProperties))).getContent();
-
-        } else if (page != null && size != null && sort == null) {
-
-            list = userDataService.findAll(new PageRequest(page, size)).getContent();
-
+    public ResponseEntity<Page<User>> findAll(Integer page, Integer size, String sort, List<String> sortProperties, boolean lazy) {
+        Pageable pageable = helperDataService.getPageableForUser(page, size, sort, sortProperties);
+        Page<User> p;
+        if (lazy) {
+            p = userDataService.findAllLoadLazy(pageable);
         } else {
-            list = userDataService.findAll();
+            p = userDataService.findAll(pageable);
         }
-
-        if (list.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(list);
-        }
+        return helperRestService.getResponseForPage(p);
     }
 
     @Override
-    public ResponseEntity<List<User>> findAllLoadLazy(Integer page, Integer size, String sort, List<String> sortProperties) {
-        List<User> list;
-
-        if (sort != null && !sort.isEmpty()) {
-            sort = sort.toUpperCase();
-        }
-
-        if (page == null && size == null && sort != null && sortProperties != null && !sortProperties.isEmpty()) {
-
-            list = userDataService.findAllLoadLazy(new Sort(Sort.Direction.valueOf(sort), sortProperties));
-
-        } else if (page != null && size != null && sort != null && sortProperties != null && !sortProperties.isEmpty()) {
-
-            list = userDataService.findAllLoadLazy(new PageRequest(page, size, new Sort(Sort.Direction.valueOf(sort), sortProperties)));
-
+    public ResponseEntity<User> findOne(Long id, boolean lazy) {
+        Optional<User> optional;
+        if (lazy) {
+            optional = userDataService.findOneLoadLazy(id);
         } else {
-            list = userDataService.findAllLoadLazy();
+            optional = userDataService.findOne(id);
         }
 
-        if (list.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(list);
-        }
-    }
-
-    @Override
-    public ResponseEntity<User> findOneLoadLazy(Long id) {
-        if (securitySupportService.isAllowed(id)) {
-            Optional<User> optional = userDataService.findOneLoadLazy(id);
-            if (optional.isPresent()) {
-                return ResponseEntity.ok(optional.get());
-            } else {
-                return ResponseEntity.noContent().build();
-            }
-        } else {
-            return ResponseEntity.status(403).build();
-        }
-    }
-
-    @Override
-    public ResponseEntity<User> findOne(Long id) {
-        Optional<User> optional = userDataService.findOne(id);
         if (optional.isPresent()) {
             return ResponseEntity.ok(optional.get());
         } else {

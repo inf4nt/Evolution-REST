@@ -1,11 +1,11 @@
-package evolution.rest;
+package evolution.rest.impl;
 
 import evolution.data.FriendDataService;
 import evolution.helper.HelperDataService;
 import evolution.helper.HelperRestService;
 import evolution.model.Friend;
-import evolution.model.Message;
 import evolution.model.User;
+import evolution.rest.api.FriendRestService;
 import evolution.service.SecuritySupportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

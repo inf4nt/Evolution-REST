@@ -2,12 +2,11 @@ package evolution.controller;
 
 
 import evolution.model.Friend;
-import evolution.rest.FriendRestService;
+import evolution.rest.api.FriendRestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
 /**
  * Created by Infant on 09.10.2017.

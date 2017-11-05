@@ -75,7 +75,7 @@ public class HelperDataService {
 
 
     private Pageable getPageableForRestService(Integer page, Integer size, String sortType, List<String> sortProperties,
-                                              Integer defaultMaxFetch, String defaultSortType, String defaultSortProperties) {
+                                               Integer defaultMaxFetch, String defaultSortType, String defaultSortProperties) {
         Integer pageResult = page;
         Integer sizeResult = size;
         String sortTypeResult = sortType;
@@ -83,6 +83,7 @@ public class HelperDataService {
 
         if (page == null || size == null) {
             sizeResult = defaultMaxFetch;
+            pageResult = 0;
         }
 
         if (sortType == null || sortType.isEmpty()) {
@@ -97,7 +98,7 @@ public class HelperDataService {
     }
 
     private Sort getSortForRestService(String sortType, List<String> sortProperties,
-                                               String defaultSortType, String defaultSortProperties) {
+                                       String defaultSortType, String defaultSortProperties) {
 
         String sortTypeResult = sortType;
         List<String> sortPropertiesResult = sortProperties;
@@ -114,7 +115,7 @@ public class HelperDataService {
     }
 
     private Pageable getPageableForRestService(Integer page, Integer size,
-                                              Integer defaultMaxFetch) {
+                                               Integer defaultMaxFetch) {
         Integer pageResult = 0;
         Integer sizeResult = 0;
 
@@ -124,7 +125,6 @@ public class HelperDataService {
 
         return new PageRequest(pageResult, sizeResult);
     }
-
 
 
     public Pageable getPageableForMessage(Integer page, Integer size, String sortType, List<String> sortProperties) {

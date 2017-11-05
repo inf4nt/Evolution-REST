@@ -1,4 +1,4 @@
-package evolution.rest;
+package evolution.rest.api;
 
 import evolution.model.User;
 import evolution.model.UserAdditionalData;

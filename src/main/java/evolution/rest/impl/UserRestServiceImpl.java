@@ -1,10 +1,10 @@
-package evolution.rest;
+package evolution.rest.impl;
 
 import evolution.data.UserDataService;
 import evolution.helper.HelperDataService;
 import evolution.helper.HelperRestService;
 import evolution.model.User;
-import evolution.security.model.CustomSecurityUser;
+import evolution.rest.api.UserRestService;
 import evolution.service.SecuritySupportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

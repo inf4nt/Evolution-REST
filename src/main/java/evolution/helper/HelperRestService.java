@@ -12,7 +12,6 @@ import java.util.Optional;
 @Service
 public class HelperRestService<T> {
 
-
     public ResponseEntity<Page<T>> getResponseForPage(Page<T> page) {
         if (page == null || page.getContent() == null || page.getContent().isEmpty()) {
             return ResponseEntity.noContent().build();

@@ -1,6 +1,7 @@
 package evolution.rest.old;
 
 import evolution.model.User;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -11,13 +12,9 @@ import java.util.List;
  */
 public interface UserRestService {
 
-    ResponseEntity<List<User>> findAll(Integer page, Integer size, String sort, List<String> sortProperties);
+    ResponseEntity<Page<User>> findAll(Integer page, Integer size, String sort, List<String> sortProperties, boolean lazy);
 
-    ResponseEntity<List<User>> findAllLoadLazy(Integer page, Integer size, String sort, List<String> sortProperties);
-
-    ResponseEntity<User> findOneLoadLazy(Long id);
-
-    ResponseEntity<User> findOne(Long id);
+    ResponseEntity<User> findOne(Long id, boolean lazy);
 
     ResponseEntity<HttpStatus> createNewUser(User user);
 
