@@ -14,11 +14,7 @@ public interface MessageRestService {
 
     ResponseEntity<Page<Message>> findAllMessage(Integer page, Integer size, String sort, List<String> sortProperties);
 
-//    ResponseEntity<Page<Message>> findMessageByDialog(Long dialogId, Integer page, Integer size, String sort, List<String> sortProperties);
-
-//    ResponseEntity<Page<Dialog>> findAllDialogByAuthUser(Integer page, Integer size, String sort, List<String> sortProperties);
-
-    ResponseEntity<Page<Message>> findMessageByAuthUser(Integer page, Integer size, String sort, List<String> sortProperties);
+    ResponseEntity<Page<Message>> findMessageByAuthUserAndInterlocutor(Long interlocutorId, Integer page, Integer size, String sort, List<String> sortProperties);
 
     ResponseEntity<Page<Message>> findLastMessageInDialogByAuthUser(Integer page, Integer size, String sort, List<String> sortProperties);
 
@@ -34,9 +30,9 @@ public interface MessageRestService {
 
 //    ResponseEntity<Dialog> findOneDialogByUserAndCheckAccess(Long id);
 
-//    ResponseEntity<HttpStatus> save(Message message);
+    ResponseEntity<HttpStatus> save(Message message);
 
-//    ResponseEntity<Message> saveMessage(Message message);
+    ResponseEntity<Message> saveMessage(Message message);
 
     ResponseEntity<HttpStatus> update(Message message);
 

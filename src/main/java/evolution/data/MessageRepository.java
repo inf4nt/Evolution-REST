@@ -74,9 +74,8 @@ interface MessageRepository extends JpaRepository<Message, Long> {
             " where m.dialog.id =:dialogId ")
     Page<Message> findMessageByDialog(@Param("dialogId") Long dialogId, Pageable pageable);
 
-    @Query("select m " +
-            " from Message m " +
-            " join m.dialog as d " +
-            "where d.first.id =:userId or d.second.id =:userId")
-    Page<Message> findMessageByUser(@Param("userId") Long userId, Pageable pageable);
+    @Query(" select m from Message m " +
+            " where (m.dialog.first.id =:user1 and m.dialog.second.id =:user2) " +
+            " or (m.dialog.first.id =:user2 and m.dialog.second.id =:user1) ")
+    Page<Message> findMessageByDialogUsers(@Param("user1") Long user1, @Param("user2") Long user2, Pageable pageable);
 }

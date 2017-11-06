@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,8 +42,8 @@ public class DialogDataService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Dialog> findDialogWhereUsers(Long user1, Long user2, Pageable pageable) {
-        return dialogRepository.findDialogWhereUsers(user1, user2, pageable);
+    public Optional<Dialog> findDialogWhereUsers(Long user1, Long user2) {
+        return Optional.ofNullable(dialogRepository.findDialogWhereUsers(user1, user2));
     }
 
     @Transactional(readOnly = true)

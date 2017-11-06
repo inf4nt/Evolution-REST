@@ -60,11 +60,6 @@ public class MessageDataService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Message> findMessageByUser(Long userId, Pageable pageable) {
-        return messageRepository.findMessageByUser(userId, pageable);
-    }
-
-    @Transactional(readOnly = true)
     public Optional<Message> findOne(Long id, Long senderId) {
         return Optional.ofNullable(messageRepository.findOne(id, senderId));
     }
@@ -82,6 +77,16 @@ public class MessageDataService {
     @Transactional(readOnly = true)
     public List<Message> findLastUserMessageInDialogWhereUserId(Long userId, Sort sort) {
         return messageRepository.findLastUserMessageInDialogWhereUserId(userId, sort);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Message> findMessageByDialogId(Long dialogId, Pageable pageable) {
+        return messageRepository.findMessageByDialog(dialogId, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Message> findMessageByDialogUsers(Long user1, Long user2, Pageable pageable) {
+        return messageRepository.findMessageByDialogUsers(user1, user2, pageable);
     }
 
     @Transactional

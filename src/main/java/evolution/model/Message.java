@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import evolution.serialization.jackson.CustomMessageSerializerDialog;
 import lombok.*;
+import org.joda.time.DateTime;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -35,7 +36,7 @@ public class Message {
     @Column(name = "message", nullable = false, columnDefinition = "text")
     private String message;
 
-    @Column(name = "date_dispatch", nullable = false)
+    @Column(name = "date_dispatch", nullable = false, columnDefinition = "timestamp")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateDispatch;
 

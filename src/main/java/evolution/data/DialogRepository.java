@@ -19,7 +19,7 @@ interface DialogRepository extends JpaRepository<Dialog, Long> {
     @Query("select d from Dialog d " +
             " where (d.first.id = :u1 and d.second.id =:u2) " +
             " or (d.first.id = :u2 and d.second.id =:u1) ")
-    Page<Dialog> findDialogWhereUsers(@Param("u1") Long user1, @Param("u2") Long user2, Pageable pageable);
+    Dialog findDialogWhereUsers(@Param("u1") Long user1, @Param("u2") Long user2);
 
     @Query("select d from Dialog d " +
             " where (d.first.id = :u1 and d.second.id =:u2) " +

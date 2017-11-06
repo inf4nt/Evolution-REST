@@ -1,13 +1,13 @@
 package evolution.service;
 
 
-import evolution.model.user.UserLight;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
-
-import javax.persistence.NoResultException;
-import java.util.List;
+//import evolution.model.user.UserLight;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.data.domain.PageRequest;
+//import org.springframework.stereotype.Service;
+//
+//import javax.persistence.NoResultException;
+//import java.util.List;
 
 /**
  * Created by Admin on 17.04.2017.
