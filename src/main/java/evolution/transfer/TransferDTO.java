@@ -19,12 +19,4 @@ public interface TransferDTO {
     UserDTO modelToDTO(User user);
 
     List<UserDTO> modelToDTOListUser(List<User> user);
-
-//    Message DTOToModel(MessageDTO messageDTO);
-
-//    User DTOToModel(UserDTO userDTO);
-
-//    List<Message> DTOToModelListMessage(List<MessageDTO> messageDTO);
-
-//    List<User> dTOToModelListUser(List<UserDTO> userDTO);
 }

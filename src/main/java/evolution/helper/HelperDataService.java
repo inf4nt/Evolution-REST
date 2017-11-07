@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
  * Created by Infant on 28.10.2017.
  */
 @Service
+@Deprecated
 public class HelperDataService {
 
     @Value("${model.message.maxfetch}")
