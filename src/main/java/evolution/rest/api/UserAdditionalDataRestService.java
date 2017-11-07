@@ -1,6 +1,6 @@
 package evolution.rest.api;
 
-import evolution.model.UserAdditionalData;
+import evolution.dto.model.UserAdditionalDataDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,9 +12,9 @@ import java.util.List;
  */
 public interface UserAdditionalDataRestService {
 
-    ResponseEntity<Page<UserAdditionalData>> findAll(Integer page, Integer size, String sortType, List<String> sortProperties);
+    ResponseEntity<Page<UserAdditionalDataDTO>> findAll(Integer page, Integer size, String sortType, List<String> sortProperties);
 
-    ResponseEntity<UserAdditionalData> findUserAdditionalDataByUser(Long userId);
+    ResponseEntity<UserAdditionalDataDTO> findUserAdditionalDataByUser(Long userId);
 
     ResponseEntity<HttpStatus> existByUser(Long userId);
 }

@@ -1,23 +1,20 @@
-package evolution.dto;
+package evolution.dto.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
-import org.joda.time.DateTime;
 
 /**
- * Created by Infant on 06.11.2017.
+ * Created by Infant on 07.11.2017.
  */
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class MessageDTO {
+public class DialogDTO {
 
     private Long id;
 
-    private UserDTO sender;
+    private UserDTO first;
 
-    private UserDTO recipient;
-
-    private String text;
+    private UserDTO second;
 
     private Long createdDateTimestamp;
 

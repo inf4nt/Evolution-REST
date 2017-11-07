@@ -16,18 +16,11 @@ import java.util.Optional;
  */
 public interface MessageRepository extends JpaRepository<Message, Long> {
 
-    @Query(" select m from Message m " +
-            " join m.dialog as d " +
-            " join m.sender as sender " +
-            " where (d.first.id =:id1 and d.second.id =:id2 ) " +
-            " or (d.first.id =:id2 and d.second.id =:id1 ) order by m.id desc ")
-    List<Message> findMessageByUsers(@Param("id1") Long id1, @Param("id2") Long id2, Pageable pageable);
-
     @Query("select m from Message m where m.id =:id")
     Optional<Message> findOneMessage(@Param("id") Long id);
 
     @Query("select m from Message m where m.id =:id and m.sender.id =:senderId")
-    Optional<Message> findOneMessage(@Param("id") Long id, Long senderId);
+    Optional<Message> findOneMessage(@Param("id") Long id, @Param("senderId") Long senderId);
 
     @Query(" select m from Message m " +
             " join m.dialog as d " +

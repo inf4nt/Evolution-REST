@@ -190,7 +190,7 @@ public class UserController {
 //            model.addAttribute("user", customUser.getUser());
 //            return "user/form-my-profile";
 //        } else if (sendRequest.isUserInRole("ROLE_ADMIN")) {
-//            model.addAttribute("user", userDaoService.findOne(id));
+//            model.addAttribute("user", userDaoService.findOneFriend(id));
 //            return "admin/admin-form-profile";
 //        }
 //
@@ -389,7 +389,7 @@ public class UserController {
 //            model.addAttribute("user", customUser.getUser());
 //            return "user/form-my-profile";
 //        } else if (sendRequest.isUserInRole("ROLE_ADMIN")) {
-//            model.addAttribute("user", userDaoService.findOne(id));
+//            model.addAttribute("user", userDaoService.findOneFriend(id));
 //            return "admin/admin-form-profile";
 //        }
 //

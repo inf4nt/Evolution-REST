@@ -1,6 +1,6 @@
 package evolution.controller;
 
-import evolution.model.Dialog;
+import evolution.dto.model.DialogDTO;
 import evolution.rest.api.DialogRestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,15 +25,15 @@ public class DialogRestController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<Dialog>> findAll(@RequestParam(required = false) Integer page,
-                                                @RequestParam(required = false) Integer size,
-                                                @RequestParam(required = false) String sortType,
-                                                @RequestParam(required = false) List<String> sortProperties) {
+    public ResponseEntity<Page<DialogDTO>> findAll(@RequestParam(required = false) Integer page,
+                                                   @RequestParam(required = false) Integer size,
+                                                   @RequestParam(required = false) String sortType,
+                                                   @RequestParam(required = false) List<String> sortProperties) {
         return dialogRestService.findAll(page, size, sortType, sortProperties);
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Dialog> findOne(@PathVariable Long id) {
+    public ResponseEntity<DialogDTO> findOne(@PathVariable Long id) {
         return dialogRestService.findOne(id);
     }
 }

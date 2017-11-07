@@ -1,7 +1,6 @@
 package evolution.rest.api;
 
-import evolution.model.User;
-import evolution.model.UserAdditionalData;
+import evolution.dto.model.UserDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,19 +12,19 @@ import java.util.List;
  */
 public interface UserRestService {
 
-    ResponseEntity<Page<User>> findAll(Integer page, Integer size, String sortType, List<String> sortProperties);
+    ResponseEntity<Page<UserDTO>> findAll(Integer page, Integer size, String sortType, List<String> sortProperties);
 
-    ResponseEntity<User> findOne(Long userId);
+    ResponseEntity<UserDTO> findOne(Long userId);
 
-    ResponseEntity<User> findByUsername(String username);
+    ResponseEntity<UserDTO> findByUsername(String username);
 
-    ResponseEntity<List<User>> findAll(String sortType, List<String> sortProperties);
+    ResponseEntity<List<UserDTO>> findAll(String sortType, List<String> sortProperties);
 
-    ResponseEntity<HttpStatus> createNewUser(User user);
+    ResponseEntity<HttpStatus> createNewUser(UserDTO user);
 
-    ResponseEntity<HttpStatus> update(User user);
+    ResponseEntity<HttpStatus> update(UserDTO user);
 
-    ResponseEntity<HttpStatus> updateAuthUser(User user);
+    ResponseEntity<HttpStatus> updateAuthUser(UserDTO user);
 
     ResponseEntity<HttpStatus> delete(Long id);
 

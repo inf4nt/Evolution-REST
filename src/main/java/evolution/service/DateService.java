@@ -27,6 +27,21 @@ public class DateService {
         return dateTime.toString(getDateTimeFormatter());
     }
 
+    public String getStringDateUTC(Long time) {
+        DateTime dateTime = new DateTime(time, DateTimeZone.UTC);
+        return dateTime.toString(getDateTimeFormatter());
+    }
+
+    public String getStringDate(Date date) {
+        DateTime dateTime = new DateTime(date.getTime());
+        return dateTime.toString(getDateTimeFormatter());
+    }
+
+    public String getStringDateUTC(Date date) {
+        DateTime dateTime = new DateTime(date.getTime(), DateTimeZone.UTC);
+        return dateTime.toString(getDateTimeFormatter());
+    }
+
     public DateTime dateToDatetimeUTC(Date date) {
         return new DateTime(date.getTime(), DateTimeZone.UTC);
     }

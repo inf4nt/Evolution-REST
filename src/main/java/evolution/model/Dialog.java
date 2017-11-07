@@ -7,6 +7,7 @@ import evolution.serialization.jackson.CustomDialogSerializerMessageList;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -17,7 +18,6 @@ import java.util.List;
 @Table(name = "dialog")
 @Data
 @ToString(exclude = {"messageList"})
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Dialog {
 
     @Id
@@ -38,7 +38,7 @@ public class Dialog {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDate;
 
-    @JsonSerialize(using = CustomDialogSerializerMessageList.class)
+//    @JsonSerialize(using = CustomDialogSerializerMessageList.class)
     @OneToMany(mappedBy = "dialog", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
-    private List<Message> messageList;
+    private List<Message> messageList = new ArrayList<>();
 }

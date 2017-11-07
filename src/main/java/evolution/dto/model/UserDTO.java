@@ -1,4 +1,4 @@
-package evolution.dto;
+package evolution.dto.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
@@ -17,6 +17,4 @@ public class UserDTO {
     private String lastName;
 
     private String nickname;
-
-    private String role;
 }

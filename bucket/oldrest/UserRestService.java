@@ -1,4 +1,4 @@
-package evolution.rest.old;
+package evolution.common.oldrest;
 
 import evolution.model.User;
 import org.springframework.data.domain.Page;

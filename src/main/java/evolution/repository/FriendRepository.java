@@ -1,4 +1,4 @@
-package evolution.data;
+package evolution.repository;
 
 import evolution.common.FriendStatusEnum;
 import evolution.model.Friend;
@@ -9,11 +9,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by Infant on 09.10.2017.
  */
-interface FriendRepository extends JpaRepository<Friend, Friend.FriendEmbeddable> {
+public interface FriendRepository extends JpaRepository<Friend, Friend.FriendEmbeddable> {
 
 //-- получить подписчиков пользователя с ид = ???
 //
@@ -79,6 +80,6 @@ interface FriendRepository extends JpaRepository<Friend, Friend.FriendEmbeddable
     @Query("select f from Friend f " +
             " where f.pk.first.id =:first " +
             " and f.pk.second.id =:second ")
-    Friend findOne(@Param("first") Long first, @Param("second") Long second);
+    Optional<Friend> findOneFriend(@Param("first") Long first, @Param("second") Long second);
 }
 

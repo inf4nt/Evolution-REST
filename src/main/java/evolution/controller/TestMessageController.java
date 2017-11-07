@@ -1,9 +1,9 @@
 package evolution.controller;
 
 import evolution.data.MessageDataService;
-import evolution.dto.MessageDTO;
+import evolution.dto.model.MessageDTO;
 import evolution.model.Message;
-import evolution.transfer.TransferDTO;
+import evolution.dto.transfer.TransferDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by Infant on 07.11.2017.

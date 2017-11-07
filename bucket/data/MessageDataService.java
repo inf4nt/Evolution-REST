@@ -35,11 +35,6 @@ public class MessageDataService {
     }
 
     @Transactional(readOnly = true)
-    public List<Message> findOneByUsers(Long user1, Long user2, Pageable pageable) {
-        return messageRepository.findMessageByUsers(user1, user2, pageable);
-    }
-
-    @Transactional(readOnly = true)
     public Page<Message> findAll(Pageable pageable) {
         return messageRepository.findAll(pageable);
     }

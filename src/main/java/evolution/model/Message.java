@@ -15,7 +15,6 @@ import java.util.Date;
 @Entity
 @Table(name = "message")
 @Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Message {
 
     @Id
@@ -24,7 +23,7 @@ public class Message {
     @SequenceGenerator(name = "seq_message", sequenceName = "seq_message_id", allocationSize = 1)
     private Long id;
 
-    @JsonSerialize(using = CustomMessageSerializerDialog.class)
+//    @JsonSerialize(using = CustomMessageSerializerDialog.class)
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "dialog_id", updatable = false, nullable = false, columnDefinition = "bigint")
     private Dialog dialog;

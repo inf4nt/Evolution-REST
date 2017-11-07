@@ -1,5 +1,6 @@
-package evolution.crud;
+package evolution.crud.old;
 
+import evolution.crud.PageableManager;
 import evolution.data.DialogRepository;
 import evolution.data.MessageRepository;
 import evolution.data.UserRepository;
@@ -8,22 +9,21 @@ import evolution.model.Dialog;
 import evolution.model.Message;
 import evolution.model.User;
 import evolution.service.DateService;
-import evolution.transfer.TransferDTO;
+import evolution.dto.transfer.TransferDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 /**
  * Created by Infant on 07.11.2017.
  */
-@Service("messageManagerService")
-public class ManagerServiceImpl implements MessageManagerService, PageableManager {
+@Service("messageCrudManagerService")
+public class MessageCrudManagerServiceImpl implements MessageCrudManagerService, PageableManager {
 
     private final MessageRepository messageRepository;
 
@@ -37,7 +37,7 @@ public class ManagerServiceImpl implements MessageManagerService, PageableManage
     private DateService dateService;
 
     @Autowired
-    public ManagerServiceImpl(MessageRepository messageRepository, DialogRepository dialogRepository, UserRepository userRepository, TransferDTO transferDTO) {
+    public MessageCrudManagerServiceImpl(MessageRepository messageRepository, DialogRepository dialogRepository, UserRepository userRepository, TransferDTO transferDTO) {
         this.messageRepository = messageRepository;
         this.dialogRepository = dialogRepository;
         this.userRepository = userRepository;
@@ -85,15 +85,13 @@ public class ManagerServiceImpl implements MessageManagerService, PageableManage
     }
 
     @Override
-    public Optional<MessageDTO> findOne(Long id) {
-        Optional<Message> message = messageRepository.findOneMessage(id);
-        return message.map(m -> transferDTO.modelToDTO(m));
+    public Optional<Message> findOne(Long id) {
+        return messageRepository.findOneMessage(id);
     }
 
     @Override
-    public Optional<MessageDTO> findOne(Long messageId, Long senderId) {
-        Optional<Message> message = messageRepository.findOneMessage(messageId, senderId);
-        return message.map(m -> transferDTO.modelToDTO(m));
+    public Optional<Message> findOne(Long messageId, Long senderId) {
+        return messageRepository.findOneMessage(messageId, senderId);
     }
 
     @Override
@@ -137,48 +135,42 @@ public class ManagerServiceImpl implements MessageManagerService, PageableManage
     }
 
     @Override
-    public Page<MessageDTO> findLastMessageInMyDialogs(Long iam, Integer page, Integer size, String sort, List<String> sortProperties) {
+    public Page<Message> findLastMessageInMyDialogs(Long iam, Integer page, Integer size, String sort, List<String> sortProperties) {
         Pageable pageable = getPageable(page, size, sort, sortProperties);
-        Page<Message> p = messageRepository.findLastMessageInMyDialogs(iam, pageable);
-
-        return pageModelToPageDTO(p);
+        return messageRepository.findLastMessageInMyDialogs(iam, pageable);
     }
 
     @Override
-    public List<MessageDTO> findAllMessage(String sort, List<String> sortProperties) {
+    public List<Message> findAllMessage(String sort, List<String> sortProperties) {
         Sort s = getSort(sort, sortProperties);
-        List<Message> messageList = messageRepository.findAll(s);
-
-        return transferDTO.modelToDTOListMessage(messageList);
+        return messageRepository.findAll(s);
     }
 
     @Override
-    public Page<MessageDTO> findAllMessage(Integer page, Integer size, String sort, List<String> sortProperties) {
+    public Page<Message> findAllMessage(Integer page, Integer size, String sort, List<String> sortProperties) {
         Pageable pageable = getPageable(page, size, sort, sortProperties);
-        Page<Message> p = messageRepository.findAll(pageable);
-
-        return pageModelToPageDTO(p);
+        return messageRepository.findAll(pageable);
     }
 
     @Override
-    public Page<MessageDTO> findMessageByDialog(Long user1, Long user2, Integer page, Integer size, String sort, List<String> sortProperties) {
-        Pageable pageable = getPageable(page, size, sort, sortProperties);
-        Optional<Dialog> optional = dialogRepository.findDialogByUsers(user1, user2);
-        if (optional.isPresent()) {
-            Dialog dialog = optional.get();
-            Page<Message> p = messageRepository.findMessageByDialog(dialog.getId(), pageable);
-
-            return pageModelToPageDTO(p);
-        } else {
-            return new PageImpl<MessageDTO>(new ArrayList<>());
-        }
+    public Page<Message> findMessageByDialog(Long user1, Long user2, Integer page, Integer size, String sort, List<String> sortProperties) {
+//        Pageable pageable = getPageable(page, size, sort, sortProperties);
+//        Optional<Dialog> optional = dialogRepository.findDialogByUsers(user1, user2);
+//        if (optional.isPresent()) {
+//            Dialog dialog = optional.get();
+//            Page<Message> p = messageRepository.findMessageByDialog(dialog.getId(), pageable);
+//
+//            return pageModelToPageDTO(p);
+//        } else {
+//            return new PageImpl<MessageDTO>(new ArrayList<>());
+//        }
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public Page<MessageDTO> findMessageByDialog(Long dialogId, Integer page, Integer size, String sort, List<String> sortProperties) {
+    public Page<Message> findMessageByDialog(Long dialogId, Integer page, Integer size, String sort, List<String> sortProperties) {
         Pageable pageable = getPageable(page, size, sort, sortProperties);
-        Page<Message> p = messageRepository.findMessageByDialog(dialogId, pageable);
-        return pageModelToPageDTO(p);
+        return messageRepository.findMessageByDialog(dialogId, pageable);
     }
 
     private Page<MessageDTO> pageModelToPageDTO(Page<Message> messagePage) {

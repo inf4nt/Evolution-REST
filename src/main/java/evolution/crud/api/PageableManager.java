@@ -1,4 +1,4 @@
-package evolution.crud;
+package evolution.crud.api;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +16,21 @@ public interface PageableManager {
 
     Pageable getPageable(Integer page, Integer size, String sort, List<String> sortProperties);
 
+    Pageable getPageable(Integer page, Integer size);
+
     Sort getSort(String sort, List<String> sortProperties);
+
+    default Pageable getPageableForRestService(Integer page, Integer size,
+                                               Integer defaultMaxFetch) {
+        Integer pageResult = 0;
+        Integer sizeResult = 0;
+
+        if (page == null || size == null) {
+            sizeResult = defaultMaxFetch;
+        }
+
+        return new PageRequest(pageResult, sizeResult);
+    }
 
     default Pageable getPageableForRestService(Integer page, Integer size, String sortType, List<String> sortProperties,
                                                Integer defaultMaxFetch, String defaultSortType, String defaultSortProperties) {

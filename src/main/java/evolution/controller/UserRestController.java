@@ -1,7 +1,7 @@
 package evolution.controller;
 
-import evolution.model.User;
-import evolution.rest.old.UserRestService;
+import evolution.dto.model.UserDTO;
+import evolution.rest.api.UserRestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -27,27 +27,29 @@ public class UserRestController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<User>> findAll(@RequestParam(required = false) Integer page,
-                                              @RequestParam(required = false) Integer size,
-                                              @RequestParam(required = false) String sort,
-                                              @RequestParam(required = false) List<String> sortProperties,
-                                              @RequestParam(required = false) boolean lazy) {
-        return userRestService.findAll(page, size, sort, sortProperties, lazy);
+    public ResponseEntity<Page<UserDTO>> findAll(@RequestParam(required = false) Integer page,
+                                                 @RequestParam(required = false) Integer size,
+                                                 @RequestParam(required = false) String sort,
+                                                 @RequestParam(required = false) List<String> sortProperties,
+                                                 @RequestParam(required = false) boolean lazy) {
+//        return userRestService.findAll(page, size, sort, sortProperties, lazy);
+        return null;
     }
 
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<User> findOne(@PathVariable Long id, @RequestParam(required = false) boolean lazy) {
-        return userRestService.findOne(id, lazy);
+    public ResponseEntity<UserDTO> findOne(@PathVariable Long id, @RequestParam(required = false) boolean lazy) {
+//        return userRestService.findOne(id, lazy);
+        return null;
     }
 
     @PostMapping
-    public ResponseEntity<HttpStatus> save(@RequestBody User user) {
+    public ResponseEntity<HttpStatus> save(@RequestBody UserDTO user) {
         return userRestService.createNewUser(user);
     }
 
     @PutMapping
-    public ResponseEntity<HttpStatus> update(@RequestBody User user) {
+    public ResponseEntity<HttpStatus> update(@RequestBody UserDTO user) {
         return userRestService.update(user);
     }
 

@@ -78,7 +78,7 @@ public class UserDaoService {
 //    }
 //
 //    @Transactional
-//    public User findOne(Long id) {
-//        return userRepositoryDeprecated.findOne(id);
+//    public User findOneFriend(Long id) {
+//        return userRepositoryDeprecated.findOneFriend(id);
 //    }
 }

@@ -1,6 +1,6 @@
 package evolution.controller;
 
-import evolution.model.Message;
+import evolution.dto.model.MessageDTO;
 import evolution.rest.api.MessageRestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,25 +26,25 @@ public class MessageRestController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<Message>> findAll(@RequestParam(required = false) Integer page,
-                                                 @RequestParam(required = false) Integer size,
-                                                 @RequestParam(required = false) String sortType,
-                                                 @RequestParam(required = false) List<String> sortProperties) {
+    public ResponseEntity<Page<MessageDTO>> findAll(@RequestParam(required = false) Integer page,
+                                                    @RequestParam(required = false) Integer size,
+                                                    @RequestParam(required = false) String sortType,
+                                                    @RequestParam(required = false) List<String> sortProperties) {
         return messageRestService.findAllMessage(page, size, sortType, sortProperties);
     }
 
 
     @PostMapping
-    public ResponseEntity<HttpStatus> postMessage(@RequestBody Message message) {
+    public ResponseEntity<HttpStatus> postMessage(@RequestBody MessageDTO message) {
         return messageRestService.save(message);
     }
 
     @GetMapping(value = "/interlocutor/{id}")
-    public ResponseEntity<Page<Message>> findMessageByInterlocutorId(@PathVariable Long id,
+    public ResponseEntity<Page<MessageDTO>> findMessageByInterlocutorId(@PathVariable Long id,
                                                                      @RequestParam(required = false) Integer page,
                                                                      @RequestParam(required = false) Integer size,
                                                                      @RequestParam(required = false) String sortType,
                                                                      @RequestParam(required = false) List<String> sortProperties) {
-        return messageRestService.findMessageByAuthUserAndInterlocutor(id, page, size, sortType, sortProperties);
+        return messageRestService.findMessageByAuthUserAndRecipientId(id, page, size, sortType, sortProperties);
     }
 }

@@ -1,6 +1,6 @@
 package evolution.rest.api;
 
-import evolution.model.Message;
+import evolution.dto.model.MessageDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,38 +12,35 @@ import java.util.List;
  */
 public interface MessageRestService {
 
-    ResponseEntity<Page<Message>> findAllMessage(Integer page, Integer size, String sort, List<String> sortProperties);
+    ResponseEntity<Page<MessageDTO>> findAllMessage(Integer page, Integer size, String sort, List<String> sortProperties);
 
-    ResponseEntity<Page<Message>> findMessageByAuthUserAndInterlocutor(Long interlocutorId, Integer page, Integer size, String sort, List<String> sortProperties);
+    ResponseEntity<Page<MessageDTO>> findMessageByAuthUserAndRecipientId(Long interlocutorId, Integer page, Integer size, String sort, List<String> sortProperties);
 
-    ResponseEntity<Page<Message>> findLastMessageInDialogByAuthUser(Integer page, Integer size, String sort, List<String> sortProperties);
+    ResponseEntity<Page<MessageDTO>> findLastMessageInMyDialog(Integer page, Integer size, String sort, List<String> sortProperties);
 
-    ResponseEntity<Page<Message>> findLastMessageInDialog(Long userId, Integer page, Integer size, String sort, List<String> sortProperties);
+    ResponseEntity<Page<MessageDTO>> findLastMessageInMyDialog(Long userId, Integer page, Integer size, String sort, List<String> sortProperties);
 
-    ResponseEntity<Message> findOneMessage(Long id);
+    ResponseEntity<MessageDTO> findOneMessage(Long id);
 
-    ResponseEntity<Message> findOneMessageByAuthSender(Long id);
+    ResponseEntity<MessageDTO> findOneByMessageIdAndSenderId(Long id);
 
-//    ResponseEntity<Page<Dialog>> findAllDialog(Integer page, Integer size, String sort, List<String> sortProperties);
+    ResponseEntity<HttpStatus> save(MessageDTO message);
 
-//    ResponseEntity<Dialog> findOneDialog(Long id);
+    ResponseEntity<MessageDTO> saveMessage(MessageDTO message);
 
-//    ResponseEntity<Dialog> findOneDialogByUserAndCheckAccess(Long id);
+    ResponseEntity<HttpStatus> update(MessageDTO message);
 
-    ResponseEntity<HttpStatus> save(Message message);
+    ResponseEntity<MessageDTO> updateAfterReturn(MessageDTO message);
 
-    ResponseEntity<Message> saveMessage(Message message);
+    ResponseEntity<HttpStatus> updateMessage(MessageDTO message);
 
-    ResponseEntity<HttpStatus> update(Message message);
+    ResponseEntity<HttpStatus> updateMessageByAuthUser(MessageDTO message);
 
-    ResponseEntity<Message> updateAfterReturn(Message message);
+    ResponseEntity<HttpStatus> delete(Long messageId);
 
-    ResponseEntity<HttpStatus> updateMessage(Long messageId, String message);
+    ResponseEntity<Long> deleteAfterReturnId(Long messageId);
 
-    ResponseEntity<HttpStatus> updateMessageByAuthUser(Long messageId, String message);
-//    ResponseEntity<HttpStatus> deleteMessage(Long messageId);
+    ResponseEntity<HttpStatus> deleteByMessageIdAndSenderId(Long messageId);
 
-//    ResponseEntity<Long> deleteAndReturn(Long id);
-
-//    ResponseEntity<HttpStatus> deactivated(Long id);
+    ResponseEntity<Long> deleteByMessageIdAndSenderIdAfterReturnId(Long messageId);
 }

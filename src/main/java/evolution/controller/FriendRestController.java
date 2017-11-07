@@ -1,7 +1,7 @@
 package evolution.controller;
 
 
-import evolution.model.Friend;
+import evolution.dto.model.FriendDTO;
 import evolution.rest.api.FriendRestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,21 +24,21 @@ public class FriendRestController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<Friend>> findAll(@RequestParam(required = false) Integer page,
+    public ResponseEntity<Page<FriendDTO>> findAll(@RequestParam(required = false) Integer page,
                                                 @RequestParam(required = false) Integer size) {
         return friendRestService.findAll(page, size);
     }
 
     @GetMapping(value = "/{userId}/status/follower")
-    public ResponseEntity<Page<Friend>> findUserFollowers(@PathVariable Long userId,
-                                                          @RequestParam(required = false) Integer page,
-                                                          @RequestParam(required = false) Integer size) {
+    public ResponseEntity<Page<FriendDTO>> findUserFollowers(@PathVariable Long userId,
+                                                             @RequestParam(required = false) Integer page,
+                                                             @RequestParam(required = false) Integer size) {
         return friendRestService.findUserFollower(userId, page, size);
     }
 
 
     @GetMapping(value = "/{userId}/status/request")
-    public ResponseEntity<Page<Friend>> findUserRequests(@PathVariable Long userId,
+    public ResponseEntity<Page<FriendDTO>> findUserRequests(@PathVariable Long userId,
                                                          @RequestParam(required = false) Integer page,
                                                          @RequestParam(required = false) Integer size) {
         return friendRestService.findUserRequest(userId, page, size);
@@ -46,7 +46,7 @@ public class FriendRestController {
 
 
     @GetMapping(value = "/{userId}/status/progress")
-    public ResponseEntity<Page<Friend>> findUserProgress(@PathVariable Long userId,
+    public ResponseEntity<Page<FriendDTO>> findUserProgress(@PathVariable Long userId,
                                                          @RequestParam(required = false) Integer page,
                                                          @RequestParam(required = false) Integer size) {
 
@@ -54,22 +54,22 @@ public class FriendRestController {
     }
 
     @GetMapping(value = "/action/{userId}/sendRequest")
-    public ResponseEntity<Friend> sendRequest(@PathVariable Long userId) {
+    public ResponseEntity<FriendDTO> sendRequest(@PathVariable Long userId) {
         return friendRestService.sendRequest(userId);
     }
 
     @GetMapping(value = "/action/{userId}/removeRequest")
-    public ResponseEntity<Friend> removeRequest(@PathVariable Long userId) {
+    public ResponseEntity<FriendDTO> removeRequest(@PathVariable Long userId) {
         return friendRestService.removeRequest(userId);
     }
 
     @GetMapping(value = "/action/{userId}/removeFriend")
-    public ResponseEntity<Friend> removeFriend(@PathVariable Long userId) {
+    public ResponseEntity<FriendDTO> removeFriend(@PathVariable Long userId) {
         return friendRestService.removeFriend(userId);
     }
 
     @GetMapping(value = "/action/{userId}/acceptRequest")
-    public ResponseEntity<Friend> acceptRequest(@PathVariable Long userId) {
+    public ResponseEntity<FriendDTO> acceptRequest(@PathVariable Long userId) {
         return friendRestService.acceptRequest(userId);
     }
 
