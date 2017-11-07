@@ -14,12 +14,25 @@ import java.util.Optional;
 /**
  * Created by Infant on 22.10.2017.
  */
-interface DialogRepository extends JpaRepository<Dialog, Long> {
+public interface DialogRepository extends JpaRepository<Dialog, Long> {
 
+    @Deprecated
     @Query("select d from Dialog d " +
             " where (d.first.id = :u1 and d.second.id =:u2) " +
             " or (d.first.id = :u2 and d.second.id =:u1) ")
     Dialog findDialogWhereUsers(@Param("u1") Long user1, @Param("u2") Long user2);
+
+    @Query("select d from Dialog d " +
+            " join fetch d.messageList " +
+            " where (d.first.id = :u1 and d.second.id =:u2) " +
+            " or (d.first.id = :u2 and d.second.id =:u1) ")
+    Optional<Dialog> findDialogByUsersLoadLazy(@Param("u1") Long user1, @Param("u2") Long user2);
+
+    @Query("select d from Dialog d " +
+            " join fetch d.messageList " +
+            " where (d.first.id = :u1 and d.second.id =:u2) " +
+            " or (d.first.id = :u2 and d.second.id =:u1) ")
+    Optional<Dialog> findDialogByUsers(@Param("u1") Long user1, @Param("u2") Long user2);
 
     @Query("select d from Dialog d " +
             " where (d.first.id = :u1 and d.second.id =:u2) " +

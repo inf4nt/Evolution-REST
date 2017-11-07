@@ -9,6 +9,9 @@ import evolution.service.DateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Created by Infant on 07.11.2017.
  */
@@ -29,8 +32,16 @@ public class TransferDTOImpl implements TransferDTO {
         messageDTO.setId(message.getId());
 
         Dialog dialog = message.getDialog();
-        messageDTO.setSender(modelToDTO(dialog.getFirst()));
-        messageDTO.setInterlocutorId(modelToDTO(dialog.getSecond()));
+        User first = dialog.getFirst();
+        User second = dialog.getSecond();
+
+        if (first.getId() > second.getId()) {
+            messageDTO.setFirst(modelToDTO(first));
+            messageDTO.setSecond(modelToDTO(second));
+        } else {
+            messageDTO.setFirst(modelToDTO(second));
+            messageDTO.setSecond(modelToDTO(first));
+        }
 
         messageDTO.setSender(modelToDTO(message.getSender()));
         messageDTO.setText(message.getMessage());
@@ -70,5 +81,25 @@ public class TransferDTOImpl implements TransferDTO {
         user.setLastName(userDTO.getLastName());
         user.setNickname(userDTO.getNickname());
         return user;
+    }
+
+    @Override
+    public List<MessageDTO> modelToDTOListMessage(List<Message> message) {
+        return message.stream().map(m ->  modelToDTO(m)).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Message> DTOToModelListMessage(List<MessageDTO> messageDTO) {
+        return messageDTO.stream().map(m ->  DTOToModel(m)).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserDTO> modelToDTOListUser(List<User> user) {
+        return user.stream().map(m ->  modelToDTO(m)).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<User> dTOToModelListUser(List<UserDTO> userDTO) {
+        return userDTO.stream().map(m ->  DTOToModel(m)).collect(Collectors.toList());
     }
 }

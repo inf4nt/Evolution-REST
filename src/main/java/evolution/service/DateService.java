@@ -39,4 +39,9 @@ public class DateService {
         return new Date(dateTime.getMillis());
     }
 
+    public Date getCurrentDateInUTC() {
+        Long a =  DateTime.now(DateTimeZone.UTC).getMillis();
+        return new Date(a);
+    }
+
 }

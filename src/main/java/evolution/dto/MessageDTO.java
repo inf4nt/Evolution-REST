@@ -15,7 +15,7 @@ public class MessageDTO {
 
     private UserDTO sender;
 
-    private UserDTO interlocutorId;
+    private UserDTO recipient;
 
     private String text;
 

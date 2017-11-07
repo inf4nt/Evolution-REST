@@ -39,6 +39,6 @@ public class Dialog {
     private Date createDate;
 
     @JsonSerialize(using = CustomDialogSerializerMessageList.class)
-    @OneToMany(mappedBy = "dialog", fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "dialog", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<Message> messageList;
 }

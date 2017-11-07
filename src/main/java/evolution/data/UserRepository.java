@@ -10,11 +10,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by Infant on 04.09.2017.
  */
-interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query(" select u " +
             "from User u " +
@@ -37,10 +38,16 @@ interface UserRepository extends JpaRepository<User, Long> {
             "join fetch u.userAdditionalData ")
     List<User> findAllLoadLazy(Sort sort);
 
+    @Deprecated
     @Query("select u " +
             "from User u " +
             "where u.id =:id")
     User findOne(@Param("id") Long id);
+
+    @Query("select u " +
+            "from User u " +
+            "where u.id =:id")
+    Optional<User> findOneUser(@Param("id") Long id);
 
     @Query("select u " +
             "from User u " +
