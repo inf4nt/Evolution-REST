@@ -19,8 +19,12 @@ import java.util.Optional;
 @Service
 public class DialogCrudManagerServiceImpl implements DialogCrudManagerService {
 
+    private final DialogRepository dialogRepository;
+
     @Autowired
-    private DialogRepository dialogRepository;
+    public DialogCrudManagerServiceImpl(DialogRepository dialogRepository) {
+        this.dialogRepository = dialogRepository;
+    }
 
     @Override
     public List<Dialog> findAll() {
@@ -40,18 +44,36 @@ public class DialogCrudManagerServiceImpl implements DialogCrudManagerService {
     }
 
     @Override
+    public Page<Dialog> findMyDialog(Long iam, Integer page, Integer size, String sort, List<String> sortProperties) {
+        Pageable pageable = getPageable(page, size, sort, sortProperties);
+        return dialogRepository.findMyDialog(iam, pageable);
+    }
+
+    @Override
+    public List<Dialog> findMyDialog(Long iam, String sort, List<String> sortProperties) {
+        Sort s = getSort(sort, sortProperties);
+        return dialogRepository.findMyDialog(iam, s);
+    }
+
+    @Override
+    public Optional<Dialog> findOne(Long iam, Long dialogId) {
+        return dialogRepository.findOneDialog(iam, dialogId);
+    }
+
+    @Override
     public Optional<Dialog> findOne(Long aLong) {
         return dialogRepository.findOneDialog(aLong);
     }
 
     @Override
     public Dialog save(Dialog object) {
-        return null;
+        return dialogRepository.save(object);
     }
 
     @Override
     public void delete(Long aLong) {
-
+        Optional<Dialog> optional = findOne(aLong);
+        optional.ifPresent(dialog -> dialogRepository.delete(dialog));
     }
 
     @Value("${model.dialog.maxfetch}")

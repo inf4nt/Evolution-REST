@@ -69,10 +69,6 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
 
     @Override
     public Message save(Message object) {
-        if (object.getId() == null || object.getDateDispatch() == null) {
-            throw new UnsupportedOperationException("if you want create new message," +
-                    " please use public Message saveMessageAndMaybeCreateNewDialog(String text, Long senderId, Long recipientId) ");
-        }
         return messageRepository.save(object);
     }
 
@@ -111,29 +107,6 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
         message.setActive(true);
 
         return messageRepository.save(message);
-//        Long dialogId = object.getDialog().getId();
-//        Dialog dialog;
-//        Optional<Dialog> od = dialogRepository.findOneDialog(dialogId);
-//
-//        if (od.isPresent()) {
-//            dialog = od.get();
-//        } else {
-//            dialog = new Dialog();
-//            dialog.setCreateDate(dateService.getCurrentDateInUTC());
-//            Optional<User> of = userRepository.findOneUserById(dialog.getFirst().getId());
-//            Optional<User> os = userRepository.findOneUserById(dialog.getSecond().getId());
-//            if (of.isPresent() && os.isPresent()) {
-//                dialog.setFirst(of.get());
-//                dialog.setSecond(os.get());
-//            }
-//            dialog = dialogRepository.save(dialog);
-//        }
-//
-//        object.setDialog(dialog);
-//        object.setActive(true);
-//        object.setDateDispatch(dateService.getCurrentDateInUTC());
-//
-//        return messageRepository.save(object);
     }
 
     @Override

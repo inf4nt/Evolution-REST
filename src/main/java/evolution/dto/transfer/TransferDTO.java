@@ -1,8 +1,6 @@
 package evolution.dto.transfer;
 
-import evolution.dto.model.DialogDTO;
-import evolution.dto.model.MessageDTO;
-import evolution.dto.model.UserDTO;
+import evolution.dto.model.*;
 import evolution.model.Dialog;
 import evolution.model.Message;
 import evolution.model.User;
@@ -25,4 +23,20 @@ public interface TransferDTO {
     UserDTO modelToDTO(User user);
 
     List<UserDTO> modelToDTOListUser(List<User> user);
+
+    User dtoToModel(UserDTO user);
+
+    List<User> dtoToModelListUser(List<UserDTO> userDTOList);
+
+    User dtoToModel(UserFullDTO userFullDTO);
+
+    List<User> dtoUserFullToModelListUser(List<UserFullDTO> userFullDTOList);
+
+    UserFullDTO modelToDTOUserFull(User user);
+
+    List<UserFullDTO> modelToDTO(List<User> userList);
+
+    User dtoToModel(UserDTOForSave userDTOForUpdate);
+
+    List<User> dtoUserForUpdateToModelListUser(List<UserDTOForSave> userDTOList);
 }

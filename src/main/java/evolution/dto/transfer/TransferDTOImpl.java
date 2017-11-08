@@ -1,12 +1,9 @@
 package evolution.dto.transfer;
 
-import evolution.dto.model.DialogDTO;
-import evolution.dto.model.MessageDTO;
-import evolution.dto.model.UserDTO;
+import evolution.dto.model.*;
 import evolution.model.Dialog;
 import evolution.model.Message;
 import evolution.model.User;
-import evolution.security.model.CustomSecurityUser;
 import evolution.service.DateService;
 import evolution.service.SecuritySupportService;
 import org.modelmapper.ModelMapper;
@@ -14,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -100,5 +96,45 @@ public class TransferDTOImpl implements TransferDTO {
     @Override
     public List<UserDTO> modelToDTOListUser(List<User> user) {
         return user.stream().map(o -> modelToDTO(o)).collect(Collectors.toList());
+    }
+
+    @Override
+    public User dtoToModel(UserDTO userDTO) {
+        return modelMapper.map(userDTO, User.class);
+    }
+
+    @Override
+    public List<User> dtoToModelListUser(List<UserDTO> userDTOList) {
+        return userDTOList.stream().map(o -> dtoToModel(o)).collect(Collectors.toList());
+    }
+
+    @Override
+    public User dtoToModel(UserDTOForSave userDTOForUpdate) {
+        return modelMapper.map(userDTOForUpdate, User.class);
+    }
+
+    @Override
+    public List<User> dtoUserForUpdateToModelListUser(List<UserDTOForSave> userDTOList) {
+        return userDTOList.stream().map(o -> dtoToModel(o)).collect(Collectors.toList());
+    }
+
+    @Override
+    public User dtoToModel(UserFullDTO userFullDTO) {
+        return modelMapper.map(userFullDTO, User.class);
+    }
+
+    @Override
+    public List<User> dtoUserFullToModelListUser(List<UserFullDTO> userFullDTOList) {
+        return userFullDTOList.stream().map(o -> dtoToModel(o)).collect(Collectors.toList());
+    }
+
+    @Override
+    public UserFullDTO modelToDTOUserFull(User user) {
+        return modelMapper.map(user, UserFullDTO.class);
+    }
+
+    @Override
+    public List<UserFullDTO> modelToDTO(List<User> userList) {
+        return userList.stream().map(o -> modelToDTOUserFull(o)).collect(Collectors.toList());
     }
 }
