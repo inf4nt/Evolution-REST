@@ -33,5 +33,39 @@ public interface UserCrudManagerService extends AbstractCrudManagerService<User,
 
     List<User> findUserAllByIsBlock(boolean block);
 
+    Page<User> findAllLazy(Integer page, Integer size, String sort, List<String> sortProperties);
+
+    Page<User> findAll(Integer page, Integer size, String sort, List<String> sortProperties);
+
+    List<User> findAllLazy(String sort, List<String> sortProperties);
+
+    List<User> findAll(String sort, List<String> sortProperties);
+
+    List<User> findAllLazy();
+
+    List<User> findAll();
+
+    Optional<User> findUserBySecretKeyLazy(String secretKey);
+
+    Optional<UserAdditionalData> findUserAdditionalDataByUserIdLazy(Long userId);
+
+    Optional<User> findOneUserByIdAndIsActiveLazy(Long userId, boolean active);
+
+    Optional<User> findOneUserByIdAndIsBlockLazy(Long userId, boolean block);
+
+    Optional<User> findOneFetchUserAdditionalData(Long userId);
+
+    Page<User> findUserAllByIsActiveLazy(boolean active, Integer page, Integer size, String sort, List<String> sortProperties);
+
+    Page<User> findUserAllByIsBlockLazy(boolean block, Integer page, Integer size, String sort, List<String> sortProperties);
+
+    List<User> findUserAllByIsActiveLazy(boolean active, String sort, List<String> sortProperties);
+
+    List<User> findUserAllByIsBlockLazy(boolean block, String sort, List<String> sortProperties);
+
+    List<User> findUserAllByIsActiveLazy(boolean active);
+
+    List<User> findUserAllByIsBlockLazy(boolean block);
+
     boolean deleteById(Long id);
 }

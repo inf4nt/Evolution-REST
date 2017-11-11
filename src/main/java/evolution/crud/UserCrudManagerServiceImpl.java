@@ -34,15 +34,85 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
     }
 
     @Override
+    public Optional<User> findUserBySecretKeyLazy(String secretKey) {
+        return userRepository.findUserBySecretKeyLazy(secretKey);
+    }
+
+    @Override
+    public Optional<UserAdditionalData> findUserAdditionalDataByUserIdLazy(Long userId) {
+        return userRepository.findOneUserById(userId).map(o -> o.getUserAdditionalData());
+    }
+
+    @Override
+    public Optional<User> findOneUserByIdAndIsActiveLazy(Long userId, boolean active) {
+        return userRepository.findOneUserByIdAndIsActiveLazy(userId, active);
+    }
+
+    @Override
+    public Optional<User> findOneUserByIdAndIsBlockLazy(Long userId, boolean block) {
+        return userRepository.findOneUserByIdAndIsBlock(userId, block);
+    }
+
+    @Override
+    public Optional<User> findOneFetchUserAdditionalData(Long userId) {
+        return userRepository.findOneUserByIdLazy(userId);
+    }
+
+    @Override
+    public Page<User> findUserAllByIsActiveLazy(boolean active, Integer page, Integer size, String sort, List<String> sortProperties) {
+        Pageable p = getPageable(page, size, sort, sortProperties);
+        return userRepository.findUserAllByIsActiveLazy(active, p);
+    }
+
+    @Override
+    public Page<User> findUserAllByIsBlockLazy(boolean block, Integer page, Integer size, String sort, List<String> sortProperties) {
+        Pageable p = getPageable(page, size, sort, sortProperties);
+        return userRepository.findUserAllByIsBlock(block, p);
+    }
+
+    @Override
+    public List<User> findUserAllByIsActiveLazy(boolean active, String sort, List<String> sortProperties) {
+        Sort s = getSort(sort, sortProperties);
+        return userRepository.findUserAllByIsActive(active, s);
+    }
+
+    @Override
+    public List<User> findUserAllByIsBlockLazy(boolean block, String sort, List<String> sortProperties) {
+        Sort s = getSort(sort, sortProperties);
+        return userRepository.findUserAllByIsBlockLazy(block, s);
+    }
+
+    @Override
+    public List<User> findUserAllByIsActiveLazy(boolean active) {
+        return userRepository.findUserAllByIsActiveLazy(active);
+    }
+
+    @Override
+    public List<User> findUserAllByIsBlockLazy(boolean block) {
+        return userRepository.findUserAllByIsBlockLazy(block);
+    }
+
+    @Override
     public List<User> findAll(String sort, List<String> sortProperties) {
         Sort s = getSort(sort, sortProperties);
         return userRepository.findAll(s);
     }
 
     @Override
+    public List<User> findAllLazy() {
+        return userRepository.findAllFetchLazy();
+    }
+
+    @Override
     public Page<User> findAll(Integer page, Integer size, String sort, List<String> sortProperties) {
         Pageable p = getPageable(page, size, sort, sortProperties);
         return userRepository.findAll(p);
+    }
+
+    @Override
+    public List<User> findAllLazy(String sort, List<String> sortProperties) {
+        Sort s = getSort(sort, sortProperties);
+        return userRepository.findAllFetchLazy(s);
     }
 
     @Override
@@ -57,18 +127,18 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
 
     @Override
     public void delete(Long aLong) {
-        Optional<User> optional = userRepository.findOneUserById(aLong);
+        Optional<User> optional = userRepository.findOneUserByIdLazy(aLong);
         optional.ifPresent(user -> userRepository.delete(user));
     }
 
     @Override
     public Optional<User> findByUsername(String username) {
-        return userRepository.findUserByUsername(username);
+        return userRepository.findUserByUsernameLazy(username);
     }
 
     @Override
     public Optional<User> findUserBySecretKey(String secretKey) {
-        return userRepository.findUserBySecretKey(secretKey);
+        return userRepository.findUserBySecretKeyLazy(secretKey);
     }
 
     @Override
@@ -83,7 +153,7 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
 
     @Override
     public Optional<User> findOneUserByIdAndIsActive(Long userId, boolean active) {
-        return userRepository.findOneUserByIdAndIsActive(userId, active);
+        return userRepository.findOneUserByIdAndIsActiveLazy(userId, active);
     }
 
     @Override
@@ -123,6 +193,12 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
     @Override
     public List<User> findUserAllByIsBlock(boolean block) {
         return userRepository.findUserAllByIsBlock(block);
+    }
+
+    @Override
+    public Page<User> findAllLazy(Integer page, Integer size, String sort, List<String> sortProperties) {
+        Pageable p = getPageable(page, size, sort, sortProperties);
+        return userRepository.findAllFetchLazy(p);
     }
 
     @Override

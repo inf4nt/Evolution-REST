@@ -12,6 +12,7 @@ import java.util.Optional;
 /**
  * Created by Infant on 08.11.2017.
  */
+
 public interface UserBusinessService {
 
     BusinessServiceExecuteResult<UserFullDTO> createNewUser(UserFullDTO userFullDTO);
@@ -20,11 +21,17 @@ public interface UserBusinessService {
 
     Page<UserDTO> findAll(Integer page, Integer size, String sortType, List<String> sortProperties);
 
+    Page<UserFullDTO> findAllFull(Integer page, Integer size, String sortType, List<String> sortProperties);
+
     List<UserDTO> findAll(String sortType, List<String> sortProperties);
 
-    List<UserFullDTO> findAll();
+    List<UserFullDTO> findAllFull();
 
-    Optional<UserFullDTO> findByUsername(String username);
+    List<UserFullDTO> findAllFull(String sortType, List<String> sortProperties);
+
+    Optional<UserFullDTO> findByUsernameFull(String username);
+
+    Optional<UserDTO> findByUsername(String username);
 
     Page<UserDTO> findAllIsBlockFalse(Integer page, Integer size, String sortType, List<String> sortProperties);
 
@@ -40,7 +47,19 @@ public interface UserBusinessService {
 
     Optional<UserDTO> findOne(Long id);
 
-    BusinessServiceExecuteResult<UserFullDTO> findOneUserFullDTO(Long id);
+    Page<UserFullDTO> findAllIsBlockFalseFull(Integer page, Integer size, String sortType, List<String> sortProperties);
+
+    List<UserFullDTO> findAllIsBlockFalseFull(String sortType, List<String> sortProperties);
+
+    List<UserFullDTO> findAllIsBlockFalseFull();
+
+    Page<UserFullDTO> findAllIsBlockTrueFull(Integer page, Integer size, String sortType, List<String> sortProperties);
+
+    List<UserFullDTO> findAllIsBlockTrueFull(String sortType, List<String> sortProperties);
+
+    List<UserFullDTO> findAllIsBlockTrueFull();
+
+    Optional<UserFullDTO> findOneUserFull(Long id);
 
     Optional<UserDTO> findOneIsBlockFalse(Long id);
 

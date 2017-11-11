@@ -1,9 +1,14 @@
 package evolution.rest;
 
+import evolution.business.api.UserBusinessService;
 import evolution.dto.model.UserDTO;
+import evolution.dto.model.UserDTOForSave;
+import evolution.dto.model.UserForUpdate;
+import evolution.dto.model.UserFullDTO;
 import evolution.rest.api.UserRestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,39 +24,83 @@ public class UserRestServiceImpl implements UserRestService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Autowired
+    private UserBusinessService userBusinessService;
 
     @Override
     public ResponseEntity<Page<UserDTO>> findAll(Integer page, Integer size, String sortType, List<String> sortProperties) {
 //        Pageable pageable = helperDataService.getPageableForUser(page, size, sortType, sortProperties);
 //        Page<User> p = userDataService.findAll(pageable);
 //        return helperRestService.getResponseForPage(p);
-        return null;
+
+        Page<UserDTO> p = userBusinessService.findAll(page, size, sortType, sortProperties);
+
+        if(p.getContent().isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(p);
+        }
     }
 
     @Override
     public ResponseEntity<UserDTO> findOne(Long userId) {
-//        Optional<User> optional = userDataService.findOne(userId);
-//        return helperRestService.getResponseForOptional(optional);
-        return null;
+        return userBusinessService
+                .findOne(userId)
+                .map(o  -> ResponseEntity.ok(o))
+                .orElse(ResponseEntity.noContent().build());
+    }
+
+    @Override
+    public ResponseEntity<UserFullDTO> findOneFull(Long userId) {
+        return userBusinessService
+                .findOneUserFull(userId)
+                .map(o  -> ResponseEntity.ok(o))
+                .orElse(ResponseEntity.noContent().build());
     }
 
     @Override
     public ResponseEntity<UserDTO> findByUsername(String username) {
-//        Optional<User> optional = userDataService.findUserByUsername(username);
-//        return helperRestService.getResponseForOptional(optional);
-        return null;
+        return userBusinessService
+                .findByUsername(username)
+                .map(o  -> ResponseEntity.ok(o))
+                .orElse(ResponseEntity.noContent().build());
+    }
+
+    @Override
+    public ResponseEntity<UserFullDTO> findByUsernameFull(String username) {
+        return userBusinessService
+                .findByUsernameFull(username)
+                .map(o -> ResponseEntity.ok(o))
+                .orElse(ResponseEntity.noContent().build());
     }
 
     @Override
     public ResponseEntity<List<UserDTO>> findAll(String sortType, List<String> sortProperties) {
-//        Sort sort = helperDataService.getSortForUser(sortType, sortProperties);
-//        List<User> list = userDataService.findAll(sort);
-//        return helperRestService.getResponseForList(list);
+        List<UserDTO> list =  userBusinessService.findAll(sortType, sortProperties);
+        if(list.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(list);
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<UserFullDTO>> findAllFull(String sortType, List<String> sortProperties) {
+        List<UserFullDTO> list = userBusinessService.findAllFull(sortType, sortProperties);
+        if (list.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(list);
+        }
+    }
+
+    @Override
+    public ResponseEntity<Page<UserFullDTO>> findAllFullPage(Integer page, Integer size, String sortType, List<String> sortProperties) {
         return null;
     }
 
     @Override
-    public ResponseEntity<HttpStatus> createNewUser(UserDTO user) {
+    public ResponseEntity<HttpStatus> createNewUser(UserDTOForSave user) {
 //        try {
 //            HttpStatus httpStatus = exist(user.getUserAdditionalData().getUsername()).getStatusCode();
 //            if (httpStatus == HttpStatus.OK) {
@@ -75,16 +124,7 @@ public class UserRestServiceImpl implements UserRestService {
     }
 
     @Override
-    public ResponseEntity<HttpStatus> updateAuthUser(UserDTO user) {
-//        if (!securitySupportService.isAllowed(user.getId())) {
-//            return ResponseEntity.status(403).build();
-//        }
-//        return update(user);
-        return null;
-    }
-
-    @Override
-    public ResponseEntity<HttpStatus> update(UserDTO user) {
+    public ResponseEntity<HttpStatus> update(UserForUpdate user) {
 //        userDataService.save(user);
 //        return ResponseEntity.ok().build();
         return null;

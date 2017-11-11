@@ -1,8 +1,7 @@
 package evolution.security.service;
 
-
-import evolution.data.UserDataService;
 import evolution.model.User;
+import evolution.repository.UserRepository;
 import evolution.security.model.CustomSecurityUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,17 +26,17 @@ public class UserDetailsServiceImpl
 
     private Logger LOGGER = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 
-    private final UserDataService userDataService;
+    private final UserRepository userRepository;
 
     @Autowired
-    public UserDetailsServiceImpl(UserDataService userDataService) {
-        this.userDataService = userDataService;
+    public UserDetailsServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional optional = userDataService.findUserByUsername(username);
+        Optional optional = userRepository.findUserByUsernameLazy(username);
         if (!optional.isPresent()) {
             LOGGER.info("\nuser  username = " + username + ", not found");
             throw new UsernameNotFoundException("user " + username + " not found");

@@ -1,6 +1,7 @@
 package evolution.controller;
 
 import evolution.dto.model.UserDTO;
+import evolution.dto.model.UserFullDTO;
 import evolution.rest.api.UserRestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,17 +31,24 @@ public class UserRestController {
     public ResponseEntity<Page<UserDTO>> findAll(@RequestParam(required = false) Integer page,
                                                  @RequestParam(required = false) Integer size,
                                                  @RequestParam(required = false) String sort,
-                                                 @RequestParam(required = false) List<String> sortProperties,
-                                                 @RequestParam(required = false) boolean lazy) {
-//        return userRestService.findAll(page, size, sort, sortProperties, lazy);
-        return null;
+                                                 @RequestParam(required = false) List<String> sortProperties) {
+        return userRestService.findAll(page, size, sort, sortProperties);
     }
 
+    @GetMapping(value = "/lazy")
+    public ResponseEntity<List<UserFullDTO>> findAllList(@RequestParam(required = false) String sort,
+                                                         @RequestParam(required = false) List<String> sortProperties) {
+        return userRestService.findAllFull(sort, sortProperties);
+    }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<UserDTO> findOne(@PathVariable Long id, @RequestParam(required = false) boolean lazy) {
-//        return userRestService.findOne(id, lazy);
-        return null;
+    public ResponseEntity<UserDTO> findOne(@PathVariable Long id) {
+        return userRestService.findOne(id);
+    }
+
+    @GetMapping(value = "/{id}/lazy")
+    public ResponseEntity<UserFullDTO> findOneLazy(@PathVariable Long id) {
+       return userRestService.findOneFull(id);
     }
 
     @PostMapping

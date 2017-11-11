@@ -20,5 +20,5 @@ public class UserFullDTO {
 
     private String role;
 
-    private UserAdditionalDataDTO userAdditionalDataDTO;
+    private UserAdditionalDataDTO userAdditionalData;
 }

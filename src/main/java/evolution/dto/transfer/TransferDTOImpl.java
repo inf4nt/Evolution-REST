@@ -19,18 +19,10 @@ import java.util.stream.Collectors;
 @Service
 public class TransferDTOImpl implements TransferDTO {
 
-    private final DateService dateService;
-
-    private final SecuritySupportService securitySupportService;
-
     private final ModelMapper modelMapper;
 
     @Autowired
-    public TransferDTOImpl(DateService dateService,
-                           SecuritySupportService securitySupportService,
-                           ModelMapper modelMapper) {
-        this.dateService = dateService;
-        this.securitySupportService = securitySupportService;
+    public TransferDTOImpl(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
     }
 
@@ -130,7 +122,9 @@ public class TransferDTOImpl implements TransferDTO {
 
     @Override
     public UserFullDTO modelToDTOUserFull(User user) {
-        return modelMapper.map(user, UserFullDTO.class);
+        UserFullDTO u = modelMapper.map(user, UserFullDTO.class);
+        u.getUserAdditionalData().setUserId(user.getId());
+        return u;
     }
 
     @Override

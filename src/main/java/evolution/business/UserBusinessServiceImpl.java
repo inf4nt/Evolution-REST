@@ -53,9 +53,9 @@ public class UserBusinessServiceImpl implements UserBusinessService {
 
     @Override
     public BusinessServiceExecuteResult<UserFullDTO> createNewUser(UserFullDTO userFullDTO) {
-        Optional<User> ou = userCrudManagerService.findByUsername(userFullDTO.getUserAdditionalDataDTO().getUsername());
+        Optional<User> ou = userCrudManagerService.findByUsername(userFullDTO.getUserAdditionalData().getUsername());
         if (ou.isPresent()) {
-            logger.info("user by username " + userFullDTO.getUserAdditionalDataDTO().getUsername() + ", is already exist !");
+            logger.info("user by username " + userFullDTO.getUserAdditionalData().getUsername() + ", is already exist !");
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.USER_IS_ALREADY_REGISTRATION_FAILED);
         }
 
@@ -109,13 +109,20 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
+    public Page<UserFullDTO> findAllFull(Integer page, Integer size, String sortType, List<String> sortProperties) {
+        Page<User> p = userCrudManagerService.findAllLazy(page, size, sortType, sortProperties);
+        return p.map(user -> transferDTO.modelToDTOUserFull(user));
+    }
+
+    @Override
     public List<UserDTO> findAll(String sortType, List<String> sortProperties) {
-        return null;
+        List<User> list = userCrudManagerService.findAll(sortType, sortProperties);
+        return list.stream().map(o -> transferDTO.modelToDTO(o)).collect(Collectors.toList());
     }
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public List<UserFullDTO> findAll() {
+    public List<UserFullDTO> findAllFull() {
         List<User> list = userCrudManagerService.findAll();
         return list.stream()
                 .map(user -> transferDTO.modelToDTOUserFull(user))
@@ -123,9 +130,21 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
-    public Optional<UserFullDTO> findByUsername(String username) {
+    public List<UserFullDTO> findAllFull(String sortType, List<String> sortProperties) {
+        List<User> list = userCrudManagerService.findAllLazy(sortType, sortProperties);
+        return list.stream().map(o -> transferDTO.modelToDTOUserFull(o)).collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<UserFullDTO> findByUsernameFull(String username) {
+        return userCrudManagerService.findByUsername(username)
+                .map(o -> transferDTO.modelToDTOUserFull(o));
+    }
+
+    @Override
+    public Optional<UserDTO> findByUsername(String username) {
         Optional<User> optional = userCrudManagerService.findByUsername(username);
-        return optional.map(user -> transferDTO.modelToDTOUserFull(user));
+        return optional.map(user -> transferDTO.modelToDTO(user));
     }
 
     @Override
@@ -180,38 +199,118 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
-    public BusinessServiceExecuteResult<UserFullDTO> findOneUserFullDTO(Long id) {
-        if (securitySupportService.isAllowed(id)) {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
+    public Page<UserFullDTO> findAllIsBlockFalseFull(Integer page, Integer size, String sortType, List<String> sortProperties) {
+        Page<User> p = userCrudManagerService.findUserAllByIsBlock(false, page, size, sortType, sortProperties);
+        return p.map(o -> transferDTO.modelToDTOUserFull(o));
+    }
+
+    @Override
+    public List<UserFullDTO> findAllIsBlockFalseFull(String sortType, List<String> sortProperties) {
+        List<User> list = userCrudManagerService.findUserAllByIsBlock(false, sortType, sortProperties);
+        return list.stream().map(o -> transferDTO.modelToDTOUserFull(o)).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserFullDTO> findAllIsBlockFalseFull() {
+        List<User> list = userCrudManagerService.findUserAllByIsBlock(false);
+        return list.stream().map(o -> transferDTO.modelToDTOUserFull(o)).collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<UserFullDTO> findAllIsBlockTrueFull(Integer page, Integer size, String sortType, List<String> sortProperties) {
+        Page<User> p = userCrudManagerService.findUserAllByIsBlock(true, page, size, sortType, sortProperties);
+        return p.map(o -> transferDTO.modelToDTOUserFull(o));
+    }
+
+    @Override
+    public List<UserFullDTO> findAllIsBlockTrueFull(String sortType, List<String> sortProperties) {
+        List<User> list = userCrudManagerService.findUserAllByIsBlock(true, sortType, sortProperties);
+        return list.stream().map(o -> transferDTO.modelToDTOUserFull(o)).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserFullDTO> findAllIsBlockTrueFull() {
+        List<User> list = userCrudManagerService.findUserAllByIsBlock(true);
+        return list.stream()
+                .map(o -> transferDTO.modelToDTOUserFull(o))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<UserFullDTO> findOneUserFull(Long id) {
+        if (!securitySupportService.isAllowed(id)) {
+            logger.warn("FORBIDDEN !!!");
+            return Optional.empty();
         }
-        Optional<User> optional = userCrudManagerService.findOne(id);
-        return BusinessServiceExecuteResult
-                .build(optional.map(user -> transferDTO.modelToDTOUserFull(user)));
+        return userCrudManagerService
+                .findOneFetchUserAdditionalData(id)
+                .map(o -> transferDTO.modelToDTOUserFull(o));
     }
 
     @Override
     public Optional<UserDTO> findOneIsBlockFalse(Long id) {
-        return null;
+        if (!securitySupportService.isAllowed(id)) {
+            logger.warn("FORBIDDEN !!!");
+            return Optional.empty();
+        }
+        return userCrudManagerService
+                .findOneUserByIdAndIsActiveLazy(id, false)
+                .map(o -> transferDTO.modelToDTO(o));
     }
 
     @Override
     public Optional<UserDTO> findOneIsBlockTrue(Long id) {
-        return null;
+        if (!securitySupportService.isAllowed(id)) {
+            logger.warn("FORBIDDEN !!!");
+            return Optional.empty();
+        }
+        return userCrudManagerService
+                .findOneUserByIdAndIsActiveLazy(id, true)
+                .map(o -> transferDTO.modelToDTO(o));
     }
 
     @Override
     public BusinessServiceExecuteResult setRole(Long userId, String role) {
-        return null;
+        if (!securitySupportService.isAllowed(userId)) {
+            logger.warn("FORBIDDEN !!!");
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
+        }
+        Optional<User> user = userCrudManagerService.findOne(userId);
+        if (!user.isPresent()) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
+        }
+        user.get().setRole(UserRoleEnum.valueOf(role.toUpperCase()));
+        User r = userCrudManagerService.save(user.get());
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, r);
     }
 
     @Override
     public BusinessServiceExecuteResult setPasswordBySecretKey(String newPassword, String secretKey) {
-        return null;
+        Optional<User> optional = userCrudManagerService.findUserBySecretKeyLazy(secretKey);
+        if (!optional.isPresent()) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
+        }
+
+        String newPasswordEncode = passwordEncoder.encode(newPassword);
+        optional.get().getUserAdditionalData().setPassword(newPasswordEncode);
+        User r = userCrudManagerService.save(optional.get());
+        //todo maybe set new secret key
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, r);
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public BusinessServiceExecuteResult setPasswordBySecretKey(String newPassword, Long id) {
-        return null;
+        Optional<User> optional = userCrudManagerService.findOneFetchUserAdditionalData(id);
+        if (!optional.isPresent()) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
+        }
+
+        String newPasswordEncode = passwordEncoder.encode(newPassword);
+        optional.get().getUserAdditionalData().setPassword(newPasswordEncode);
+        User r = userCrudManagerService.save(optional.get());
+        //todo maybe set new secret key
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, r);
     }
 
     @Override
@@ -220,47 +319,125 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public BusinessServiceExecuteResult setNewSecretKey(Long id) {
-        return null;
+        Optional<User> optional = userCrudManagerService.findOneFetchUserAdditionalData(id);
+        if (!optional.isPresent()) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
+        }
+        optional.get().getUserAdditionalData().setSecretKey(UUID.randomUUID().toString());
+        User r = userCrudManagerService.save(optional.get());
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, r);
     }
 
     @Override
     public BusinessServiceExecuteResult delete(Long id) {
-        return null;
+        if (!securitySupportService.isAllowed(id)) {
+            logger.warn("FORBIDDEN !!!");
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
+        }
+        userCrudManagerService.delete(id);
+        Optional<User> optional = userCrudManagerService.findOne(id);
+        if (optional.isPresent()) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.EXPECTATION_FAILED);
+        } else {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK);
+        }
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public BusinessServiceExecuteResult delete(List<Long> ids) {
-        return null;
+        ids.forEach(o -> userCrudManagerService.delete(o));
+
+        for (Long id : ids) {
+            Optional<User> user = userCrudManagerService.findOne(id);
+            if (user.isPresent())
+                return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.EXPECTATION_FAILED);
+        }
+
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK);
     }
 
     @Override
     public BusinessServiceExecuteResult deleteAll() {
-        return null;
+        List<User> list = userCrudManagerService.findAll();
+        list.forEach(o -> userCrudManagerService.delete(o.getId()));
+
+        list.clear();
+        list = userCrudManagerService.findAll();
+        if (!list.isEmpty()) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.EXPECTATION_FAILED);
+        }
+
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK);
     }
 
     @Override
     public BusinessServiceExecuteResult activatedUser(String secretKey) {
-        return null;
+        Optional<User> optional = userCrudManagerService.findUserBySecretKeyLazy(secretKey);
+        if (!optional.isPresent()) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
+        }
+
+        optional.get().getUserAdditionalData().setActive(true);
+        User r = userCrudManagerService.save(optional.get());
+
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, r);
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public BusinessServiceExecuteResult deactivatedUser(Long id) {
-        return null;
+        Optional<User> optional = userCrudManagerService.findOneFetchUserAdditionalData(id);
+        if (!optional.isPresent()) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
+        }
+
+        optional.get().getUserAdditionalData().setActive(false);
+        User r = userCrudManagerService.save(optional.get());
+
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, r);
     }
 
     @Override
     public BusinessServiceExecuteResult deactivatedUser(String secretKey) {
-        return null;
+        Optional<User> optional = userCrudManagerService.findUserBySecretKeyLazy(secretKey);
+        if (!optional.isPresent()) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
+        }
+
+        optional.get().getUserAdditionalData().setActive(false);
+        User r = userCrudManagerService.save(optional.get());
+
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, r);
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public BusinessServiceExecuteResult sendBlockToUser(Long id) {
-        return null;
+        Optional<User> optional = userCrudManagerService.findOneFetchUserAdditionalData(id);
+        if (!optional.isPresent()) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
+        }
+
+        optional.get().getUserAdditionalData().setBlock(true);
+        User r = userCrudManagerService.save(optional.get());
+
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, r);
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public BusinessServiceExecuteResult sendUnBlockToUser(Long id) {
-        return null;
+        Optional<User> optional = userCrudManagerService.findOneFetchUserAdditionalData(id);
+        if (!optional.isPresent()) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
+        }
+
+        optional.get().getUserAdditionalData().setActive(false);
+        User r = userCrudManagerService.save(optional.get());
+
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, r);
     }
 }

@@ -21,13 +21,13 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
             " join m.dialog as d " +
             " where d.id =:dialogId " +
             " and (d.first.id =:userId or d.second.id =userId) ")
-    Page<Message> findMessageByDialogAndUserDialog(@Param("dialogId") Long dialogId, @Param("userId") Long userId);
+    Page<Message> findMessageByDialogAndUserDialog(@Param("dialogId") Long dialogId, @Param("userId") Long userId, Pageable pageable);
 
     @Query(" select m " +
             " from Message m " +
             " join m.dialog as d " +
             " where d.id =:dialogId ")
-    Page<Message> findMessageByDialog(@Param("dialogId") Long dialogId);
+    Page<Message> findMessageByDialog(@Param("dialogId") Long dialogId, Pageable pageable);
 
     @Query("select m from Message m where m.id =:id")
     Optional<Message> findOneMessageById(@Param("id") Long messageId);
@@ -41,8 +41,8 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
             " select max (m.id) " +
             " from Message m " +
             " join m.dialog as d " +
-            " where d.first.id =:id1 " +
-            " or d.second.id =:id1 " +
+            " where d.first.id =:userId " +
+            " or d.second.id =:userId " +
             " group by m.dialog.id ) " +
             " order by m.id desc ")
     Page<Message> findLastMessageInMyDialog(@Param("userId") Long iam, Pageable pageable);
@@ -53,8 +53,8 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
             " select max (m.id) " +
             " from Message m " +
             " join m.dialog as d " +
-            " where d.first.id =:id1 " +
-            " or d.second.id =:id1 " +
+            " where d.first.id =:userId " +
+            " or d.second.id =:userId " +
             " group by m.dialog.id ) " +
             " order by m.id desc ")
     List<Message> findLastMessageInMyDialog(@Param("userId") Long iam, Sort sort);
@@ -65,13 +65,15 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     @Query("select m from Message m where m.sender.id =:senderId")
     List<Message> findMessageBySenderId(@Param("senderId") Long senderId, Sort sort);
 
-    @Query(" select m from Message m " +
+    @Query(" select m" +
+            " from Message m " +
             " join m.dialog as d " +
             " where m.sender.id <> recipientId " +
             " and (d.first.id =:recipientId or d.second.id =:recipientId) ")
     Page<Message> findMessageByRecipientId(@Param("recipientId") Long recipientId, Pageable pageable);
 
-    @Query(" select m from Message m " +
+    @Query(" select m " +
+            " from Message m " +
             " join m.dialog as d " +
             " where m.sender.id <> recipientId " +
             " and (d.first.id =:recipientId or d.second.id =:recipientId) ")
