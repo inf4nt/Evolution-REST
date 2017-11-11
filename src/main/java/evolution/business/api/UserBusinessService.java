@@ -2,6 +2,7 @@ package evolution.business.api;
 
 import evolution.dto.model.UserDTO;
 import evolution.dto.model.UserDTOForSave;
+import evolution.dto.model.UserDTOForUpdate;
 import evolution.dto.model.UserFullDTO;
 import evolution.business.BusinessServiceExecuteResult;
 import org.springframework.data.domain.Page;
@@ -15,9 +16,13 @@ import java.util.Optional;
 
 public interface UserBusinessService {
 
-    BusinessServiceExecuteResult<UserFullDTO> createNewUser(UserFullDTO userFullDTO);
+    BusinessServiceExecuteResult<UserFullDTO> createNewUserFull(UserDTOForSave userDTOForSave);
 
-    BusinessServiceExecuteResult<UserFullDTO> update(UserDTOForSave userDTO);
+    BusinessServiceExecuteResult<UserFullDTO> updateFull(UserDTOForUpdate userDTOForUpdate);
+
+    BusinessServiceExecuteResult<UserDTOForSave> createNewUser(UserDTOForSave userDTOForSave);
+
+    BusinessServiceExecuteResult<UserDTOForUpdate> update(UserDTOForUpdate userDTOForUpdate);
 
     Page<UserDTO> findAll(Integer page, Integer size, String sortType, List<String> sortProperties);
 
@@ -33,37 +38,23 @@ public interface UserBusinessService {
 
     Optional<UserDTO> findByUsername(String username);
 
-    Page<UserDTO> findAllIsBlockFalse(Integer page, Integer size, String sortType, List<String> sortProperties);
+    Page<UserDTO> findAllIsBlock(boolean isBlock, Integer page, Integer size, String sortType, List<String> sortProperties);
 
-    List<UserDTO> findAllIsBlockFalse(String sortType, List<String> sortProperties);
+    List<UserDTO> findAllIsBlock(boolean isBlock, String sortType, List<String> sortProperties);
 
-    List<UserDTO> findAllIsBlockFalse();
-
-    Page<UserDTO> findAllIsBlockTrue(Integer page, Integer size, String sortType, List<String> sortProperties);
-
-    List<UserDTO> findAllIsBlockTrue(String sortType, List<String> sortProperties);
-
-    List<UserDTO> findAllIsBlockTrue();
+    List<UserDTO> findAllIsBlock(boolean isBlock);
 
     Optional<UserDTO> findOne(Long id);
 
-    Page<UserFullDTO> findAllIsBlockFalseFull(Integer page, Integer size, String sortType, List<String> sortProperties);
+    Page<UserFullDTO> findAllIsBlockFull(boolean isBlock, Integer page, Integer size, String sortType, List<String> sortProperties);
 
-    List<UserFullDTO> findAllIsBlockFalseFull(String sortType, List<String> sortProperties);
+    List<UserFullDTO> findAllIsBlockFull(boolean isBlock, String sortType, List<String> sortProperties);
 
-    List<UserFullDTO> findAllIsBlockFalseFull();
-
-    Page<UserFullDTO> findAllIsBlockTrueFull(Integer page, Integer size, String sortType, List<String> sortProperties);
-
-    List<UserFullDTO> findAllIsBlockTrueFull(String sortType, List<String> sortProperties);
-
-    List<UserFullDTO> findAllIsBlockTrueFull();
+    List<UserFullDTO> findAllIsBlockFull(boolean isBlock);
 
     Optional<UserFullDTO> findOneUserFull(Long id);
 
-    Optional<UserDTO> findOneIsBlockFalse(Long id);
-
-    Optional<UserDTO> findOneIsBlockTrue(Long id);
+    Optional<UserDTO> findOneIsBlock(Long id, boolean isBlock);
 
     BusinessServiceExecuteResult setRole(Long userId, String role);
 

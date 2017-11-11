@@ -4,13 +4,17 @@ import evolution.business.api.UserBusinessService;
 import evolution.common.BusinessServiceExecuteStatus;
 import evolution.common.UserRoleEnum;
 import evolution.crud.api.UserCrudManagerService;
+import evolution.dto.UserDTOTransfer;
 import evolution.dto.model.UserDTO;
 import evolution.dto.model.UserDTOForSave;
+import evolution.dto.model.UserDTOForUpdate;
 import evolution.dto.model.UserFullDTO;
-import evolution.dto.transfer.TransferDTO;
+
 import evolution.model.User;
+import evolution.model.UserAdditionalData;
 import evolution.service.DateService;
 import evolution.service.SecuritySupportService;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +23,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -34,206 +39,179 @@ public class UserBusinessServiceImpl implements UserBusinessService {
 
     private final SecuritySupportService securitySupportService;
 
-    private final TransferDTO transferDTO;
-
     private final UserCrudManagerService userCrudManagerService;
 
     private final DateService dateService;
 
     private final PasswordEncoder passwordEncoder;
 
+    private final UserDTOTransfer userDTOTransfer;
+
     @Autowired
-    public UserBusinessServiceImpl(SecuritySupportService securitySupportService, TransferDTO transferDTO, UserCrudManagerService userCrudManagerService, DateService dateService, PasswordEncoder passwordEncoder) {
+    public UserBusinessServiceImpl(SecuritySupportService securitySupportService,
+                                   UserCrudManagerService userCrudManagerService,
+                                   DateService dateService,
+                                   PasswordEncoder passwordEncoder,
+                                   UserDTOTransfer userDTOTransfer) {
         this.securitySupportService = securitySupportService;
-        this.transferDTO = transferDTO;
         this.userCrudManagerService = userCrudManagerService;
         this.dateService = dateService;
         this.passwordEncoder = passwordEncoder;
+        this.userDTOTransfer = userDTOTransfer;
     }
 
     @Override
-    public BusinessServiceExecuteResult<UserFullDTO> createNewUser(UserFullDTO userFullDTO) {
-        Optional<User> ou = userCrudManagerService.findByUsername(userFullDTO.getUserAdditionalData().getUsername());
+    public BusinessServiceExecuteResult<UserFullDTO> createNewUserFull(UserDTOForSave userDTOForSave) {
+        return null;
+    }
+
+    @Override
+    public BusinessServiceExecuteResult<UserFullDTO> updateFull(UserDTOForUpdate userDTOForUpdate) {
+        return null;
+    }
+
+    @Override
+    public BusinessServiceExecuteResult<UserDTOForSave> createNewUser(UserDTOForSave userDTOForSave) {
+        Optional<User> ou = userCrudManagerService.findByUsername(userDTOForSave.getUserAdditionalData().getUsername());
         if (ou.isPresent()) {
-            logger.info("user by username " + userFullDTO.getUserAdditionalData().getUsername() + ", is already exist !");
+            logger.info("user by username " + userDTOForSave.getUserAdditionalData().getUsername() + ", is already exist !");
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.USER_IS_ALREADY_REGISTRATION_FAILED);
         }
 
-        User user = transferDTO.dtoToModel(userFullDTO);
-        // todo check valid
-        if (user.getId() != null)
-            user.setId(null);
-        //set current date in UTC
-        user.getUserAdditionalData().setRegistrationDate(dateService.getCurrentDateInUTC());
-        //encode password
+        User user = userDTOTransfer.dtoToModel(userDTOForSave);
         String encodePassword = passwordEncoder.encode(user.getUserAdditionalData().getPassword());
-        //set encoded password
-        user.getUserAdditionalData().setPassword(encodePassword);
-        //set default role
-        user.setRole(UserRoleEnum.USER);
 
+        user.getUserAdditionalData().setPassword(encodePassword);
+
+        user.getUserAdditionalData().setBlock(false);
+        user.getUserAdditionalData().setActive(false);
+        user.getUserAdditionalData().setSecretKey(UUID.randomUUID().toString());
+        user.getUserAdditionalData().setRegistrationDate(dateService.getCurrentDateInUTC());
+        user.setRole(UserRoleEnum.USER);
         user.getUserAdditionalData().setUser(user);
 
-        //generate secret key
-        String secretKey = UUID.randomUUID().toString();
-        user.getUserAdditionalData().setSecretKey(secretKey);
-        //set block
-        user.getUserAdditionalData().setBlock(false);
-        //set active
-        user.getUserAdditionalData().setActive(false);
 
-        // todo create letter about registration
-
+//        User user = transferDTO.dtoToModel(userFullDTO);
+//
+//        // todo check valid
+//        if (user.getId() != null)
+//            user.setId(null);
+//        //set current date in UTC
+//        user.getUserAdditionalData().setRegistrationDate(dateService.getCurrentDateInUTC());
+//        //encode password
+//        String encodePassword = passwordEncoder.encode(user.getUserAdditionalData().getPassword());
+//        //set encoded password
+//        user.getUserAdditionalData().setPassword(encodePassword);
+//        //set default role
+//        user.setRole(UserRoleEnum.USER);
+//
+//        user.getUserAdditionalData().setUser(user);
+//
+//        //generate secret key
+//        String secretKey = UUID.randomUUID().toString();
+//        user.getUserAdditionalData().setSecretKey(secretKey);
+//        //set block
+//        user.getUserAdditionalData().setBlock(false);
+//        //set active
+//        user.getUserAdditionalData().setActive(false);
+//
+//        // todo create letter about registration
+//
         User result = userCrudManagerService.save(user);
-        UserFullDTO resultDTO = transferDTO.modelToDTOUserFull(result);
+        UserDTOForSave userDTOForSave1 = userDTOTransfer.modelToDTOForSave(result);
 
-        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, resultDTO);
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, userDTOForSave1);
+
     }
 
     @Override
-    public BusinessServiceExecuteResult<UserFullDTO> update(UserDTOForSave userDTO) {
-        if (!securitySupportService.isAllowed(userDTO.getId())) {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
-        }
-
-        User user = transferDTO.dtoToModel(userDTO);
-
-
+    public BusinessServiceExecuteResult<UserDTOForUpdate> update(UserDTOForUpdate userDTOForUpdate) {
         return null;
     }
 
     @Override
     public Page<UserDTO> findAll(Integer page, Integer size, String sortType, List<String> sortProperties) {
         Page<User> p = userCrudManagerService.findAll(page, size, sortType, sortProperties);
-        return p.map(user -> transferDTO.modelToDTO(user));
+        return p.map(user -> userDTOTransfer.modelToDTO(user));
     }
 
     @Override
     public Page<UserFullDTO> findAllFull(Integer page, Integer size, String sortType, List<String> sortProperties) {
         Page<User> p = userCrudManagerService.findAllLazy(page, size, sortType, sortProperties);
-        return p.map(user -> transferDTO.modelToDTOUserFull(user));
+//        return p.map(user -> transferDTO.modelToDTOUserFull(user));
+        return null;
     }
 
     @Override
     public List<UserDTO> findAll(String sortType, List<String> sortProperties) {
         List<User> list = userCrudManagerService.findAll(sortType, sortProperties);
-        return list.stream().map(o -> transferDTO.modelToDTO(o)).collect(Collectors.toList());
+//        return list.stream().map(o -> transferDTO.modelToDTO(o)).collect(Collectors.toList());
+        return null;
     }
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<UserFullDTO> findAllFull() {
         List<User> list = userCrudManagerService.findAll();
-        return list.stream()
-                .map(user -> transferDTO.modelToDTOUserFull(user))
-                .collect(Collectors.toList());
+//        return list.stream()
+//                .map(user -> transferDTO.modelToDTOUserFull(user))
+//                .collect(Collectors.toList());
+        return null;
     }
 
     @Override
     public List<UserFullDTO> findAllFull(String sortType, List<String> sortProperties) {
         List<User> list = userCrudManagerService.findAllLazy(sortType, sortProperties);
-        return list.stream().map(o -> transferDTO.modelToDTOUserFull(o)).collect(Collectors.toList());
+        return list.stream().map(o -> userDTOTransfer.modelToDTOFull(o)).collect(Collectors.toList());
     }
 
     @Override
     public Optional<UserFullDTO> findByUsernameFull(String username) {
         return userCrudManagerService.findByUsername(username)
-                .map(o -> transferDTO.modelToDTOUserFull(o));
+                .map(o -> userDTOTransfer.modelToDTOFull(o));
     }
 
     @Override
     public Optional<UserDTO> findByUsername(String username) {
         Optional<User> optional = userCrudManagerService.findByUsername(username);
-        return optional.map(user -> transferDTO.modelToDTO(user));
+        return optional.map(user -> userDTOTransfer.modelToDTO(user));
     }
 
     @Override
-    public Page<UserDTO> findAllIsBlockFalse(Integer page, Integer size, String sortType, List<String> sortProperties) {
-        Page<User> p = userCrudManagerService.findUserAllByIsBlock(false, page, size, sortType, sortProperties);
-        return p.map(user -> transferDTO.modelToDTO(user));
+    public Page<UserDTO> findAllIsBlock(boolean isBlock, Integer page, Integer size, String sortType, List<String> sortProperties) {
+        return null;
     }
 
     @Override
-    public List<UserDTO> findAllIsBlockFalse(String sortType, List<String> sortProperties) {
-        List<User> list = userCrudManagerService.findUserAllByIsBlock(false, sortType, sortProperties);
-        return list.stream()
-                .map(user -> transferDTO.modelToDTO(user))
-                .collect(Collectors.toList());
+    public List<UserDTO> findAllIsBlock(boolean isBlock, String sortType, List<String> sortProperties) {
+        return null;
     }
 
     @Override
-    public List<UserDTO> findAllIsBlockFalse() {
-        List<User> list = userCrudManagerService.findUserAllByIsBlock(false);
-        return list.stream()
-                .map(user -> transferDTO.modelToDTO(user))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public Page<UserDTO> findAllIsBlockTrue(Integer page, Integer size, String sortType, List<String> sortProperties) {
-        Page<User> p = userCrudManagerService.findUserAllByIsBlock(true, page, size, sortType, sortProperties);
-        return p.map(user -> transferDTO.modelToDTO(user));
-    }
-
-    @Override
-    public List<UserDTO> findAllIsBlockTrue(String sortType, List<String> sortProperties) {
-        List<User> list = userCrudManagerService.findUserAllByIsBlock(true, sortType, sortProperties);
-        return list.stream()
-                .map(user -> transferDTO.modelToDTO(user))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<UserDTO> findAllIsBlockTrue() {
-        List<User> list = userCrudManagerService.findUserAllByIsBlock(true);
-        return list.stream()
-                .map(user -> transferDTO.modelToDTO(user))
-                .collect(Collectors.toList());
+    public List<UserDTO> findAllIsBlock(boolean isBlock) {
+        return null;
     }
 
     @Override
     public Optional<UserDTO> findOne(Long id) {
         return userCrudManagerService
                 .findOne(id)
-                .map(user -> transferDTO.modelToDTO(user));
+                .map(user -> userDTOTransfer.modelToDTO(user));
     }
 
     @Override
-    public Page<UserFullDTO> findAllIsBlockFalseFull(Integer page, Integer size, String sortType, List<String> sortProperties) {
-        Page<User> p = userCrudManagerService.findUserAllByIsBlock(false, page, size, sortType, sortProperties);
-        return p.map(o -> transferDTO.modelToDTOUserFull(o));
+    public Page<UserFullDTO> findAllIsBlockFull(boolean isBlock, Integer page, Integer size, String sortType, List<String> sortProperties) {
+        return null;
     }
 
     @Override
-    public List<UserFullDTO> findAllIsBlockFalseFull(String sortType, List<String> sortProperties) {
-        List<User> list = userCrudManagerService.findUserAllByIsBlock(false, sortType, sortProperties);
-        return list.stream().map(o -> transferDTO.modelToDTOUserFull(o)).collect(Collectors.toList());
+    public List<UserFullDTO> findAllIsBlockFull(boolean isBlock, String sortType, List<String> sortProperties) {
+        return null;
     }
 
     @Override
-    public List<UserFullDTO> findAllIsBlockFalseFull() {
-        List<User> list = userCrudManagerService.findUserAllByIsBlock(false);
-        return list.stream().map(o -> transferDTO.modelToDTOUserFull(o)).collect(Collectors.toList());
-    }
-
-    @Override
-    public Page<UserFullDTO> findAllIsBlockTrueFull(Integer page, Integer size, String sortType, List<String> sortProperties) {
-        Page<User> p = userCrudManagerService.findUserAllByIsBlock(true, page, size, sortType, sortProperties);
-        return p.map(o -> transferDTO.modelToDTOUserFull(o));
-    }
-
-    @Override
-    public List<UserFullDTO> findAllIsBlockTrueFull(String sortType, List<String> sortProperties) {
-        List<User> list = userCrudManagerService.findUserAllByIsBlock(true, sortType, sortProperties);
-        return list.stream().map(o -> transferDTO.modelToDTOUserFull(o)).collect(Collectors.toList());
-    }
-
-    @Override
-    public List<UserFullDTO> findAllIsBlockTrueFull() {
-        List<User> list = userCrudManagerService.findUserAllByIsBlock(true);
-        return list.stream()
-                .map(o -> transferDTO.modelToDTOUserFull(o))
-                .collect(Collectors.toList());
+    public List<UserFullDTO> findAllIsBlockFull(boolean isBlock) {
+        return null;
     }
 
     @Override
@@ -242,31 +220,15 @@ public class UserBusinessServiceImpl implements UserBusinessService {
             logger.warn("FORBIDDEN !!!");
             return Optional.empty();
         }
-        return userCrudManagerService
-                .findOneFetchUserAdditionalData(id)
-                .map(o -> transferDTO.modelToDTOUserFull(o));
+//        return userCrudManagerService
+//                .findOneFetchUserAdditionalData(id)
+//                .map(o -> transferDTO.modelToDTOUserFull(o));
+        return null;
     }
 
     @Override
-    public Optional<UserDTO> findOneIsBlockFalse(Long id) {
-        if (!securitySupportService.isAllowed(id)) {
-            logger.warn("FORBIDDEN !!!");
-            return Optional.empty();
-        }
-        return userCrudManagerService
-                .findOneUserByIdAndIsActiveLazy(id, false)
-                .map(o -> transferDTO.modelToDTO(o));
-    }
-
-    @Override
-    public Optional<UserDTO> findOneIsBlockTrue(Long id) {
-        if (!securitySupportService.isAllowed(id)) {
-            logger.warn("FORBIDDEN !!!");
-            return Optional.empty();
-        }
-        return userCrudManagerService
-                .findOneUserByIdAndIsActiveLazy(id, true)
-                .map(o -> transferDTO.modelToDTO(o));
+    public Optional<UserDTO> findOneIsBlock(Long id, boolean isBlock) {
+        return null;
     }
 
     @Override

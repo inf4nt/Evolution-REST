@@ -2,7 +2,7 @@ package evolution.rest.api;
 
 import evolution.dto.model.UserDTO;
 import evolution.dto.model.UserDTOForSave;
-import evolution.dto.model.UserForUpdate;
+import evolution.dto.model.UserDTOForUpdate;
 import evolution.dto.model.UserFullDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -33,7 +33,7 @@ public interface UserRestService {
 
     ResponseEntity<HttpStatus> createNewUser(UserDTOForSave user);
 
-    ResponseEntity<HttpStatus> update(UserForUpdate user);
+    ResponseEntity<HttpStatus> update(UserDTOForUpdate user);
 
     ResponseEntity<HttpStatus> delete(Long id);
 

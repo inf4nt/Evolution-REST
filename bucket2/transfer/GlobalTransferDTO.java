@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by Infant on 07.11.2017.
  */
-public interface TransferDTO {
+public interface GlobalTransferDTO {
 
     MessageDTO modelToDTO(Message message);
 

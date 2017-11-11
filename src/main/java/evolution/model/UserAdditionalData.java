@@ -19,7 +19,6 @@ import java.util.Date;
 @Entity
 @Table(name = "user_additional_data")
 @Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserAdditionalData {
 
     @Id
@@ -39,14 +38,14 @@ public class UserAdditionalData {
     @Column(name = "password", nullable = false, columnDefinition = "varchar(255)")
     private String password;
 
-    @Column(name = "registration_date")
+    @Column(name = "registration_date", columnDefinition = "timestamp default current_timestamp")
     @Temporal(TemporalType.TIMESTAMP)
     private Date registrationDate;
 
-    @Column
+    @Column(columnDefinition = "varchar(255)")
     private String country;
 
-    @Column
+    @Column(columnDefinition = "varchar(255)")
     private String state;
 
     @Enumerated(EnumType.STRING)
@@ -62,9 +61,6 @@ public class UserAdditionalData {
     @Column(name = "secret_key", columnDefinition = "varchar(255)", unique = true)
     private String secretKey;
 
-    // todo create custom json serialization
-    @JsonSerialize(using = CustomUserAdditionalDataSerializerUser.class)
-//    @JsonIgnore
     @OneToOne(mappedBy = "userAdditionalData", fetch = FetchType.LAZY)
     private User user;
 

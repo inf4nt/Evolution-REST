@@ -1,9 +1,12 @@
 package evolution.rest;
 
+import com.sun.org.apache.regexp.internal.RE;
+import evolution.business.BusinessServiceExecuteResult;
 import evolution.business.api.UserBusinessService;
+import evolution.common.BusinessServiceExecuteStatus;
 import evolution.dto.model.UserDTO;
 import evolution.dto.model.UserDTOForSave;
-import evolution.dto.model.UserForUpdate;
+import evolution.dto.model.UserDTOForUpdate;
 import evolution.dto.model.UserFullDTO;
 import evolution.rest.api.UserRestService;
 import org.slf4j.Logger;
@@ -15,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by Infant on 29.10.2017.
@@ -35,7 +39,7 @@ public class UserRestServiceImpl implements UserRestService {
 
         Page<UserDTO> p = userBusinessService.findAll(page, size, sortType, sortProperties);
 
-        if(p.getContent().isEmpty()) {
+        if (p.getContent().isEmpty()) {
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.ok(p);
@@ -44,9 +48,8 @@ public class UserRestServiceImpl implements UserRestService {
 
     @Override
     public ResponseEntity<UserDTO> findOne(Long userId) {
-        return userBusinessService
-                .findOne(userId)
-                .map(o  -> ResponseEntity.ok(o))
+        return userBusinessService.findOne(userId)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.noContent().build());
     }
 
@@ -54,7 +57,7 @@ public class UserRestServiceImpl implements UserRestService {
     public ResponseEntity<UserFullDTO> findOneFull(Long userId) {
         return userBusinessService
                 .findOneUserFull(userId)
-                .map(o  -> ResponseEntity.ok(o))
+                .map(o -> ResponseEntity.ok(o))
                 .orElse(ResponseEntity.noContent().build());
     }
 
@@ -62,7 +65,7 @@ public class UserRestServiceImpl implements UserRestService {
     public ResponseEntity<UserDTO> findByUsername(String username) {
         return userBusinessService
                 .findByUsername(username)
-                .map(o  -> ResponseEntity.ok(o))
+                .map(o -> ResponseEntity.ok(o))
                 .orElse(ResponseEntity.noContent().build());
     }
 
@@ -76,8 +79,8 @@ public class UserRestServiceImpl implements UserRestService {
 
     @Override
     public ResponseEntity<List<UserDTO>> findAll(String sortType, List<String> sortProperties) {
-        List<UserDTO> list =  userBusinessService.findAll(sortType, sortProperties);
-        if(list.isEmpty()) {
+        List<UserDTO> list = userBusinessService.findAll(sortType, sortProperties);
+        if (list.isEmpty()) {
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.ok(list);
@@ -101,30 +104,16 @@ public class UserRestServiceImpl implements UserRestService {
 
     @Override
     public ResponseEntity<HttpStatus> createNewUser(UserDTOForSave user) {
-//        try {
-//            HttpStatus httpStatus = exist(user.getUserAdditionalData().getUsername()).getStatusCode();
-//            if (httpStatus == HttpStatus.OK) {
-//                return ResponseEntity.status(417).build();
-//            }
-//
-//            logger.info(user.toString());
-//            String password = passwordEncoder.encode(user.getUserAdditionalData().getPassword());
-//            user.getUserAdditionalData().setPassword(password);
-//
-//            //todo check valid user
-//            userDataService.save(user);
-//
-//            return ResponseEntity.status(201).build();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            logger.warn(e.getMessage());
-//            return ResponseEntity.status(500).build();
-//        }
-        return null;
+        BusinessServiceExecuteResult b = userBusinessService.createNewUser(user);
+        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
+            return ResponseEntity.ok().build();
+        }
+
+        return ResponseEntity.status(417).build();
     }
 
     @Override
-    public ResponseEntity<HttpStatus> update(UserForUpdate user) {
+    public ResponseEntity<HttpStatus> update(UserDTOForUpdate user) {
 //        userDataService.save(user);
 //        return ResponseEntity.ok().build();
         return null;
@@ -152,10 +141,11 @@ public class UserRestServiceImpl implements UserRestService {
 
     @Override
     public ResponseEntity<HttpStatus> exist(String username) {
-//        if (userDataService.exist(username)) {
-//            return ResponseEntity.ok().build();
-//        }
-//        return ResponseEntity.noContent().build();
-        return null;
+        Optional<UserDTO> optional =  userBusinessService.findByUsername(username);
+        if (optional.isPresent()) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.noContent().build();
+        }
     }
 }

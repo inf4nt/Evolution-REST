@@ -4,8 +4,6 @@ import evolution.dto.model.*;
 import evolution.model.Dialog;
 import evolution.model.Message;
 import evolution.model.User;
-import evolution.service.DateService;
-import evolution.service.SecuritySupportService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +15,7 @@ import java.util.stream.Collectors;
  * Created by Infant on 07.11.2017.
  */
 @Service
-public class TransferDTOImpl implements TransferDTO {
+public class TransferDTOImpl implements GlobalTransferDTO {
 
     private final ModelMapper modelMapper;
 
@@ -123,7 +121,7 @@ public class TransferDTOImpl implements TransferDTO {
     @Override
     public UserFullDTO modelToDTOUserFull(User user) {
         UserFullDTO u = modelMapper.map(user, UserFullDTO.class);
-        u.getUserAdditionalData().setUserId(user.getId());
+//        u.getUserAdditionalData().setUserId(user.getId());
         return u;
     }
 

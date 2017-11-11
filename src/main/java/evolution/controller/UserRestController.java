@@ -1,6 +1,8 @@
 package evolution.controller;
 
 import evolution.dto.model.UserDTO;
+import evolution.dto.model.UserDTOForSave;
+import evolution.dto.model.UserDTOForUpdate;
 import evolution.dto.model.UserFullDTO;
 import evolution.rest.api.UserRestService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,12 +54,12 @@ public class UserRestController {
     }
 
     @PostMapping
-    public ResponseEntity<HttpStatus> save(@RequestBody UserDTO user) {
+    public ResponseEntity<HttpStatus> save(@RequestBody UserDTOForSave user) {
         return userRestService.createNewUser(user);
     }
 
     @PutMapping
-    public ResponseEntity<HttpStatus> update(@RequestBody UserDTO user) {
+    public ResponseEntity<HttpStatus> update(@RequestBody UserDTOForUpdate user) {
         return userRestService.update(user);
     }
 

@@ -32,6 +32,4 @@ public class UserAdditionalDataDTO {
     private boolean isActive;
 
     private String secretKey;
-
-    private Long userId;
 }

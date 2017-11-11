@@ -1,44 +1,75 @@
-//package evolution.controller;
-//
-//import evolution.data.MessageDataService;
-//import evolution.dto.model.MessageDTO;
-//import evolution.model.Message;
-//import evolution.dto.transfer.TransferDTO;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.web.bind.annotation.CrossOrigin;
-//import org.springframework.web.bind.annotation.GetMapping;
-//import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.web.bind.annotation.RestController;
-//
-//import java.util.List;
-//
-///**
-// * Created by Infant on 07.11.2017.
-// */
-//@RestController
-//@RequestMapping(value = "/test")
-//@CrossOrigin
-//public class TestMessageController {
-//
-//    private final MessageDataService messageDataService;
-//
-//    private final TransferDTO transferDTO;
-//
-//    @Autowired
-//    public TestMessageController(MessageDataService messageDataService, TransferDTO transferDTO) {
-//        this.messageDataService = messageDataService;
-//        this.transferDTO = transferDTO;
-//    }
-//
-//    @GetMapping
-//    public List<MessageDTO> findAll() {
-//        List<Message> list = messageDataService.findAll();
-//
-//        List<MessageDTO> messageDTOS = transferDTO.modelToDTOListMessage(list);
-//
-//        return messageDTOS;
-//
-//    }
-//
-//
-//}
+package evolution.controller;
+
+
+
+import evolution.business.api.UserBusinessService;
+import evolution.dto.model.UserDTOForSave;
+import evolution.dto.model.UserFullDTO;
+import evolution.model.User;
+import evolution.repository.UserRepository;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.bind.annotation.*;
+import java.util.Optional;
+
+/**
+ * Created by Infant on 07.11.2017.
+ */
+@RestController
+@RequestMapping(value = "/test")
+@CrossOrigin
+public class TestMessageController {
+
+    private final ModelMapper modelMapper;
+
+    private final UserRepository userRepository;
+
+    private final UserBusinessService userBusinessService;
+
+    @Autowired
+    public TestMessageController(ModelMapper modelMapper,
+                                 UserRepository userRepository, UserBusinessService userBusinessService) {
+        this.modelMapper = modelMapper;
+        this.userRepository = userRepository;
+
+        this.userBusinessService = userBusinessService;
+    }
+
+    @GetMapping(value = "/dto/{id}")
+    public UserFullDTO getDTO(@PathVariable Long id) {
+        Optional<User> user = userRepository.findOneUserByIdLazy(id);
+        return user.map(o -> modelMapper
+                .map(o, UserFullDTO.class))
+                .orElse(null);
+    }
+
+    @GetMapping(value = "/model/{id}")
+    public User getModel(@PathVariable Long id) {
+        User user = userRepository.findOneUserByIdLazy(id).get();
+
+        UserDTOForSave userDTOForSave = modelMapper.map(user, UserDTOForSave.class);
+
+        System.out.println("userDTOForSave " + userDTOForSave);
+
+        userDTOForSave.setFirstName("LOOOOOX");
+        userDTOForSave.setLastName("POOOOCCC");
+
+        User r = modelMapper.map(userDTOForSave, User.class);
+
+        return r;
+    }
+
+    @GetMapping(value = "/post")
+    public UserDTOForSave testPost() {
+        UserDTOForSave userDTOForSave = new UserDTOForSave();
+        userDTOForSave.setLastName("ln_post");
+        userDTOForSave.setFirstName("fn_post");
+        userDTOForSave.setNickname("nickname_post");
+        userDTOForSave.getUserAdditionalData().setUsername("username_post");
+        userDTOForSave.getUserAdditionalData().setPassword("1111");
+
+        return userBusinessService.createNewUser(userDTOForSave).getResultObject().orElseGet(null);
+    }
+
+}

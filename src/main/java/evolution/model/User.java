@@ -19,7 +19,6 @@ import javax.persistence.*;
 @Table(name = "user_data")
 @Data
 @NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class User {
 
     // default data
@@ -51,10 +50,9 @@ public class User {
     // default data
     // default data
 
-//    @JsonSerialize(using = CustomUserSerializerUserAdditionalData.class)
     @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REMOVE})
     @JoinColumn(name = "user_additional_data_id", columnDefinition = "bigint")
-    private UserAdditionalData userAdditionalData;
+    private UserAdditionalData userAdditionalData = new UserAdditionalData();
 
     @Version
     @Column(columnDefinition = "bigint")
