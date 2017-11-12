@@ -34,14 +34,13 @@ public class UserDetailsServiceImpl
     }
 
     @Override
-    @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional optional = userRepository.findUserByUsernameLazy(username);
+        Optional<User> optional = userRepository.findUserByUsernameLazy(username);
         if (!optional.isPresent()) {
             LOGGER.info("\nuser  username = " + username + ", not found");
             throw new UsernameNotFoundException("user " + username + " not found");
         }
-        User user = (User) optional.get();
+        User user = optional.get();
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole()));
         return new CustomSecurityUser(

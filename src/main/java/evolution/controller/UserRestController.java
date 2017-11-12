@@ -54,39 +54,39 @@ public class UserRestController {
     }
 
     @PostMapping
-    public ResponseEntity<HttpStatus> save(@RequestBody UserDTOForSave user) {
+    public ResponseEntity save(@RequestBody UserDTOForSave user) {
         return userRestService.createNewUser(user);
     }
 
     @PutMapping
-    public ResponseEntity<HttpStatus> update(@RequestBody UserDTOForUpdate user) {
+    public ResponseEntity update(@RequestBody UserDTOForUpdate user) {
         return userRestService.update(user);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<HttpStatus> deleteById(@PathVariable Long id) {
+    public ResponseEntity deleteById(@PathVariable Long id) {
         return userRestService.delete(id);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(value = "/block/{id}")
-    public ResponseEntity<HttpStatus> blockUser(@PathVariable Long id) {
+    public ResponseEntity blockUser(@PathVariable Long id) {
         return userRestService.block(id);
     }
 
     @GetMapping(value = "/anBlock/{id}")
-    public ResponseEntity<HttpStatus> anBlockUser(@PathVariable Long id) {
+    public ResponseEntity anBlockUser(@PathVariable Long id) {
         return userRestService.anBlock(id);
     }
 
     @GetMapping(value = "/activated/{key}")
-    public ResponseEntity<HttpStatus> anBlockUser(@PathVariable String key) {
+    public ResponseEntity anBlockUser(@PathVariable String key) {
         return userRestService.activated(key);
     }
 
-    @GetMapping(value = "/exist/{username}")
-    public ResponseEntity<HttpStatus> exist(@PathVariable String username) {
+    @GetMapping(value = "/exist")
+    public ResponseEntity exist(@RequestParam String username) {
         return userRestService.exist(username);
     }
 }

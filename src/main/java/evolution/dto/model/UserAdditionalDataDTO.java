@@ -10,7 +10,7 @@ import java.util.Date;
  * Created by Infant on 08.11.2017.
  */
 @Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude
 public class UserAdditionalDataDTO {
 
     private Long id;

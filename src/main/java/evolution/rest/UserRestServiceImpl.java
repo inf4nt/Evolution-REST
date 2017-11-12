@@ -1,6 +1,5 @@
 package evolution.rest;
 
-import com.sun.org.apache.regexp.internal.RE;
 import evolution.business.BusinessServiceExecuteResult;
 import evolution.business.api.UserBusinessService;
 import evolution.common.BusinessServiceExecuteStatus;
@@ -33,10 +32,6 @@ public class UserRestServiceImpl implements UserRestService {
 
     @Override
     public ResponseEntity<Page<UserDTO>> findAll(Integer page, Integer size, String sortType, List<String> sortProperties) {
-//        Pageable pageable = helperDataService.getPageableForUser(page, size, sortType, sortProperties);
-//        Page<User> p = userDataService.findAll(pageable);
-//        return helperRestService.getResponseForPage(p);
-
         Page<UserDTO> p = userBusinessService.findAll(page, size, sortType, sortProperties);
 
         if (p.getContent().isEmpty()) {
@@ -103,49 +98,55 @@ public class UserRestServiceImpl implements UserRestService {
     }
 
     @Override
-    public ResponseEntity<HttpStatus> createNewUser(UserDTOForSave user) {
+    public ResponseEntity createNewUser(UserDTOForSave user) {
         BusinessServiceExecuteResult b = userBusinessService.createNewUser(user);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.status(201).build();
+        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.USER_IS_ALREADY_EXIST_REGISTRATION_FAILED) {
+            return ResponseEntity.status(417).body(b.getExecuteStatus());
         }
 
         return ResponseEntity.status(417).build();
     }
 
     @Override
-    public ResponseEntity<HttpStatus> update(UserDTOForUpdate user) {
-//        userDataService.save(user);
-//        return ResponseEntity.ok().build();
+    public ResponseEntity update(UserDTOForUpdate user) {
+        BusinessServiceExecuteResult b = userBusinessService.update(user);
+        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
+            return ResponseEntity.ok().body(b.getExecuteStatus());
+        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE) {
+            return ResponseEntity.status(417).body(b.getExecuteStatus());
+        }
+        return ResponseEntity.status(417).build();
+    }
+
+    @Override
+    public ResponseEntity delete(Long id) {
         return null;
     }
 
     @Override
-    public ResponseEntity<HttpStatus> delete(Long id) {
+    public ResponseEntity block(Long id) {
         return null;
     }
 
     @Override
-    public ResponseEntity<HttpStatus> block(Long id) {
+    public ResponseEntity anBlock(Long id) {
         return null;
     }
 
     @Override
-    public ResponseEntity<HttpStatus> anBlock(Long id) {
+    public ResponseEntity activated(String key) {
         return null;
     }
 
     @Override
-    public ResponseEntity<HttpStatus> activated(String key) {
-        return null;
-    }
-
-    @Override
-    public ResponseEntity<HttpStatus> exist(String username) {
-        Optional<UserDTO> optional =  userBusinessService.findByUsername(username);
+    public ResponseEntity exist(String username) {
+        Optional<UserDTO> optional = userBusinessService.findByUsername(username);
         if (optional.isPresent()) {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok().body("User by username, " + username + ", exist");
         } else {
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("User by username, " + username + ", not found!");
         }
     }
 }

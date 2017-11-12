@@ -31,17 +31,17 @@ public interface UserRestService {
 
     ResponseEntity<List<UserDTO>> findAll(String sortType, List<String> sortProperties);
 
-    ResponseEntity<HttpStatus> createNewUser(UserDTOForSave user);
+    ResponseEntity createNewUser(UserDTOForSave user);
 
-    ResponseEntity<HttpStatus> update(UserDTOForUpdate user);
+    ResponseEntity update(UserDTOForUpdate user);
 
-    ResponseEntity<HttpStatus> delete(Long id);
+    ResponseEntity delete(Long id);
 
-    ResponseEntity<HttpStatus> block(Long id);
+    ResponseEntity block(Long id);
 
-    ResponseEntity<HttpStatus> anBlock(Long id);
+    ResponseEntity anBlock(Long id);
 
-    ResponseEntity<HttpStatus> activated(String key);
+    ResponseEntity activated(String key);
 
-    ResponseEntity<HttpStatus> exist(String username);
+    ResponseEntity exist(String username);
 }

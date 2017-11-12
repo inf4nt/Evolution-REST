@@ -45,13 +45,13 @@ public interface PageableManager {
             pageResult = 0;
         }
 
-        if (sortType == null || sortType.isEmpty()) {
+        if (sortTypeResult == null || sortTypeResult.isEmpty()) {
             sortTypeResult = defaultSortType.toUpperCase();
         } else {
             sortTypeResult = sortTypeResult.toUpperCase();
         }
 
-        if (sortProperties == null || !sortProperties.isEmpty()) {
+        if (sortPropertiesResult == null || sortPropertiesResult.isEmpty()) {
             String arr[] = defaultSortProperties.split(",");
 
             sortPropertiesResult = Arrays.stream(arr)
@@ -68,11 +68,13 @@ public interface PageableManager {
         String sortTypeResult = sortType;
         List<String> sortPropertiesResult = sortProperties;
 
-        if (sortType == null || sortType.isEmpty()) {
+        if (sortTypeResult == null || sortTypeResult.isEmpty()) {
             sortTypeResult = defaultSortType.toUpperCase();
+        } else {
+            sortTypeResult = sortType.toUpperCase();
         }
 
-        if (sortProperties == null || !sortProperties.isEmpty()) {
+        if (sortPropertiesResult == null || sortPropertiesResult.isEmpty()) {
             String arr[] = defaultSortProperties.split(",");
 
             sortPropertiesResult = Arrays.stream(arr)

@@ -58,46 +58,4 @@ public class UserDTOTransfer {
     public UserDTO modelToDTO(User user) {
         return modelMapper.map(user, UserDTO.class);
     }
-
-    public List<User> dtoToModel(List listDTO) {
-        if (listDTO == null || listDTO.isEmpty()) {
-            return new ArrayList<>();
-        }
-        Class clazz = listDTO.get(0).getClass();
-
-        if (clazz == UserFullDTO.class) {
-            return ((List<UserFullDTO>) listDTO).stream().map(this::dtoToModel).collect(Collectors.toList());
-        }
-
-        if (clazz == UserDTO.class) {
-            return ((List<UserDTO>) listDTO).stream().map(this::dtoToModel).collect(Collectors.toList());
-        }
-
-        if (clazz == UserDTOForSave.class) {
-            return ((List<UserDTOForSave>) listDTO).stream().map(this::dtoToModel).collect(Collectors.toList());
-        }
-
-        if (clazz == UserDTOForUpdate.class) {
-            return ((List<UserDTOForUpdate>) listDTO).stream().map(this::dtoToModel).collect(Collectors.toList());
-        }
-
-        throw new UnsupportedOperationException();
-    }
-
-//    public List<User> dtoToModel(List<UserFullDTO> userFullDTO) {
-//        return null;
-//    }
-//
-//    public List<User> dtoToModel(List<UserDTOForUpdate> userDTOForUpdate) {
-//        return null;
-//    }
-//
-//    public List<User> dtoToModel(List<UserDTOForSave> userDTOForSave) {
-//        return null;
-//    }
-//
-//    public List<User> dtoToModel(List<UserDTO> userDTO) {
-//        return null;
-//    }
-
 }

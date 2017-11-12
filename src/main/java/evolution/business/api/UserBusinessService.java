@@ -5,6 +5,7 @@ import evolution.dto.model.UserDTOForSave;
 import evolution.dto.model.UserDTOForUpdate;
 import evolution.dto.model.UserFullDTO;
 import evolution.business.BusinessServiceExecuteResult;
+import evolution.model.User;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -18,11 +19,15 @@ public interface UserBusinessService {
 
     BusinessServiceExecuteResult<UserFullDTO> createNewUserFull(UserDTOForSave userDTOForSave);
 
-    BusinessServiceExecuteResult<UserFullDTO> updateFull(UserDTOForUpdate userDTOForUpdate);
-
     BusinessServiceExecuteResult<UserDTOForSave> createNewUser(UserDTOForSave userDTOForSave);
 
+    BusinessServiceExecuteResult<User> createNewUserGlobal(UserDTOForSave userDTOForSave);
+
+    BusinessServiceExecuteResult<UserFullDTO> updateFull(UserDTOForUpdate userDTOForUpdate);
+
     BusinessServiceExecuteResult<UserDTOForUpdate> update(UserDTOForUpdate userDTOForUpdate);
+
+    BusinessServiceExecuteResult<User> updateGlobal(UserDTOForUpdate userDTOForUpdate);
 
     Page<UserDTO> findAll(Integer page, Integer size, String sortType, List<String> sortProperties);
 

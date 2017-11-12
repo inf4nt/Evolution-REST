@@ -30,6 +30,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("select u " +
             " from User u " +
+            " where u.userAdditionalData.username =:username ")
+    Optional<User> findUserByUsername(@Param("username") String username);
+
+    @Query("select u " +
+            " from User u " +
             " join fetch u.userAdditionalData as ua " +
             " where ua.secretKey =:key ")
     Optional<User> findUserBySecretKeyLazy(@Param("key") String secretKey);

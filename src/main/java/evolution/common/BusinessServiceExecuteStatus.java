@@ -5,7 +5,7 @@ package evolution.common;
  */
 public enum BusinessServiceExecuteStatus {
 
-    USER_IS_ALREADY_REGISTRATION_FAILED,
+    USER_IS_ALREADY_EXIST_REGISTRATION_FAILED,
     OK,
     FORBIDDEN,
     NOT_FOUNT_OBJECT_FOR_EXECUTE,

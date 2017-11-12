@@ -51,7 +51,7 @@ public class User {
     // default data
 
     @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REMOVE})
-    @JoinColumn(name = "user_additional_data_id", columnDefinition = "bigint")
+    @JoinColumn(name = "user_additional_data_id", columnDefinition = "bigint", nullable = false)
     private UserAdditionalData userAdditionalData = new UserAdditionalData();
 
     @Version

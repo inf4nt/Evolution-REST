@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -54,7 +55,7 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
     }
 
     @Override
-    public Optional<User> findOneFetchUserAdditionalData(Long userId) {
+    public Optional<User> findOneLazy(Long userId) {
         return userRepository.findOneUserByIdLazy(userId);
     }
 
@@ -142,6 +143,7 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
     }
 
     @Override
+    @Transactional
     public Optional<UserAdditionalData> findUserAdditionalDataByUserId(Long userId) {
         Optional<User> optional = userRepository.findOneUserById(userId);
         if (optional.isPresent()) {

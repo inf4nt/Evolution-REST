@@ -46,7 +46,7 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
 
         logger.info("checking authentication für user " + username);
 
-        //todo: remove after testing
+//        //todo: remove after testing
         username = "com.infant@gmail.com";
 
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -64,7 +64,7 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
 //            if (this.tokenUtil.validateToken(authToken, userDetails)) {
 //                UsernamePasswordAuthenticationToken authentication =
 //                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-//                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(sendRequest));
+//                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 //                SecurityContextHolder.getContext().setAuthentication(authentication);
 //            }
 //        }

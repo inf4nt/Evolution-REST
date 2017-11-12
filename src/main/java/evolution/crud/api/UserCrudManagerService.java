@@ -53,7 +53,7 @@ public interface UserCrudManagerService extends AbstractCrudManagerService<User,
 
     Optional<User> findOneUserByIdAndIsBlockLazy(Long userId, boolean block);
 
-    Optional<User> findOneFetchUserAdditionalData(Long userId);
+    Optional<User> findOneLazy(Long userId);
 
     Page<User> findUserAllByIsActiveLazy(boolean active, Integer page, Integer size, String sort, List<String> sortProperties);
 

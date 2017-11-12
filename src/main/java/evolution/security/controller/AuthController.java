@@ -24,7 +24,9 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
+
     private final TokenUtil tokenUtils;
+
     private final UserDetailsService userDetailsService;
 
     @Autowired

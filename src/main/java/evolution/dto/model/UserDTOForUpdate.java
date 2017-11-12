@@ -24,10 +24,12 @@ public class UserDTOForUpdate {
     @Data
     @JsonInclude
     public static class UserAdditionalDataDTOForUpdate {
+
         private String country;
 
         private String state;
 
         private GenderEnum gender;
+
     }
 }
