@@ -20,14 +20,34 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
             " from Message m " +
             " join m.dialog as d " +
             " where d.id =:dialogId " +
-            " and (d.first.id =:userId or d.second.id =userId) ")
+            " and (d.first.id =:userId or d.second.id =:userId) ")
     Page<Message> findMessageByDialogAndUserDialog(@Param("dialogId") Long dialogId, @Param("userId") Long userId, Pageable pageable);
+
+    @Query(" select m " +
+            " from Message m " +
+            " join m.dialog as d " +
+            " where d.id =:dialogId " +
+            " and (d.first.id =:userId or d.second.id =:userId) ")
+    List<Message> findMessageByDialogAndUserDialog(@Param("dialogId") Long dialogId, @Param("userId") Long userId, Sort sort);
+
+    @Query(" select m " +
+            " from Message m " +
+            " join m.dialog as d " +
+            " where d.id =:dialogId " +
+            " and (d.first.id =:userId or d.second.id =:userId) ")
+    List<Message> findMessageByDialogAndUserDialog(@Param("dialogId") Long dialogId, @Param("userId") Long userId);
 
     @Query(" select m " +
             " from Message m " +
             " join m.dialog as d " +
             " where d.id =:dialogId ")
     Page<Message> findMessageByDialog(@Param("dialogId") Long dialogId, Pageable pageable);
+
+    @Query(" select m " +
+            " from Message m " +
+            " join m.dialog as d " +
+            " where d.id =:dialogId ")
+    List<Message> findMessageByDialog(@Param("dialogId") Long dialogId);
 
     @Query("select m from Message m where m.id =:id")
     Optional<Message> findOneMessageById(@Param("id") Long messageId);

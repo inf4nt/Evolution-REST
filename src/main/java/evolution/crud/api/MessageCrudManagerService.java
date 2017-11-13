@@ -13,6 +13,18 @@ public interface MessageCrudManagerService extends AbstractCrudManagerService<Me
 
     Optional<Message> findOneByMessageIdAndSenderId(Long messageId, Long senderId);
 
+    List<Message> findMessageByDialogId(Long dialogId);
+
+    List<Message> findMessageByDialogId(Long dialogId, String sort, List<String> sortProperties);
+
+    Page<Message> findMessageByDialogId(Long dialogId, Integer page, Integer size, String sort, List<String> sortProperties);
+
+    Page<Message> findMessageByDialogId(Long dialogId, Long iam, Integer page, Integer size, String sort, List<String> sortProperties);
+
+    List<Message> findMessageByDialogId(Long dialogId, Long iam, String sort, List<String> sortProperties);
+
+    List<Message> findMessageByDialogId(Long dialogId, Long iam);
+
     Page<Message> findLastMessageInMyDialog(Long iam, Integer page, Integer size, String sort, List<String> sortProperties);
 
     List<Message> findLastMessageInMyDialog(Long iam, String sort, List<String> sortProperties);

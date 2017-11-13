@@ -35,7 +35,7 @@ public class Message {
     @Column(name = "message", nullable = false, columnDefinition = "text")
     private String message;
 
-    @Column(name = "date_dispatch", nullable = false, columnDefinition = "timestamp")
+    @Column(name = "date_dispatch", nullable = false, columnDefinition = "timestamp", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateDispatch;
 

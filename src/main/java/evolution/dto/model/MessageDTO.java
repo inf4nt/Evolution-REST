@@ -14,9 +14,7 @@ public class MessageDTO {
 
     private UserDTO sender;
 
-    private UserDTO recipient;
-
-    private UserDTO dialogSecond;
+    private DialogDTO dialogDTO;
 
     private String text;
 

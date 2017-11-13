@@ -25,6 +25,11 @@ public class MessageRestController {
         this.messageRestService = messageRestService;
     }
 
+    @GetMapping(value = "/list")
+    public ResponseEntity<List<MessageDTO>> findAllMessage() {
+        return messageRestService.findAll();
+    }
+
     @GetMapping
     public ResponseEntity<Page<MessageDTO>> findAll(@RequestParam(required = false) Integer page,
                                                     @RequestParam(required = false) Integer size,

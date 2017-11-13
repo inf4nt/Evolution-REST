@@ -284,11 +284,8 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public BusinessServiceExecuteResult setRole(Long userId, String role) {
-        if (!securitySupportService.isAllowed(userId)) {
-            logger.warn("FORBIDDEN !!!");
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
-        }
         Optional<User> user = userCrudManagerService.findOne(userId);
         if (!user.isPresent()) {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);

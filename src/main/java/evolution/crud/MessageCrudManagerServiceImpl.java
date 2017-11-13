@@ -140,6 +140,40 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
     }
 
     @Override
+    public List<Message> findMessageByDialogId(Long dialogId) {
+        return messageRepository.findMessageByDialog(dialogId);
+    }
+
+    @Override
+    public List<Message> findMessageByDialogId(Long dialogId, String sort, List<String> sortProperties) {
+        Sort s = getSort(sort, sortProperties);
+        return messageRepository.findMessageByRecipientId(dialogId, s);
+    }
+
+    @Override
+    public Page<Message> findMessageByDialogId(Long dialogId, Integer page, Integer size, String sort, List<String> sortProperties) {
+        Pageable p = getPageable(page, size, sort, sortProperties);
+        return messageRepository.findMessageByDialog(dialogId, p);
+    }
+
+    @Override
+    public Page<Message> findMessageByDialogId(Long dialogId, Long iam, Integer page, Integer size, String sort, List<String> sortProperties) {
+        Pageable p = getPageable(page, size, sort, sortProperties);
+        return messageRepository.findMessageByDialogAndUserDialog(dialogId, iam, p);
+    }
+
+    @Override
+    public List<Message> findMessageByDialogId(Long dialogId, Long iam, String sort, List<String> sortProperties) {
+        Sort s = getSort(sort, sortProperties);
+        return messageRepository.findMessageByDialogAndUserDialog(dialogId, iam, s);
+    }
+
+    @Override
+    public List<Message> findMessageByDialogId(Long dialogId, Long iam) {
+        return messageRepository.findMessageByDialogAndUserDialog(dialogId, iam);
+    }
+
+    @Override
     public Page<Message> findLastMessageInMyDialog(Long iam, Integer page, Integer size, String sort, List<String> sortProperties) {
         Pageable p = getPageable(page, size, sort, sortProperties);
         return messageRepository.findLastMessageInMyDialog(iam, p);

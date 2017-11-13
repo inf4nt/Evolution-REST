@@ -1,11 +1,14 @@
 package evolution.rest;
 
 
+import com.sun.org.apache.regexp.internal.RE;
+import evolution.business.api.MessageBusinessService;
 import evolution.dto.model.MessageDTO;
 
 import evolution.rest.api.MessageRestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +24,23 @@ public class MessageRestServiceImpl implements MessageRestService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    private final MessageBusinessService messageBusinessService;
+
+    @Autowired
+    public MessageRestServiceImpl(MessageBusinessService messageBusinessService) {
+        this.messageBusinessService = messageBusinessService;
+    }
+
+
+    @Override
+    public ResponseEntity<List<MessageDTO>> findAll() {
+        List<MessageDTO> list =  messageBusinessService.findAll();
+        if (list.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(list);
+        }
+    }
 
     @Override
     public ResponseEntity<Page<MessageDTO>> findAllMessage(Integer page, Integer size, String sort, List<String> sortProperties) {

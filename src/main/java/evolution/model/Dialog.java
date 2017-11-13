@@ -34,11 +34,10 @@ public class Dialog {
     @JoinColumn(name = "second", updatable = false, nullable = false, columnDefinition = "bigint")
     private User second;
 
-    @Column(name = "date_create", nullable = false)
+    @Column(name = "date_create", nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDate;
 
-//    @JsonSerialize(using = CustomDialogSerializerMessageList.class)
     @OneToMany(mappedBy = "dialog", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
     private List<Message> messageList = new ArrayList<>();
 }

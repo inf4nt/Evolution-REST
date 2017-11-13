@@ -12,6 +12,8 @@ import java.util.List;
  */
 public interface MessageRestService {
 
+    ResponseEntity<List<MessageDTO>> findAll();
+
     ResponseEntity<Page<MessageDTO>> findAllMessage(Integer page, Integer size, String sort, List<String> sortProperties);
 
     ResponseEntity<Page<MessageDTO>> findMessageByAuthUserAndRecipientId(Long interlocutorId, Integer page, Integer size, String sort, List<String> sortProperties);

@@ -28,7 +28,7 @@ public class TransferDTOImpl implements GlobalTransferDTO {
     public MessageDTO modelToDTO(Message message) {
 //        MessageDTO messageDTO = modelMapper.map(message, MessageDTO.class);
 //        messageDTO.setCreatedDateTimestamp(message.getDateDispatch().getTime());
-//        messageDTO.setCreatedDateString(dateService.getStringDateUTC(message.getDateDispatch().getTime()));
+//        messageDTO.setCreatedDateString(dateService.formatDateUTC(message.getDateDispatch().getTime()));
 //
 //        Optional<CustomSecurityUser> optional = securitySupportService.getPrincipal();
 //        if (optional.isPresent()) {
@@ -66,7 +66,7 @@ public class TransferDTOImpl implements GlobalTransferDTO {
 //        UserDTO firstDTO = modelMapper.map(dialog.getFirst(), UserDTO.class);
 //        UserDTO secondDTO = modelMapper.map(dialog.getSecond(), UserDTO.class);
 //        dialogDTO.setCreatedDateTimestamp(dialog.getCreateDate().getTime());
-//        dialogDTO.setCreatedDateString(dateService.getStringDateUTC(dialog.getCreateDate().getTime()));
+//        dialogDTO.setCreatedDateString(dateService.formatDateUTC(dialog.getCreateDate().getTime()));
 //        if (optional.isPresent()) {
 //            User a = optional.get().getUser();
 //            if (!dialog.getFirst().getId().equals(a.getId())) {
