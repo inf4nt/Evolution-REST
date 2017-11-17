@@ -3,6 +3,7 @@ package evolution.crud.api;
 import evolution.model.Message;
 import org.springframework.data.domain.Page;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,5 +40,5 @@ public interface MessageCrudManagerService extends AbstractCrudManagerService<Me
 
     void deleteMessageAndMaybeDialog(Long messageId);
 
-    Message saveMessageAndMaybeCreateNewDialog(String text, Long senderId, Long recipientId);
+    Message saveMessageAndMaybeCreateNewDialog(String text, Long senderId, Long recipientId, Date createDateUTC);
 }

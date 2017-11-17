@@ -1,7 +1,10 @@
 package evolution.business.api;
 
 import evolution.business.BusinessServiceExecuteResult;
+import evolution.dto.MessageDTOTransfer;
 import evolution.dto.model.MessageDTO;
+import evolution.dto.model.MessageDTOForSave;
+import evolution.dto.model.MessageDTOFull;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -23,9 +26,21 @@ public interface MessageBusinessService {
 
     List<MessageDTO> findMessageByDialogId(Long dialogId, String sortType, List<String> sortProperties);
 
-    List<MessageDTO> findMessageByDialogIdAndUserIam(Long dialogId);
+    List<MessageDTO> findMessageByDialogIdAndUserIam(Long dialogId, Long iam);
 
-    Page<MessageDTO> findMessageByDialogIdAndUserIam(Long dialogId, Integer page, Integer size, String sortType, List<String> sortProperties);
+    Page<MessageDTO> findMessageByDialogIdAndUserIam(Long dialogId, Long iam, Integer page, Integer size, String sortType, List<String> sortProperties);
 
-    List<MessageDTO> findMessageByDialogIdAndUserIam(Long dialogId, String sortType, List<String> sortProperties);
+    List<MessageDTO> findMessageByDialogIdAndUserIam(Long dialogId, Long iam, String sortType, List<String> sortProperties);
+
+    BusinessServiceExecuteResult<MessageDTOForSave> createNewMessage(MessageDTOForSave messageDTOForSave);
+
+    BusinessServiceExecuteResult<MessageDTO> createNewMessage2(MessageDTOForSave messageDTOForSave);
+
+    BusinessServiceExecuteResult<MessageDTOFull> createNewMessage3(MessageDTOForSave messageDTOForSave);
+
+    BusinessServiceExecuteResult<MessageDTOForSave> createMessage(Long senderId, Long recipientId, String text);
+
+    BusinessServiceExecuteResult<MessageDTO> createMessage2(Long senderId, Long recipientId, String text);
+
+    BusinessServiceExecuteResult<MessageDTOFull> createMessage3(Long senderId, Long recipientId, String text);
 }

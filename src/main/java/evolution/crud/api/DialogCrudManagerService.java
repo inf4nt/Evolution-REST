@@ -16,4 +16,5 @@ public interface DialogCrudManagerService extends AbstractCrudManagerService<Dia
     List<Dialog> findMyDialog(Long iam, String sort, List<String> sortProperties);
 
     Optional<Dialog> findOne(Long iam, Long dialogId);
+
 }

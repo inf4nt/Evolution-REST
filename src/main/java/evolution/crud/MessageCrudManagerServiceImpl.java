@@ -16,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -74,7 +75,7 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
 
     @Override
     @Transactional
-    public Message saveMessageAndMaybeCreateNewDialog(String text, Long senderId, Long recipientId) {
+    public Message saveMessageAndMaybeCreateNewDialog(String text, Long senderId, Long recipientId, Date createDateUTC) {
         Optional<Dialog> od = dialogRepository.findDialogByUsers(senderId, recipientId);
         Dialog dialog;
         Message message = new Message();
@@ -90,7 +91,7 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
         } else {
             // dialog not exist
             dialog = new Dialog();
-            dialog.setCreateDate(dateService.getCurrentDateInUTC());
+            dialog.setCreateDate(createDateUTC);
 
             Optional<User> or = userRepository.findOneUserById(recipientId);
             if (os.isPresent() && or.isPresent()) {
@@ -101,7 +102,7 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
             dialog = dialogRepository.save(dialog);
         }
 
-        message.setDateDispatch(dateService.getCurrentDateInUTC());
+        message.setDateDispatch(createDateUTC);
         message.setDialog(dialog);
         message.setMessage(text);
         message.setActive(true);

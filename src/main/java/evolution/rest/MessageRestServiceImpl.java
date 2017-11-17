@@ -44,10 +44,12 @@ public class MessageRestServiceImpl implements MessageRestService {
 
     @Override
     public ResponseEntity<Page<MessageDTO>> findAllMessage(Integer page, Integer size, String sort, List<String> sortProperties) {
-//        Pageable pageable = helperDataService.getPageableForMessage(page, size, sort, sortProperties);
-//
-//        return serviceResultAndRepair(messageDataService.findAll(pageable));
-        return null;
+        Page<MessageDTO> p = messageBusinessService.findAll(page, size, sort, sortProperties);
+        if(p.getContent().isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok().body(p);
+        }
     }
 
     @Override
