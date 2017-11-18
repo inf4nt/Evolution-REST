@@ -69,7 +69,7 @@ public class TestMessageController {
         userDTOForSave.getUserAdditionalData().setUsername("username_post");
         userDTOForSave.getUserAdditionalData().setPassword("1111");
 
-        return userBusinessService.createNewUser(userDTOForSave).getResultObject().orElseGet(null);
+        return userBusinessService.createNewUser(userDTOForSave).getResultObjectOptional().orElseGet(null);
     }
 
 }

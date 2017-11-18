@@ -1,8 +1,8 @@
 package evolution.crud.api;
 
-import evolution.common.FriendStatusEnum;
 import evolution.model.Friend;
 import org.springframework.data.domain.Page;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -17,17 +17,21 @@ public interface FriendCrudManagerService extends PageableManager {
 
     Optional<Friend> findOneFriend(Long user1, Long user2);
 
-    Page<Friend> findFollowerByUser(Long userId, FriendStatusEnum followerStatus, Integer page, Integer size);
+    Page<Friend> findFollowerByUser(Long userId, Integer page, Integer size);
 
-    Page<Friend> findRequestByUser(Long userId, FriendStatusEnum requestStatus, Integer page, Integer size);
+    Page<Friend> findRequestByUser(Long userId, Integer page, Integer size);
 
-    Page<Friend> findProgressByUser(Long userId, FriendStatusEnum progressStatus, Integer page, Integer size);
+    Page<Friend> findProgressByUser(Long userId, Integer page, Integer size);
 
-    List<Friend> findFollowerByUser(Long userId, FriendStatusEnum followerStatus);
+    List<Friend> findFollowerByUser(Long userId);
 
-    List<Friend> findRequestByUser(Long userId, FriendStatusEnum requestStatus);
+    List<Friend> findRequestByUser(Long userId);
 
-    List<Friend> findProgressByUser(Long userId, FriendStatusEnum progressStatus);
+    List<Friend> findProgressByUser(Long userId);
+
+    Page<Friend> findRequestFromUser(Long userId, Integer page, Integer size);
+
+    List<Friend> findRequestFromUser(Long userId);
 
     Optional<Friend> sendRequestToFriend(Long senderId, Long recipientId);
 

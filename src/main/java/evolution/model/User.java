@@ -77,4 +77,16 @@ public class User {
         this.nickname = customSecurityUser.getUser().getNickname();
         this.role = customSecurityUser.getUser().getRole();
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", role=" + role +
+                ", version=" + version +
+                '}';
+    }
 }

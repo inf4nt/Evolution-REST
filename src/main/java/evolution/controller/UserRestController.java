@@ -37,7 +37,7 @@ public class UserRestController {
         return userRestService.findAll(page, size, sort, sortProperties);
     }
 
-    @GetMapping(value = "/lazy")
+    @GetMapping(value = "/list")
     public ResponseEntity<List<UserFullDTO>> findAllList(@RequestParam(required = false) String sort,
                                                          @RequestParam(required = false) List<String> sortProperties) {
         return userRestService.findAllFull(sort, sortProperties);

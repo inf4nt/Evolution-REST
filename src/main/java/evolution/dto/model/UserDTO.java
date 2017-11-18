@@ -7,7 +7,7 @@ import lombok.Data;
  * Created by Infant on 07.11.2017.
  */
 @Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude
 public class UserDTO {
 
     private Long id;

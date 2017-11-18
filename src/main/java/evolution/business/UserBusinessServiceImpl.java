@@ -111,7 +111,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         BusinessServiceExecuteResult<User> b = createNewUserGlobal(userDTOForSave);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
             return BusinessServiceExecuteResult
-                    .build(BusinessServiceExecuteStatus.OK, b.getResultObject().map(o -> userDTOTransfer.modelToDTOFull(o)));
+                    .build(BusinessServiceExecuteStatus.OK, b.getResultObjectOptional().map(o -> userDTOTransfer.modelToDTOFull(o)));
         }
         return BusinessServiceExecuteResult.build(b.getExecuteStatus());
     }
@@ -121,7 +121,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         BusinessServiceExecuteResult<User> b = updateGlobal(userDTOForUpdate);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
             return BusinessServiceExecuteResult
-                    .build(BusinessServiceExecuteStatus.OK, b.getResultObject().map(o -> userDTOTransfer.modelToDTOFull(o)));
+                    .build(BusinessServiceExecuteStatus.OK, b.getResultObjectOptional().map(o -> userDTOTransfer.modelToDTOFull(o)));
         }
         return BusinessServiceExecuteResult.build(b.getExecuteStatus());
     }
@@ -131,7 +131,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         BusinessServiceExecuteResult<User> b = createNewUserGlobal(userDTOForSave);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
             return BusinessServiceExecuteResult
-                    .build(BusinessServiceExecuteStatus.OK, b.getResultObject().map(o -> userDTOTransfer.modelToDTOForSave(o)));
+                    .build(BusinessServiceExecuteStatus.OK, b.getResultObjectOptional().map(o -> userDTOTransfer.modelToDTOForSave(o)));
         }
         return BusinessServiceExecuteResult.build(b.getExecuteStatus());
     }
@@ -141,7 +141,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         BusinessServiceExecuteResult<User> b = updateGlobal(userDTOForUpdate);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
             return BusinessServiceExecuteResult
-                    .build(BusinessServiceExecuteStatus.OK, b.getResultObject().map(o -> userDTOTransfer.modelToDTOForUpdate(o)));
+                    .build(BusinessServiceExecuteStatus.OK, b.getResultObjectOptional().map(o -> userDTOTransfer.modelToDTOForUpdate(o)));
         }
         return BusinessServiceExecuteResult.build(b.getExecuteStatus());
     }

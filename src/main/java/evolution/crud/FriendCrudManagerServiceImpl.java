@@ -5,6 +5,7 @@ import evolution.crud.api.FriendCrudManagerService;
 import evolution.model.Friend;
 import evolution.model.User;
 import evolution.repository.FriendRepository;
+import evolution.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,14 +25,21 @@ import java.util.Optional;
 @Service
 public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
 
-    @Autowired
-    private FriendRepository friendRepository;
-
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+
+    private final FriendRepository friendRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     private User first;
 
     private User second;
+
+    @Autowired
+    public FriendCrudManagerServiceImpl(FriendRepository friendRepository) {
+        this.friendRepository = friendRepository;
+    }
 
     @Override
     public Page<Friend> findAll(Integer page, Integer size) {
@@ -51,51 +59,80 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
     }
 
     @Override
-    public Page<Friend> findFollowerByUser(Long userId, FriendStatusEnum followerStatus, Integer page, Integer size) {
+    public Page<Friend> findFollowerByUser(Long userId, Integer page, Integer size) {
         Pageable pageable = getPageable(page, size);
-        return friendRepository.findFollowerByUser(userId, followerStatus, pageable);
+        return friendRepository.findFollowerByUser(userId, FriendStatusEnum.FOLLOWER, pageable);
     }
 
     @Override
-    public Page<Friend> findRequestByUser(Long userId, FriendStatusEnum requestStatus, Integer page, Integer size) {
+    public Page<Friend> findRequestByUser(Long userId, Integer page, Integer size) {
         Pageable pageable = getPageable(page, size);
-        return friendRepository.findRequestFromUser(userId, requestStatus, pageable);
+        return friendRepository.findRequestFromUser(userId, FriendStatusEnum.REQUEST, pageable);
     }
 
     @Override
-    public Page<Friend> findProgressByUser(Long userId, FriendStatusEnum progressStatus, Integer page, Integer size) {
+    public Page<Friend> findProgressByUser(Long userId, Integer page, Integer size) {
         Pageable pageable = getPageable(page, size);
-        return friendRepository.findProgressByUser(userId, progressStatus, pageable);
+        return friendRepository.findProgressByUser(userId, FriendStatusEnum.PROGRESS, pageable);
     }
 
     @Override
-    public List<Friend> findFollowerByUser(Long userId, FriendStatusEnum followerStatus) {
-        return friendRepository.findFollowerByUser(userId, followerStatus);
+    public List<Friend> findFollowerByUser(Long userId) {
+        return friendRepository.findFollowerByUser(userId, FriendStatusEnum.FOLLOWER);
     }
 
     @Override
-    public List<Friend> findRequestByUser(Long userId, FriendStatusEnum requestStatus) {
-        return friendRepository.findRequestFromUser(userId, requestStatus);
+    public List<Friend> findRequestByUser(Long userId) {
+        return friendRepository.findRequestFromUser(userId, FriendStatusEnum.REQUEST);
     }
 
     @Override
-    public List<Friend> findProgressByUser(Long userId, FriendStatusEnum progressStatus) {
-        return friendRepository.findProgressByUser(userId, progressStatus);
+    public List<Friend> findProgressByUser(Long userId) {
+        return friendRepository.findProgressByUser(userId, FriendStatusEnum.PROGRESS);
+    }
+
+    @Override
+    public Page<Friend> findRequestFromUser(Long userId, Integer page, Integer size) {
+        Pageable pageable = getPageable(page, size);
+        return null;
+    }
+
+    @Override
+    public List<Friend> findRequestFromUser(Long userId) {
+        return null;
     }
 
     @Override
     @Transactional
     public Optional<Friend> sendRequestToFriend(Long senderId, Long recipientId) {
-        User action = new User(senderId);
+        User action = null;
 
         init(senderId, recipientId);
         Optional<Friend> exist = friendRepository.findOneFriend(first.getId(), second.getId());
+        Optional<User> of = userRepository.findOneUserById(first.getId());
+        Optional<User> os = userRepository.findOneUserById(second.getId());
+
+        if (!of.isPresent() || !os.isPresent()) {
+            return exist;
+        }
 
         if (!exist.isPresent()) {
+
+            first = of.get();
+            second = os.get();
+
+            if (first.getId().equals(senderId)) {
+                action = first;
+            }
+
+            if (second.getId().equals(senderId)) {
+                action = second;
+            }
+
             Friend friend = new Friend(first, second, FriendStatusEnum.REQUEST, action);
             return Optional.of(friendRepository.save(friend));
         } else {
-            LOGGER.info("sendRequest friend failed. Action =  " + action.getId() + ", other " + recipientId + ". Find row = " + exist.get());
+            LOGGER.info("sendRequest friend failed. Action =  " + senderId + ", other " + recipientId + ". Find row = " + exist.get());
             return exist;
         }
     }
@@ -113,9 +150,9 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
 
             if (FriendStatusEnum.REQUEST == request.get().getStatus()
                     && request.get().getActionUser().getId().equals(action.getId())) {
-
                 friendRepository.delete(request.get());
                 LOGGER.info("remove sendRequest successful");
+                return Optional.of(new Friend());
             } else {
                 LOGGER.info("remove sendRequest failed. Action =  " + action.getId() + ", other " + recipientId + ". Find row = " + request.get());
                 return request;

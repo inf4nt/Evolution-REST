@@ -16,7 +16,6 @@ public class BusinessServiceExecuteResult<T> {
     @Getter
     private BusinessServiceExecuteStatus executeStatus;
 
-    @Getter
     private Optional<T> resultObject;
 
     private BusinessServiceExecuteResult(BusinessServiceExecuteStatus executeStatus, T resultObject) {
@@ -57,5 +56,13 @@ public class BusinessServiceExecuteResult<T> {
         } else {
             return new BusinessServiceExecuteResult<>(NO_CONTENT, resultObject);
         }
+    }
+
+    public T getResultObject() {
+        return resultObject.orElseThrow(() -> new NullPointerException());
+    }
+
+    public Optional<T> getResultObjectOptional() {
+        return resultObject;
     }
 }
