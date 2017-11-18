@@ -174,7 +174,7 @@ public class FriendRestServiceImpl implements FriendRestService {
         BusinessServiceExecuteResult<FriendDTOFull> b = friendBusinessService.deleteRequest(friendDTO);
 
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
-            return ResponseEntity.ok().body(b.getResultObject());
+            return ResponseEntity.ok().build();
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.EXPECTATION_FAILED) {
             return ResponseEntity.status(417).body(b.getResultObject());
         }
