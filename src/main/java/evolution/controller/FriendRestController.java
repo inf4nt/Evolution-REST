@@ -84,24 +84,23 @@ public class FriendRestController {
         return friendRestService.findUserProgress2(userId, page, size);
     }
 
-    @PostMapping(value = "/action/sendRequest")
+    @PostMapping(value = "/action/send_request")
     public ResponseEntity<FriendDTOFull> sendRequest(@RequestBody FriendActionDTO friendActionDTO) {
         return friendRestService.sendRequest(friendActionDTO);
     }
 
-    @DeleteMapping(value = "/action/removeRequest")
+    @DeleteMapping(value = "/action/remove_request")
     public ResponseEntity<FriendDTOFull> removeRequest(@RequestBody FriendActionDTO friendActionDTO) {
         return friendRestService.removeRequest(friendActionDTO);
     }
 
-    @DeleteMapping(value = "/action/removeFriend")
+    @DeleteMapping(value = "/action/remove_friend")
     public ResponseEntity<FriendDTOFull> removeFriend(@RequestBody FriendActionDTO friendActionDTO) {
         return friendRestService.removeFriend(friendActionDTO);
     }
 
-    @PutMapping(value = "/action/acceptRequest")
+    @PutMapping(value = "/action/accept_request")
     public ResponseEntity<FriendDTOFull> acceptRequest(@RequestBody FriendActionDTO friendActionDTO) {
         return friendRestService.acceptRequest(friendActionDTO);
     }
-
 }

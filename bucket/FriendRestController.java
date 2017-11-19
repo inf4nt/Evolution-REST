@@ -48,10 +48,10 @@
 //        return ResponseEntity.ok(list);
 //    }
 //
-//    @GetMapping(value = "/status/{user1}/{user2}")
-//    public ResponseEntity<FriendsDTO> findFriendStatusByUsers(@PathVariable Long user1,
-//                                                              @PathVariable Long user2) {
-//        FriendsDTO friendsDTO = friendsDataService.findFriendStatusByUsers(user1, user2);
+//    @GetMapping(value = "/status/{first}/{second}")
+//    public ResponseEntity<FriendsDTO> findFriendStatusByUsers(@PathVariable Long first,
+//                                                              @PathVariable Long second) {
+//        FriendsDTO friendsDTO = friendsDataService.findFriendStatusByUsers(first, second);
 //        return ResponseEntity.ok(friendsDTO);
 //    }
 //

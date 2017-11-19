@@ -16,7 +16,6 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Friend {
 
     @EmbeddedId
@@ -26,7 +25,7 @@ public class Friend {
     @Column(nullable = false)
     private FriendStatusEnum status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "action_user_id", columnDefinition = "bigint", nullable = false)
     private User actionUser;
 
@@ -52,7 +51,6 @@ public class Friend {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class FriendEmbeddable implements Serializable {
 
         /*

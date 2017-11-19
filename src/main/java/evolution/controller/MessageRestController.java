@@ -1,6 +1,7 @@
 package evolution.controller;
 
 import evolution.dto.model.MessageDTO;
+import evolution.dto.model.MessageDTOForSave;
 import evolution.rest.api.MessageRestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -40,16 +41,44 @@ public class MessageRestController {
 
 
     @PostMapping
-    public ResponseEntity<HttpStatus> postMessage(@RequestBody MessageDTO message) {
+    public ResponseEntity<HttpStatus> postMessage(@RequestBody MessageDTOForSave message) {
         return messageRestService.save(message);
     }
 
     @GetMapping(value = "/interlocutor/{id}")
     public ResponseEntity<Page<MessageDTO>> findMessageByInterlocutorId(@PathVariable Long id,
+                                                                        @RequestParam(required = false) Integer page,
+                                                                        @RequestParam(required = false) Integer size,
+                                                                        @RequestParam(required = false) String sortType,
+                                                                        @RequestParam(required = false) List<String> sortProperties) {
+        return messageRestService.findMessageByAuthUserAndRecipientId(id, page, size, sortType, sortProperties);
+    }
+
+    @GetMapping(value = "/dialog/{id}")
+    public ResponseEntity<Page<MessageDTO>> findMessageByDialog(@PathVariable Long id,
+                                                                @RequestParam(required = false) Integer page,
+                                                                @RequestParam(required = false) Integer size,
+                                                                @RequestParam(required = false) String sortType,
+                                                                @RequestParam(required = false) List<String> sortProperties) {
+        return messageRestService.findMessageByDialogAndUserId(id, page, size, sortType, sortProperties);
+    }
+
+    @GetMapping(value = "/list/dialog/{id}")
+    public ResponseEntity<List<MessageDTO>> findMessageByDialog(@PathVariable Long id) {
+        return messageRestService.findMessageByDialogAndUserId(id);
+    }
+
+    @GetMapping(value = "/dialog/{id}/admin")
+    public ResponseEntity<Page<MessageDTO>> findMessageByDialogAdmin(@PathVariable Long id,
                                                                      @RequestParam(required = false) Integer page,
                                                                      @RequestParam(required = false) Integer size,
                                                                      @RequestParam(required = false) String sortType,
                                                                      @RequestParam(required = false) List<String> sortProperties) {
-        return messageRestService.findMessageByAuthUserAndRecipientId(id, page, size, sortType, sortProperties);
+        return messageRestService.findMessageByDialog(id, page, size, sortType, sortProperties);
+    }
+
+    @GetMapping(value = "/list/dialog/{id}/admin")
+    public ResponseEntity<List<MessageDTO>> findMessageByDialogAdmin(@PathVariable Long id) {
+        return messageRestService.findMessageByDialog(id);
     }
 }

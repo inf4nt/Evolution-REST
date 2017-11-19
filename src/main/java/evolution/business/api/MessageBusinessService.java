@@ -26,11 +26,11 @@ public interface MessageBusinessService {
 
     List<MessageDTO> findMessageByDialogId(Long dialogId, String sortType, List<String> sortProperties);
 
-    List<MessageDTO> findMessageByDialogIdAndUserIam(Long dialogId, Long iam);
+    List<MessageDTO> findMessageByDialogIdAndUserIam(Long dialogId);
 
-    Page<MessageDTO> findMessageByDialogIdAndUserIam(Long dialogId, Long iam, Integer page, Integer size, String sortType, List<String> sortProperties);
+    Page<MessageDTO> findMessageByDialogIdAndUserIam(Long dialogId, Integer page, Integer size, String sortType, List<String> sortProperties);
 
-    List<MessageDTO> findMessageByDialogIdAndUserIam(Long dialogId, Long iam, String sortType, List<String> sortProperties);
+    List<MessageDTO> findMessageByDialogIdAndUserIam(Long dialogId, String sortType, List<String> sortProperties);
 
     BusinessServiceExecuteResult<MessageDTOForSave> createNewMessage(MessageDTOForSave messageDTOForSave);
 

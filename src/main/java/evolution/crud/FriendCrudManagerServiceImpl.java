@@ -29,16 +29,21 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
 
     private final FriendRepository friendRepository;
 
+    private final UserRepository userRepository;
+
+//    private User first;
+//
+//    private User second;
+
+    private Long firstId;
+
+    private Long secondId;
+
     @Autowired
-    private UserRepository userRepository;
-
-    private User first;
-
-    private User second;
-
-    @Autowired
-    public FriendCrudManagerServiceImpl(FriendRepository friendRepository) {
+    public FriendCrudManagerServiceImpl(FriendRepository friendRepository,
+                                        UserRepository userRepository) {
         this.friendRepository = friendRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -55,7 +60,7 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
     @Override
     public Optional<Friend> findOneFriend(Long user1, Long user2) {
         init(user1, user2);
-        return friendRepository.findOneFriend(first.getId(), second.getId());
+        return friendRepository.findOneFriend(firstId, secondId);
     }
 
     @Override
@@ -94,12 +99,12 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
     @Override
     public Page<Friend> findRequestFromUser(Long userId, Integer page, Integer size) {
         Pageable pageable = getPageable(page, size);
-        return null;
+        return friendRepository.findRequestFromUser(userId, FriendStatusEnum.REQUEST, pageable);
     }
 
     @Override
     public List<Friend> findRequestFromUser(Long userId) {
-        return null;
+        return friendRepository.findRequestFromUser(userId, FriendStatusEnum.REQUEST);
     }
 
     @Override
@@ -108,9 +113,9 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
         User action = null;
 
         init(senderId, recipientId);
-        Optional<Friend> exist = friendRepository.findOneFriend(first.getId(), second.getId());
-        Optional<User> of = userRepository.findOneUserById(first.getId());
-        Optional<User> os = userRepository.findOneUserById(second.getId());
+        Optional<Friend> exist = friendRepository.findOneFriend(firstId, secondId);
+        Optional<User> of = userRepository.findOneUserById(firstId);
+        Optional<User> os = userRepository.findOneUserById(secondId);
 
         if (!of.isPresent() || !os.isPresent()) {
             return exist;
@@ -118,8 +123,8 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
 
         if (!exist.isPresent()) {
 
-            first = of.get();
-            second = os.get();
+            User first = of.get();
+            User second = os.get();
 
             if (first.getId().equals(senderId)) {
                 action = first;
@@ -140,21 +145,19 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
     @Override
     @Transactional
     public Optional<Friend> removeRequest(Long senderId, Long recipientId) {
-        User action = new User(senderId);
+        init(senderId, recipientId);
 
-        init(action.getId(), recipientId);
-
-        Optional<Friend> request = findOneFriend(first.getId(), second.getId());
+        Optional<Friend> request = findOneFriend(firstId, secondId);
 
         if (request.isPresent()) {
 
             if (FriendStatusEnum.REQUEST == request.get().getStatus()
-                    && request.get().getActionUser().getId().equals(action.getId())) {
+                    && request.get().getActionUser().getId().equals(senderId)) {
                 friendRepository.delete(request.get());
                 LOGGER.info("remove sendRequest successful");
                 return Optional.of(new Friend());
             } else {
-                LOGGER.info("remove sendRequest failed. Action =  " + action.getId() + ", other " + recipientId + ". Find row = " + request.get());
+                LOGGER.info("remove sendRequest failed. Action =  " + senderId + ", other " + recipientId + ". Find row = " + request.get());
                 return request;
             }
 
@@ -167,15 +170,19 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
     @Transactional
     public Optional<Friend> removeFriend(Long senderId, Long recipientId) {
         init(senderId, recipientId);
-
-        Optional<Friend> progress = findOneFriend(first.getId(), second.getId());
+        User action;
+        Optional<Friend> progress = findOneFriend(firstId, secondId);
 
         if (progress.isPresent()) {
 
             if (FriendStatusEnum.PROGRESS == progress.get().getStatus()) {
                 Friend friend = progress.get();
                 friend.setStatus(FriendStatusEnum.REQUEST);
-                friend.setActionUser(getUserByIdFromFriendPk(recipientId, friend));
+
+                action = getUserByIdFromFriendPk(senderId, friend);
+
+                friend.setActionUser(action);
+
                 return Optional.of(friendRepository.save(friend));
             } else {
                 LOGGER.info("remove friend failed. Action =  " + senderId + ", other " + recipientId + ". Find row = " + progress.get());
@@ -190,20 +197,23 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
     @Override
     @Transactional
     public Optional<Friend> acceptRequest(Long senderId, Long recipientId) {
-        User action = new User(senderId);
+        User action;
 
-        init(action, new User(recipientId));
+        init(senderId, recipientId);
 
-        Optional<Friend> request = findOneFriend(first.getId(), second.getId());
+        Optional<Friend> request = findOneFriend(firstId, secondId);
         if (request.isPresent()) {
 
-            if (request.get().getStatus() == FriendStatusEnum.REQUEST && !action.getId().equals(request.get().getActionUser().getId())) {
+            if (request.get().getStatus() == FriendStatusEnum.REQUEST && !senderId.equals(request.get().getActionUser().getId())) {
                 Friend friend = request.get();
                 friend.setStatus(FriendStatusEnum.PROGRESS);
+
+                action = getUserByIdFromFriendPk(senderId, friend);
+
                 friend.setActionUser(action);
                 return Optional.of(friendRepository.save(friend));
             } else {
-                LOGGER.info("accept sendRequest failed. Action =  " + action.getId() + ", other " + recipientId + ". Find row = " + request.get());
+                LOGGER.info("accept sendRequest failed. Action =  " + senderId + ", other " + recipientId + ". Find row = " + request.get());
                 return request;
             }
 
@@ -230,25 +240,23 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
     public Sort getSort(String sort, List<String> sortProperties) {
         throw new UnsupportedOperationException("sort not supported");
     }
-
-    private void init(Long senderRequest, Long someUser) {
-        init(new User(senderRequest), new User(someUser));
-    }
-
-    private void init(User user1, User user2) {
-        if (user1.getId() > user2.getId()) {
-            first = user1;
-            second = user2;
+    
+    private void init(Long senderOrAction, Long recipient) {
+        if (senderOrAction > recipient) {
+            firstId = senderOrAction;
+            secondId = recipient;
         } else {
-            first = user2;
-            second = user1;
+            firstId = recipient;
+            secondId = senderOrAction;
         }
     }
 
     private User getUserByIdFromFriendPk(Long userId, Friend friend) {
         if (friend.getPk().getFirst().getId().equals(userId))
             return friend.getPk().getFirst();
-        else
+        else if (friend.getPk().getSecond().getId().equals(userId))
             return friend.getPk().getSecond();
+        else
+          throw new UnsupportedOperationException("Friend primary key not have user by id " + userId);
     }
 }

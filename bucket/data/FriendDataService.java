@@ -39,13 +39,13 @@
 //        this.securitySupportService = securitySupportService;
 //    }
 //
-//    private void init(User user1, User user2) {
-//        if (user1.getId() > user2.getId()) {
-//            first = user1;
-//            second = user2;
+//    private void init(User first, User second) {
+//        if (first.getId() > second.getId()) {
+//            first = first;
+//            second = second;
 //        } else {
-//            first = user2;
-//            second = user1;
+//            first = second;
+//            second = first;
 //        }
 //    }
 //

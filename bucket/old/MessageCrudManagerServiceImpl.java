@@ -155,7 +155,7 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService,
     @Override
     public Page<Message> findMessageByDialog(Long user1, Long user2, Integer page, Integer size, String sort, List<String> sortProperties) {
 //        Pageable pageable = getPageable(page, size, sort, sortProperties);
-//        Optional<Dialog> optional = dialogRepository.findDialogByUsers(user1, user2);
+//        Optional<Dialog> optional = dialogRepository.findDialogByUsers(first, second);
 //        if (optional.isPresent()) {
 //            Dialog dialog = optional.get();
 //            Page<Message> p = messageRepository.findMessageByDialog(dialog.getId(), pageable);

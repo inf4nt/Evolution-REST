@@ -39,6 +39,7 @@ public interface FriendRepository extends JpaRepository<Friend, Friend.FriendEmb
     Page<Friend> findFollowerByUser(@Param("userId") Long userId, @Param("status") FriendStatusEnum requestStatus, Pageable pageable);
 
 //-- получить заявки исходящие от пользователя с ид = ???
+    //  или получить запросы в друзья исходящие от пользователя с ид = ???
 //
 //    SELECT *
 //    FROM friends f
@@ -83,11 +84,5 @@ public interface FriendRepository extends JpaRepository<Friend, Friend.FriendEmb
             " where f.pk.first.id =:first " +
             " and f.pk.second.id =:second ")
     Optional<Friend> findOneFriend(@Param("first") Long first, @Param("second") Long second);
-
-    @Query("select f from Friend f where f.status =:status and f.actionUser.id =:userId")
-    Page<Friend> findRequestsFromUser(@Param("userId") Long userId, @Param("status") FriendStatusEnum status, Pageable pageable);
-
-    @Query("select f from Friend f where f.status =:status and f.actionUser.id =:userId")
-    List<Friend> findRequestsFromUser(@Param("userId") Long userId, @Param("status") FriendStatusEnum status);
 }
 

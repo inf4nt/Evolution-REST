@@ -38,21 +38,21 @@
 //
 ////    @Query("select 1 " +
 ////            " from Friends f " +
-////            " where (f.user.id =:user1 and f.friend.id =:user2) " +
-////            " or (f.user.id =:user2 and f.friend.id =:user1) ")
-////    List existFriend(@Param("user1") Long user1, @Param("user2") Long user2);
+////            " where (f.user.id =:first and f.friend.id =:second) " +
+////            " or (f.user.id =:second and f.friend.id =:first) ")
+////    List existFriend(@Param("first") Long first, @Param("second") Long second);
 //
 //
 //    @Query(value = "select 1 from friends " +
-//            "WHERE (user_id = :user1 and friend_id = :user2) " +
-//            "or (user_id = :user2 and friend_id = :user1) for UPDATE NOWAIT ", nativeQuery = true)
-//    List existFriend(@Param("user1") Long user1, @Param("user2") Long user2);
+//            "WHERE (user_id = :first and friend_id = :second) " +
+//            "or (user_id = :second and friend_id = :first) for UPDATE NOWAIT ", nativeQuery = true)
+//    List existFriend(@Param("first") Long first, @Param("second") Long second);
 //
 //    @Query(value = " select f.status " +
 //            " from Friends f " +
-//            " where f.user.id =:user1 " +
-//            " and f.friend.id =:user2 ")
-//    Long findFriendStatusByUsers(@Param("user1") Long user1, @Param("user2") Long user2);
+//            " where f.user.id =:first " +
+//            " and f.friend.id =:second ")
+//    Long findFriendStatusByUsers(@Param("first") Long first, @Param("second") Long second);
 //
 //
 ////    //todo: in future repair this

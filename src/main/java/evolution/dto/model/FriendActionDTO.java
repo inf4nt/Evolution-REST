@@ -6,12 +6,9 @@ import lombok.Data;
 
 @Data
 @JsonInclude
-public class FriendActionDTO{
+public class FriendActionDTO {
 
     private Long actionUserId;
 
     private Long recipientUserId;
-
-    private FriendActionEnum action;
-
 }

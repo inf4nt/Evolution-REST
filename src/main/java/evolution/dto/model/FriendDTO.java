@@ -15,9 +15,9 @@ import lombok.NoArgsConstructor;
 @JsonInclude
 public class FriendDTO {
 
-    private UserDTO user1;
+    private UserDTO first;
 
-    private UserDTO user2;
+    private UserDTO second;
 
     private FriendStatusEnum status;
 }

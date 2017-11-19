@@ -7,6 +7,7 @@ import evolution.dto.model.FriendActionDTO;
 import evolution.dto.model.FriendDTO;
 import evolution.dto.model.FriendDTOFull;
 import evolution.rest.api.FriendRestService;
+import evolution.service.SecuritySupportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +27,13 @@ public class FriendRestServiceImpl implements FriendRestService {
 
     private final FriendBusinessService friendBusinessService;
 
+    private final SecuritySupportService securitySupportService;
+
     @Autowired
-    public FriendRestServiceImpl(FriendBusinessService friendBusinessService) {
+    public FriendRestServiceImpl(FriendBusinessService friendBusinessService,
+                                 SecuritySupportService securitySupportService) {
         this.friendBusinessService = friendBusinessService;
+        this.securitySupportService = securitySupportService;
     }
 
     @Override
@@ -164,6 +169,8 @@ public class FriendRestServiceImpl implements FriendRestService {
             return ResponseEntity.status(201).body(b.getResultObject());
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.EXPECTATION_FAILED) {
             return ResponseEntity.status(417).body(b.getResultObject());
+        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {
+            return ResponseEntity.status(403).build();
         }
 
         return ResponseEntity.noContent().build();
@@ -177,6 +184,8 @@ public class FriendRestServiceImpl implements FriendRestService {
             return ResponseEntity.ok().build();
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.EXPECTATION_FAILED) {
             return ResponseEntity.status(417).body(b.getResultObject());
+        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {
+            return ResponseEntity.status(403).build();
         }
 
         return ResponseEntity.noContent().build();
@@ -190,6 +199,8 @@ public class FriendRestServiceImpl implements FriendRestService {
             return ResponseEntity.status(200).body(b.getResultObject());
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.EXPECTATION_FAILED) {
             return ResponseEntity.status(417).body(b.getResultObject());
+        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {
+            return ResponseEntity.status(403).build();
         }
 
         return ResponseEntity.noContent().build();
@@ -203,6 +214,8 @@ public class FriendRestServiceImpl implements FriendRestService {
             return ResponseEntity.status(200).body(b.getResultObject());
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.EXPECTATION_FAILED) {
             return ResponseEntity.status(417).body(b.getResultObject());
+        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {
+            return ResponseEntity.status(403).build();
         }
 
         return ResponseEntity.noContent().build();

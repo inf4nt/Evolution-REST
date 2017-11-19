@@ -52,22 +52,22 @@
 //        return actionFriendsAdminService(principal.get().getUser().getId(), friendsId, action);
 //    }
 //
-//    public ServiceStatus actionFriendsAdminService(Long user1, Long user2, FriendActionEnum action) {
+//    public ServiceStatus actionFriendsAdminService(Long first, Long second, FriendActionEnum action) {
 //        if (FriendActionEnum.ACCEPT_REQUEST == action) {
 //
-//            return acceptFriendsAdminService(user1, user2);
+//            return acceptFriendsAdminService(first, second);
 //
 //        } else if (FriendActionEnum.DELETE_FRIEND == action) {
 //
-//            return deleteFriendAdminService(user1, user2);
+//            return deleteFriendAdminService(first, second);
 //
 //        } else if (FriendActionEnum.DELETE_REQUEST == action) {
 //
-//            return deleteRequestAdminService(user1, user2);
+//            return deleteRequestAdminService(first, second);
 //
 //        } else if (FriendActionEnum.REQUEST_FRIEND == action) {
 //
-//            return requestFriendAdminService(user1, user2);
+//            return requestFriendAdminService(first, second);
 //
 //        }
 //        LOGGER.warn("method not found");
@@ -75,9 +75,9 @@
 //    }
 //
 //    @Transactional(readOnly = true)
-//    public FriendsDTO findFriendStatusByUsers(Long user1, Long user2) {
-//        Long status = friendRepository.findFriendStatusByUsers(user1, user2);
-//        FriendsDTO friendsDTO = new FriendsDTO(user1, user2);
+//    public FriendsDTO findFriendStatusByUsers(Long first, Long second) {
+//        Long status = friendRepository.findFriendStatusByUsers(first, second);
+//        FriendsDTO friendsDTO = new FriendsDTO(first, second);
 //        friendsDTO.setStatus(status);
 //        return friendsDTO;
 //    }
@@ -103,8 +103,8 @@
 //    }
 //
 //    @Transactional
-//    public ServiceStatus deleteRequestAdminService(Long senderRequest, Long user2) {
-//        Optional<Friends> sender = getFriendsByUserIdAndStatus(senderRequest, user2, FriendStatusEnum.REQUEST.getId());
+//    public ServiceStatus deleteRequestAdminService(Long senderRequest, Long second) {
+//        Optional<Friends> sender = getFriendsByUserIdAndStatus(senderRequest, second, FriendStatusEnum.REQUEST.getId());
 //
 //        if (!sender.isPresent()) {
 //            return ServiceStatus.EXPECTATION_FAILED;
@@ -114,7 +114,7 @@
 //            return ServiceStatus.FALSE;
 //        }
 //
-//        Optional<Friends> other = getFriendsByUserIdAndStatus(user2, senderRequest, FriendStatusEnum.FOLLOWER.getId());
+//        Optional<Friends> other = getFriendsByUserIdAndStatus(second, senderRequest, FriendStatusEnum.FOLLOWER.getId());
 //
 //        if (!other.isPresent()) {
 //            return ServiceStatus.EXPECTATION_FAILED;
@@ -131,8 +131,8 @@
 //    }
 //
 //    @Transactional
-//    public ServiceStatus deleteFriendAdminService(Long senderRequest, Long user2) {
-//        Optional<Friends> sender = getFriendsByUserIdAndStatus(senderRequest, user2, FriendStatusEnum.PROGRESS.getId());
+//    public ServiceStatus deleteFriendAdminService(Long senderRequest, Long second) {
+//        Optional<Friends> sender = getFriendsByUserIdAndStatus(senderRequest, second, FriendStatusEnum.PROGRESS.getId());
 //
 //        if (!sender.isPresent()) {
 //            return ServiceStatus.EXPECTATION_FAILED;
@@ -142,7 +142,7 @@
 //            return ServiceStatus.FALSE;
 //        }
 //
-//        Optional<Friends> removed = getFriendsByUserIdAndStatus(user2, senderRequest, FriendStatusEnum.PROGRESS.getId());
+//        Optional<Friends> removed = getFriendsByUserIdAndStatus(second, senderRequest, FriendStatusEnum.PROGRESS.getId());
 //
 //        if (!removed.isPresent()) {
 //            return ServiceStatus.EXPECTATION_FAILED;
@@ -165,16 +165,16 @@
 //    }
 //
 //    @Transactional
-//    public ServiceStatus requestFriendAdminService(Long senderRequestUserId, Long user2) {
-//        if (existFriend(senderRequestUserId, user2) == ServiceStatus.FALSE) {
+//    public ServiceStatus requestFriendAdminService(Long senderRequestUserId, Long second) {
+//        if (existFriend(senderRequestUserId, second) == ServiceStatus.FALSE) {
 //
 //            Friends f1 = new Friends();
 //            f1.setUser(new UserLight(senderRequestUserId)); // auth user
-//            f1.setFriend(new UserLight(user2));
+//            f1.setFriend(new UserLight(second));
 //            f1.setStatus(FriendStatusEnum.REQUEST.getId());
 //
 //            Friends f2 = new Friends();
-//            f2.setUser(new UserLight(user2));
+//            f2.setUser(new UserLight(second));
 //            f2.setFriend(new UserLight(senderRequestUserId)); // auth user
 //            f2.setStatus(FriendStatusEnum.FOLLOWER.getId());
 //
@@ -223,8 +223,8 @@
 //    }
 //
 //    @Transactional
-//    public ServiceStatus existFriend(Long user1, Long user2) {
-//        if (friendRepository.existFriend(user1, user2).size() >= 2) {
+//    public ServiceStatus existFriend(Long first, Long second) {
+//        if (friendRepository.existFriend(first, second).size() >= 2) {
 //            return ServiceStatus.TRUE;
 //        } else {
 //            return ServiceStatus.FALSE;

@@ -2,9 +2,12 @@ package evolution.rest;
 
 
 import com.sun.org.apache.regexp.internal.RE;
+import evolution.business.BusinessServiceExecuteResult;
 import evolution.business.api.MessageBusinessService;
+import evolution.common.BusinessServiceExecuteStatus;
 import evolution.dto.model.MessageDTO;
 
+import evolution.dto.model.MessageDTOForSave;
 import evolution.rest.api.MessageRestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +37,7 @@ public class MessageRestServiceImpl implements MessageRestService {
 
     @Override
     public ResponseEntity<List<MessageDTO>> findAll() {
-        List<MessageDTO> list =  messageBusinessService.findAll();
+        List<MessageDTO> list = messageBusinessService.findAll();
         if (list.isEmpty()) {
             return ResponseEntity.noContent().build();
         } else {
@@ -45,7 +48,7 @@ public class MessageRestServiceImpl implements MessageRestService {
     @Override
     public ResponseEntity<Page<MessageDTO>> findAllMessage(Integer page, Integer size, String sort, List<String> sortProperties) {
         Page<MessageDTO> p = messageBusinessService.findAll(page, size, sort, sortProperties);
-        if(p.getContent().isEmpty()) {
+        if (p.getContent().isEmpty()) {
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.ok().body(p);
@@ -109,50 +112,12 @@ public class MessageRestServiceImpl implements MessageRestService {
     }
 
     @Override
-    public ResponseEntity<HttpStatus> save(MessageDTO message) {
-//        try {
-//            User auth = securitySupportService.getAuthenticationPrincipal().getUser();
-//            Long secondId = message.getDialog().getSecond().getId();
-//
-//            Optional<Dialog> optional = dialogDataService.findDialogWhereUsers(auth.getId(), secondId);
-//            List<Message> messageList;
-//
-//            DateTime dateTime = DateTime.now(DateTimeZone.UTC);
-//            Dialog dialog;
-//            if (optional.isPresent()) {
-//                // dialog exist
-//                dialog = optional.get();
-//                messageList = dialog.getMessageList();
-//            } else {
-//                // create new dialog
-//                dialog = new Dialog();
-//                dialog.setCreateDate(new Date(dateTime.getMillis()));
-//                dialog.setFirst(auth);
-//                Optional<User> second = userDataService.findOne(secondId);
-//                if(!second.isPresent()) {
-//                    logger.info("second user in dialog not found. Second user id " + secondId);
-//                    return ResponseEntity.status(417).build();
-//                }
-//                dialog.setSecond(second.get());
-//                messageList = new ArrayList<>();
-//                dialog.setMessageList(messageList);
-//            }
-//
-//            message.setDateDispatch(new Date(dateTime.getMillis()));
-//            message.setSender(auth);
-//            message.setDialog(dialog);
-//
-//            messageList.add(message);
-//
-//            dialogDataService.save(dialog);
-//
-//            return ResponseEntity.ok().build();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            logger.warn(e.getMessage());
-//            return ResponseEntity.status(500).build();
-//        }
-        return null;
+    public ResponseEntity<HttpStatus> save(MessageDTOForSave message) {
+        BusinessServiceExecuteResult b = messageBusinessService.createMessage(message.getSenderId(), message.getRecipientId(), message.getText());
+        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
+            return ResponseEntity.status(201).build();
+        }
+        return ResponseEntity.status(417).build();
     }
 
     @Override
@@ -250,5 +215,60 @@ public class MessageRestServiceImpl implements MessageRestService {
     @Override
     public ResponseEntity<Long> deleteByMessageIdAndSenderIdAfterReturnId(Long messageId) {
         return null;
+    }
+
+    @Override
+    public ResponseEntity<Page<MessageDTO>> findMessageByDialog(Long dialogId, Integer page, Integer size, String sort, List<String> sortProperties) {
+        Page<MessageDTO> p = messageBusinessService.findMessageByDialogId(dialogId, page, size, sort, sortProperties);
+        if (p.getContent().isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok().body(p);
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<MessageDTO>> findMessageByDialog(Long dialogId, String sort, List<String> sortProperties) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<List<MessageDTO>> findMessageByDialog(Long dialogId) {
+        List<MessageDTO> list = messageBusinessService.findMessageByDialogId(dialogId);
+        if (list.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(list);
+        }
+    }
+
+    @Override
+    public ResponseEntity<Page<MessageDTO>> findMessageByDialogAndUserId(Long dialogId, Integer page, Integer size, String sort, List<String> sortProperties) {
+        Page<MessageDTO> p = messageBusinessService.findMessageByDialogIdAndUserIam(dialogId, page, size, sort, sortProperties);
+        if (p.getContent().isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(p);
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<MessageDTO>> findMessageByDialogAndUserId(Long dialogId, String sort, List<String> sortProperties) {
+        List<MessageDTO> list = messageBusinessService.findMessageByDialogIdAndUserIam(dialogId, sort, sortProperties);
+        if (list.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(list);
+        }
+    }
+
+    @Override
+    public ResponseEntity<List<MessageDTO>> findMessageByDialogAndUserId(Long dialogId) {
+        List<MessageDTO> list = messageBusinessService.findMessageByDialogIdAndUserIam(dialogId);
+        if (list.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(list);
+        }
     }
 }

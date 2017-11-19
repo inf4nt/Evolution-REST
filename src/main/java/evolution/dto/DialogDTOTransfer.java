@@ -60,6 +60,36 @@ public class DialogDTOTransfer {
         return dto;
     }
 
+    public DialogDTO modelToDTO(Dialog dialog, User auth) {
+        DialogDTO dto = new DialogDTO();
+        dto.setId(dialog.getId());
+        // auth user always FIRST !
+
+        if (dialog.getFirst().getId().equals(auth.getId())) {
+            dto.setFirst(userDTOTransfer.modelToDTO(dialog.getFirst()));
+            dto.setSecond(userDTOTransfer.modelToDTO(dialog.getSecond()));
+        } else {
+            dto.setFirst(userDTOTransfer.modelToDTO(dialog.getSecond()));
+            dto.setSecond(userDTOTransfer.modelToDTO(dialog.getFirst()));
+        }
+
+        dto.setCreatedDateTimestamp(dialog.getCreateDate().getTime());
+        dto.setCreatedDateString(dateService.formatDateUTC(dialog.getCreateDate()));
+        return dto;
+    }
+
+    public DialogDTO modelToDTO(Dialog dialog) {
+        DialogDTO dto = new DialogDTO();
+        dto.setId(dialog.getId());
+
+        dto.setFirst(userDTOTransfer.modelToDTO(dialog.getFirst()));
+        dto.setSecond(userDTOTransfer.modelToDTO(dialog.getSecond()));
+
+        dto.setCreatedDateTimestamp(dialog.getCreateDate().getTime());
+        dto.setCreatedDateString(dateService.formatDateUTC(dialog.getCreateDate()));
+        return dto;
+    }
+
 
     public Dialog dtoToModel(DialogDTO dialogDTO) {
         return modelMapper.map(dialogDTO, Dialog.class);

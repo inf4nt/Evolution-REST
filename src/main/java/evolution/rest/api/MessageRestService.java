@@ -1,6 +1,7 @@
 package evolution.rest.api;
 
 import evolution.dto.model.MessageDTO;
+import evolution.dto.model.MessageDTOForSave;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ public interface MessageRestService {
 
     ResponseEntity<MessageDTO> findOneByMessageIdAndSenderId(Long id);
 
-    ResponseEntity<HttpStatus> save(MessageDTO message);
+    ResponseEntity<HttpStatus> save(MessageDTOForSave message);
 
     ResponseEntity<MessageDTO> saveMessage(MessageDTO message);
 
@@ -45,4 +46,16 @@ public interface MessageRestService {
     ResponseEntity<HttpStatus> deleteByMessageIdAndSenderId(Long messageId);
 
     ResponseEntity<Long> deleteByMessageIdAndSenderIdAfterReturnId(Long messageId);
+
+    ResponseEntity<Page<MessageDTO>> findMessageByDialog(Long dialogId, Integer page, Integer size, String sort, List<String> sortProperties);
+
+    ResponseEntity<List<MessageDTO>> findMessageByDialog(Long dialogId, String sort, List<String> sortProperties);
+
+    ResponseEntity<List<MessageDTO>> findMessageByDialog(Long dialogId);
+
+    ResponseEntity<Page<MessageDTO>> findMessageByDialogAndUserId(Long dialogId, Integer page, Integer size, String sort, List<String> sortProperties);
+
+    ResponseEntity<List<MessageDTO>> findMessageByDialogAndUserId(Long dialogId, String sort, List<String> sortProperties);
+
+    ResponseEntity<List<MessageDTO>> findMessageByDialogAndUserId(Long dialogId);
 }

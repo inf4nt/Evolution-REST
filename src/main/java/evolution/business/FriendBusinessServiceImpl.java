@@ -12,6 +12,8 @@ import evolution.dto.model.FriendDTO;
 import evolution.dto.model.FriendDTOFull;
 import evolution.model.Friend;
 import evolution.service.SecuritySupportService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class FriendBusinessServiceImpl implements FriendBusinessService {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final FriendCrudManagerService friendCrudManagerService;
 
@@ -113,6 +117,11 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
 
     @Override
     public BusinessServiceExecuteResult<FriendDTOFull> acceptRequest(FriendActionDTO friendActionDTO) {
+        if (!securitySupportService.isAllowed(friendActionDTO.getActionUserId())) {
+            logger.info("FORBIDDEN");
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
+        }
+
         Optional<Friend> request = friendCrudManagerService.acceptRequest(friendActionDTO.getActionUserId(), friendActionDTO.getRecipientUserId());
         if (!request.isPresent()) {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
@@ -127,6 +136,11 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
 
     @Override
     public BusinessServiceExecuteResult<FriendDTOFull> deleteFriend(FriendActionDTO friendActionDTO) {
+        if (!securitySupportService.isAllowed(friendActionDTO.getActionUserId())) {
+            logger.info("FORBIDDEN");
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
+        }
+
         Optional<Friend> delete = friendCrudManagerService.removeFriend(friendActionDTO.getActionUserId(), friendActionDTO.getRecipientUserId());
         if (!delete.isPresent()) {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
@@ -141,6 +155,11 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
 
     @Override
     public BusinessServiceExecuteResult<FriendDTOFull> deleteRequest(FriendActionDTO friendActionDTO) {
+        if (!securitySupportService.isAllowed(friendActionDTO.getActionUserId())) {
+            logger.info("FORBIDDEN");
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
+        }
+
         Optional<Friend> deleteRequest = friendCrudManagerService.removeRequest(friendActionDTO.getActionUserId(), friendActionDTO.getRecipientUserId());
         if (!deleteRequest.isPresent()) {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
@@ -155,6 +174,11 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
 
     @Override
     public BusinessServiceExecuteResult<FriendDTOFull> sendRequestToFriend(FriendActionDTO friendActionDTO) {
+        if (!securitySupportService.isAllowed(friendActionDTO.getActionUserId())) {
+            logger.info("FORBIDDEN");
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
+        }
+
         Optional<Friend> friend = friendCrudManagerService.sendRequestToFriend(friendActionDTO.getActionUserId(), friendActionDTO.getRecipientUserId());
         if (!friend.isPresent()) {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);

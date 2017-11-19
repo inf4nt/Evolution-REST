@@ -81,9 +81,7 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
         Message message = new Message();
 
         Optional<User> os = userRepository.findOneUserById(senderId);
-        if (os.isPresent()) {
-            message.setSender(os.get());
-        }
+        os.ifPresent(o -> message.setSender(o));
 
         if (od.isPresent()) {
             //dialog exist

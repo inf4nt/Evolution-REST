@@ -21,11 +21,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static evolution.common.BusinessServiceExecuteStatus.EXPECTATION_FAILED;
+import static evolution.common.BusinessServiceExecuteStatus.FORBIDDEN;
 import static evolution.common.BusinessServiceExecuteStatus.OK;
 
 /**
@@ -90,50 +92,54 @@ public class MessageBusinessServiceImpl implements MessageBusinessService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<MessageDTO> findMessageByDialogId(Long dialogId) {
         return messageCrudManagerService
                 .findMessageByDialogId(dialogId)
-                .stream().map(o -> messageDTOTransfer.modelToDTO(o, securitySupportService.getPrincipal()))
+                .stream().map(o -> messageDTOTransfer.modelToDTO(o))
                 .collect(Collectors.toList());
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Page<MessageDTO> findMessageByDialogId(Long dialogId, Integer page, Integer size, String sortType, List<String> sortProperties) {
         return messageCrudManagerService
                 .findMessageByDialogId(dialogId, page, size, sortType, sortProperties)
-                .map(o -> messageDTOTransfer.modelToDTO(o, securitySupportService.getPrincipal()));
+                .map(o -> messageDTOTransfer.modelToDTO(o));
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<MessageDTO> findMessageByDialogId(Long dialogId, String sortType, List<String> sortProperties) {
-        Optional<CustomSecurityUser> auth = securitySupportService.getPrincipal();
         return messageCrudManagerService
                 .findMessageByDialogId(dialogId, sortType, sortProperties).stream()
-                .map(o -> messageDTOTransfer.modelToDTO(o, auth))
+                .map(o -> messageDTOTransfer.modelToDTO(o))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<MessageDTO> findMessageByDialogIdAndUserIam(Long dialogId, Long iam) {
-        Optional<CustomSecurityUser> auth = securitySupportService.getPrincipal();
+    public List<MessageDTO> findMessageByDialogIdAndUserIam(Long dialogId) {
+        User auth = securitySupportService.getAuthenticationPrincipal().getUser();
         return messageCrudManagerService
-                .findMessageByDialogId(dialogId, iam)
+                .findMessageByDialogId(dialogId, auth.getId())
                 .stream().map(o -> messageDTOTransfer.modelToDTO(o, auth))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Page<MessageDTO> findMessageByDialogIdAndUserIam(Long dialogId, Long iam, Integer page, Integer size, String sortType, List<String> sortProperties) {
+    public Page<MessageDTO> findMessageByDialogIdAndUserIam(Long dialogId, Integer page, Integer size, String sortType, List<String> sortProperties) {
+        User auth = securitySupportService.getAuthenticationPrincipal().getUser();
         return messageCrudManagerService
-                .findMessageByDialogId(dialogId, iam, page, size, sortType, sortProperties)
-                .map(o -> messageDTOTransfer.modelToDTO(o, securitySupportService.getPrincipal()));
+                .findMessageByDialogId(dialogId, auth.getId(), page, size, sortType, sortProperties)
+                .map(o -> messageDTOTransfer.modelToDTO(o, auth));
     }
 
     @Override
-    public List<MessageDTO> findMessageByDialogIdAndUserIam(Long dialogId, Long iam, String sortType, List<String> sortProperties) {
+    public List<MessageDTO> findMessageByDialogIdAndUserIam(Long dialogId, String sortType, List<String> sortProperties) {
+        User auth = securitySupportService.getAuthenticationPrincipal().getUser();
         return messageCrudManagerService
-                .findMessageByDialogId(dialogId, iam, sortType, sortProperties).stream()
-                .map(o -> messageDTOTransfer.modelToDTO(o, securitySupportService.getPrincipal()))
+                .findMessageByDialogId(dialogId, auth.getId(), sortType, sortProperties).stream()
+                .map(o -> messageDTOTransfer.modelToDTO(o, auth))
                 .collect(Collectors.toList());
     }
 
@@ -154,6 +160,11 @@ public class MessageBusinessServiceImpl implements MessageBusinessService {
 
     @Override
     public BusinessServiceExecuteResult<MessageDTOForSave> createMessage(Long senderId, Long recipientId, String text) {
+        if (!securitySupportService.isAllowed(senderId)) {
+            logger.info("FORBIDDEN");
+            return BusinessServiceExecuteResult.build(FORBIDDEN);
+        }
+
         try {
             Message message = messageCrudManagerService.saveMessageAndMaybeCreateNewDialog(text, senderId, recipientId, dateService.getCurrentDateInUTC());
             return BusinessServiceExecuteResult.build(OK, messageDTOTransfer.modelToDTOForSave(message, securitySupportService.getPrincipal()));

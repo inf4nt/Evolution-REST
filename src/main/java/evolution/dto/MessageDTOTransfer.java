@@ -50,6 +50,40 @@ public class MessageDTOTransfer {
         return dto;
     }
 
+    public MessageDTO modelToDTO(Message message, User auth) {
+
+        MessageDTO dto = new MessageDTO();
+        dto.setId(message.getId());
+
+        dto.setCreatedDateTimestamp(message.getDateDispatch().getTime());
+        dto.setCreatedDateString(dateService.formatDateUTC(message.getDateDispatch().getTime()));
+
+        dto.setText(message.getMessage());
+        dto.setSender(userDTOTransfer.modelToDTO(message.getSender()));
+
+
+        dto.setDialogDTO(dialogDTOTransfer.modelToDTO(message.getDialog(), auth));
+
+        return dto;
+    }
+
+    public MessageDTO modelToDTO(Message message) {
+
+        MessageDTO dto = new MessageDTO();
+        dto.setId(message.getId());
+
+        dto.setCreatedDateTimestamp(message.getDateDispatch().getTime());
+        dto.setCreatedDateString(dateService.formatDateUTC(message.getDateDispatch().getTime()));
+
+        dto.setText(message.getMessage());
+        dto.setSender(userDTOTransfer.modelToDTO(message.getSender()));
+
+
+        dto.setDialogDTO(dialogDTOTransfer.modelToDTO(message.getDialog()));
+
+        return dto;
+    }
+
 
     public MessageDTOForSave modelToDTOForSave(Message message, Optional<CustomSecurityUser> auth) {
         return null;
