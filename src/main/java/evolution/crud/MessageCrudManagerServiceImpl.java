@@ -1,6 +1,7 @@
 package evolution.crud;
 
 import evolution.crud.api.MessageCrudManagerService;
+import evolution.dto.model.MessageDTO;
 import evolution.model.Dialog;
 import evolution.model.Message;
 import evolution.model.User;
@@ -113,6 +114,18 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
         message.setActive(true);
 
         return messageRepository.save(message);
+    }
+
+    @Override
+    public List<Message> findMessageByInterlocutor(Long interlocutor, Long second) {
+        return messageRepository.findMessageByInterlocutor(interlocutor, second);
+    }
+
+    @Override
+    public Page<Message> findMessageByInterlocutor(Long interlocutor, Long second, Integer page, Integer size, String sort, List<String> sortProperties) {
+        Pageable p = getPageableForRestService(page, size, sort, sortProperties,
+                this.messageMaxFetch, this.defaultMessageSortType, this.defaultMessageSortProperties);
+        return messageRepository.findMessageByInterlocutor(interlocutor, second, p);
     }
 
     @Override

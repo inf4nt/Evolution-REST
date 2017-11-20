@@ -1,5 +1,6 @@
 package evolution.crud.api;
 
+import evolution.dto.model.MessageDTO;
 import evolution.model.Message;
 import org.springframework.data.domain.Page;
 
@@ -47,4 +48,8 @@ public interface MessageCrudManagerService extends AbstractCrudManagerService<Me
     boolean deleteMessageAndMaybeDialog(Long messageId);
 
     Message saveMessageAndMaybeCreateNewDialog(String text, Long senderId, Long recipientId, Date createDateUTC);
+
+    List<Message> findMessageByInterlocutor(Long interlocutor, Long second);
+
+    Page<Message> findMessageByInterlocutor(Long interlocutor, Long second, Integer page, Integer size, String sort, List<String> sortProperties);
 }

@@ -120,4 +120,16 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
             " where m.sender.id <> recipientId " +
             " and (d.first.id =:recipientId or d.second.id =:recipientId) ")
     List<Message> findMessageByRecipientId(@Param("recipientId") Long recipientId);
+
+    @Query(" select m " +
+            " from Message m " +
+            " where (m.dialog.first.id =:first and  m.dialog.second.id =:second) " +
+            " or (m.dialog.first.id =:second and  m.dialog.second.id =:first) ")
+    List<Message> findMessageByInterlocutor(@Param("first") Long interlocutor, @Param("second") Long second);
+
+    @Query(" select m " +
+            " from Message m " +
+            " where (m.dialog.first.id =:first and  m.dialog.second.id =:second) " +
+            " or (m.dialog.first.id =:second and  m.dialog.second.id =:first) ")
+    Page<Message> findMessageByInterlocutor(@Param("first") Long interlocutor, @Param("second") Long second, Pageable pageable);
 }

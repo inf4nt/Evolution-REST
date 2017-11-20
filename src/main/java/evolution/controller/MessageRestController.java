@@ -39,10 +39,24 @@ public class MessageRestController {
         return messageRestService.findAllMessage(page, size, sortType, sortProperties);
     }
 
-
+    //todo return messageDTO
     @PostMapping
-    public ResponseEntity<HttpStatus> postMessage(@RequestBody MessageDTOForSave message) {
+    public ResponseEntity<MessageDTO> postMessage(@RequestBody MessageDTOForSave message) {
         return messageRestService.save(message);
+    }
+
+    @GetMapping(value = "/interlocutor/{id}")
+    public ResponseEntity<Page<MessageDTO>> findMessageByInterlocutor(@PathVariable Long id,
+                                                                      @RequestParam(required = false) Integer page,
+                                                                      @RequestParam(required = false) Integer size,
+                                                                      @RequestParam(required = false) String sortType,
+                                                                      @RequestParam(required = false) List<String> sortProperties) {
+        return messageRestService.findMessageByInterlocutor(id, page, size, sortType, sortProperties);
+    }
+
+    @GetMapping(value = "/interlocutor/{id}/list")
+    public ResponseEntity<List<MessageDTO>> findMessageByInterlocutor(@PathVariable Long id) {
+        return messageRestService.findMessageByInterlocutor(id);
     }
 
     @GetMapping(value = "/recipient/user/{id}")
@@ -82,7 +96,6 @@ public class MessageRestController {
         return messageRestService.delete(id);
     }
 
-
     @GetMapping(value = "/last-message-dialog/user/{id}/list")
     public ResponseEntity<List<MessageDTO>> findLastMessageInMyDialog(@PathVariable Long id) {
         return messageRestService.findLastMessageInMyDialog(id);
@@ -90,10 +103,10 @@ public class MessageRestController {
 
     @GetMapping(value = "/last-message-dialog/user/{id}")
     public ResponseEntity<Page<MessageDTO>> findLastMessageInMyDialog(@PathVariable Long id,
-                                                                    @RequestParam(required = false) Integer page,
-                                                                    @RequestParam(required = false) Integer size,
-                                                                    @RequestParam(required = false) String sortType,
-                                                                    @RequestParam(required = false) List<String> sortProperties) {
+                                                                      @RequestParam(required = false) Integer page,
+                                                                      @RequestParam(required = false) Integer size,
+                                                                      @RequestParam(required = false) String sortType,
+                                                                      @RequestParam(required = false) List<String> sortProperties) {
         return messageRestService.findLastMessageInMyDialog(id, page, size, sortType, sortProperties);
     }
 }

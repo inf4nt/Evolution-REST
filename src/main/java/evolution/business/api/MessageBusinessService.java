@@ -6,6 +6,7 @@ import evolution.dto.model.MessageDTO;
 import evolution.dto.model.MessageDTOForSave;
 import evolution.dto.model.MessageDTOFull;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,23 +30,9 @@ public interface MessageBusinessService {
 
     List<MessageDTO> findMessageByDialogId(Long dialogId, String sortType, List<String> sortProperties);
 
-    List<MessageDTO> findMessageByDialogIdAndUserIam(Long dialogId);
+    BusinessServiceExecuteResult<MessageDTO> createNewMessage(MessageDTOForSave messageDTOForSave);
 
-    Page<MessageDTO> findMessageByDialogIdAndUserIam(Long dialogId, Integer page, Integer size, String sortType, List<String> sortProperties);
-
-    List<MessageDTO> findMessageByDialogIdAndUserIam(Long dialogId, String sortType, List<String> sortProperties);
-
-    BusinessServiceExecuteResult<MessageDTOForSave> createNewMessage(MessageDTOForSave messageDTOForSave);
-
-    BusinessServiceExecuteResult<MessageDTO> createNewMessage2(MessageDTOForSave messageDTOForSave);
-
-    BusinessServiceExecuteResult<MessageDTOFull> createNewMessage3(MessageDTOForSave messageDTOForSave);
-
-    BusinessServiceExecuteResult<MessageDTOForSave> createMessage(Long senderId, Long recipientId, String text);
-
-    BusinessServiceExecuteResult<MessageDTO> createMessage2(Long senderId, Long recipientId, String text);
-
-    BusinessServiceExecuteResult<MessageDTOFull> createMessage3(Long senderId, Long recipientId, String text);
+    BusinessServiceExecuteResult<MessageDTO> createMessage(Long senderId, Long recipientId, String text);
 
     BusinessServiceExecuteResult delete(Long id);
 
@@ -60,4 +47,8 @@ public interface MessageBusinessService {
     List<MessageDTO> findMessageByRecipientId(Long iam);
 
     Page<MessageDTO> findMessageByRecipientId(Long iam, Integer page, Integer size, String sortType, List<String> sortProperties);
+
+    List<MessageDTO> findMessageByInterlocutor(Long interlocutor);
+
+    Page<MessageDTO> findMessageByInterlocutor(Long interlocutor, Integer page, Integer size, String sort, List<String> sortProperties);
 }

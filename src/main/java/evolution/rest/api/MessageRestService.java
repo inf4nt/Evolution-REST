@@ -28,7 +28,7 @@ public interface MessageRestService {
 
     ResponseEntity<MessageDTO> findOneMessage(Long id);
 
-    ResponseEntity<HttpStatus> save(MessageDTOForSave message);
+    ResponseEntity<MessageDTO> save(MessageDTOForSave message);
 
     ResponseEntity<HttpStatus> update(MessageForUpdateDTO message);
 
@@ -45,4 +45,8 @@ public interface MessageRestService {
     ResponseEntity<List<MessageDTO>> findMessageByDialog(Long dialogId, String sort, List<String> sortProperties);
 
     ResponseEntity<List<MessageDTO>> findMessageByDialog(Long dialogId);
+
+    ResponseEntity<List<MessageDTO>> findMessageByInterlocutor(Long interlocutor);
+
+    ResponseEntity<Page<MessageDTO>> findMessageByInterlocutor(Long interlocutor, Integer page, Integer size, String sort, List<String> sortProperties);
 }
