@@ -17,21 +17,13 @@ public class UserForSaveDTO {
 
     private String nickname;
 
-    private UserAdditionalDataDTOForSave userAdditionalData = new UserAdditionalDataDTOForSave();
+    private String username;
 
-    @Data
-    @JsonInclude
-    public static class UserAdditionalDataDTOForSave {
+    private String password;
 
-        private String username;
+    private String country;
 
-        private String password;
+    private String state;
 
-        private String country;
-
-        private String state;
-
-        private GenderEnum gender;
-    }
-
+    private GenderEnum gender;
 }

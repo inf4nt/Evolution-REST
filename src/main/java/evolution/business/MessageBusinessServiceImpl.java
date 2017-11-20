@@ -165,10 +165,17 @@ public class MessageBusinessServiceImpl implements MessageBusinessService {
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public BusinessServiceExecuteResult delete(Long id) {
         try {
-            boolean res = messageCrudManagerService.deleteMessageAndMaybeDialog(id);
+            boolean res;
+
+            if (securitySupportService.isAdmin()) {
+                res = messageCrudManagerService.deleteMessageAndMaybeDialog(id);
+            } else {
+                User auth = securitySupportService.getAuthenticationPrincipal().getUser();
+                res = messageCrudManagerService.deleteMessageAndMaybeDialog(id, auth.getId());
+            }
+
             if (res) {
                 return BusinessServiceExecuteResult.build(OK);
             } else {

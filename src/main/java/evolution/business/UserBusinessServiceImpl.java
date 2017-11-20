@@ -59,17 +59,20 @@ public class UserBusinessServiceImpl implements UserBusinessService {
 
     @Override
     public BusinessServiceExecuteResult<User> createNewUserGlobal(UserForSaveDTO userForSaveDTO) {
-        Optional<User> ou = userCrudManagerService.findByUsername(userForSaveDTO.getUserAdditionalData().getUsername());
+        Optional<User> ou = userCrudManagerService.findByUsername(userForSaveDTO.getUsername());
         if (ou.isPresent()) {
-            logger.info("user by username " + userForSaveDTO.getUserAdditionalData().getUsername() + ", is already exist !");
+            logger.info("user by username " + userForSaveDTO.getUsername() + ", is already exist !");
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.USER_IS_ALREADY_EXIST_REGISTRATION_FAILED);
         }
 
         User user = userDTOTransfer.dtoToModel(userForSaveDTO);
-        String encodePassword = passwordEncoder.encode(user.getUserAdditionalData().getPassword());
 
+        String encodePassword = passwordEncoder.encode(userForSaveDTO.getPassword());
+        user.getUserAdditionalData().setUsername(userForSaveDTO.getUsername());
+        user.getUserAdditionalData().setCountry(userForSaveDTO.getCountry());
+        user.getUserAdditionalData().setState(userForSaveDTO.getState());
         user.getUserAdditionalData().setPassword(encodePassword);
-
+        user.getUserAdditionalData().setGender(userForSaveDTO.getGender());
         user.getUserAdditionalData().setBlock(false);
         user.getUserAdditionalData().setActive(false);
         user.getUserAdditionalData().setSecretKey(UUID.randomUUID().toString());
@@ -127,11 +130,11 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
-    public BusinessServiceExecuteResult<UserForSaveDTO> createNewUser(UserForSaveDTO userForSaveDTO) {
+    public BusinessServiceExecuteResult<UserFullDTO> createNewUser(UserForSaveDTO userForSaveDTO) {
         BusinessServiceExecuteResult<User> b = createNewUserGlobal(userForSaveDTO);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
             return BusinessServiceExecuteResult
-                    .build(BusinessServiceExecuteStatus.OK, b.getResultObjectOptional().map(o -> userDTOTransfer.modelToDTOForSave(o)));
+                    .build(BusinessServiceExecuteStatus.OK, b.getResultObjectOptional().map(o -> userDTOTransfer.modelToDTOFull(o)));
         }
         return BusinessServiceExecuteResult.build(b.getExecuteStatus());
     }

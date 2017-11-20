@@ -47,6 +47,8 @@ public interface MessageCrudManagerService extends AbstractCrudManagerService<Me
 
     boolean deleteMessageAndMaybeDialog(Long messageId);
 
+    boolean deleteMessageAndMaybeDialog(Long messageId, Long senderId);
+
     Message saveMessageAndMaybeCreateNewDialog(String text, Long senderId, Long recipientId, Date createDateUTC);
 
     List<Message> findMessageByInterlocutor(Long interlocutor, Long second);

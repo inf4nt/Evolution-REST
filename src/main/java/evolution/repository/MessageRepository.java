@@ -53,7 +53,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     Optional<Message> findOneMessageById(@Param("id") Long messageId);
 
     @Query("select m from Message m where m.id =:id and m.sender.id =:senderId")
-    Optional<Message> findOneMessageByMessageIdAndSenderId(@Param("id") Long messageId, @Param("senderId") Long senderId);
+    Optional<Message> findOneByMessageIdAndSender(@Param("id") Long messageId, @Param("senderId") Long senderId);
 
     @Query(" select m " +
             " from Message m " +

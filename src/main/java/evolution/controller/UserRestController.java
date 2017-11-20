@@ -52,8 +52,8 @@ public class UserRestController {
        return userRestService.findOneFull(id);
     }
 
-    @PostMapping
-    public ResponseEntity save(@RequestBody UserForSaveDTO user) {
+    @PostMapping(value = "/post")
+    public ResponseEntity<UserFullDTO> save(@RequestBody UserForSaveDTO user) {
         return userRestService.createNewUser(user);
     }
 
@@ -62,13 +62,11 @@ public class UserRestController {
         return userRestService.update(user);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping(value = "/{id}")
     public ResponseEntity deleteById(@PathVariable Long id) {
         return userRestService.delete(id);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(value = "/block/{id}")
     public ResponseEntity blockUser(@PathVariable Long id) {
         return userRestService.block(id);

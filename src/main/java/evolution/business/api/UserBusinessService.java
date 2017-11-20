@@ -19,7 +19,7 @@ public interface UserBusinessService {
 
     BusinessServiceExecuteResult<UserFullDTO> createNewUserFull(UserForSaveDTO userForSaveDTO);
 
-    BusinessServiceExecuteResult<UserForSaveDTO> createNewUser(UserForSaveDTO userForSaveDTO);
+    BusinessServiceExecuteResult<UserFullDTO> createNewUser(UserForSaveDTO userForSaveDTO);
 
     BusinessServiceExecuteResult<User> createNewUserGlobal(UserForSaveDTO userForSaveDTO);
 

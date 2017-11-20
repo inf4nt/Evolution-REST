@@ -30,7 +30,7 @@ public interface UserRestService {
 
     ResponseEntity<List<UserDTO>> findAll(String sortType, List<String> sortProperties);
 
-    ResponseEntity createNewUser(UserForSaveDTO user);
+    ResponseEntity<UserFullDTO> createNewUser(UserForSaveDTO user);
 
     ResponseEntity update(UserForUpdateDTO user);
 

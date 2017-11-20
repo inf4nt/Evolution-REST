@@ -98,12 +98,12 @@ public class UserRestServiceImpl implements UserRestService {
     }
 
     @Override
-    public ResponseEntity createNewUser(UserForSaveDTO user) {
-        BusinessServiceExecuteResult b = userBusinessService.createNewUser(user);
-        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
-            return ResponseEntity.status(201).build();
+    public ResponseEntity<UserFullDTO> createNewUser(UserForSaveDTO user) {
+        BusinessServiceExecuteResult<UserFullDTO> b = userBusinessService.createNewUser(user);
+        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent()) {
+            return ResponseEntity.status(201).body(b.getResultObjectOptional().get());
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.USER_IS_ALREADY_EXIST_REGISTRATION_FAILED) {
-            return ResponseEntity.status(417).body(b.getExecuteStatus());
+            return ResponseEntity.status(417).build();
         }
 
         return ResponseEntity.status(417).build();
