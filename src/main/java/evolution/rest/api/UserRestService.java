@@ -1,11 +1,10 @@
 package evolution.rest.api;
 
 import evolution.dto.model.UserDTO;
-import evolution.dto.model.UserDTOForSave;
-import evolution.dto.model.UserDTOForUpdate;
+import evolution.dto.model.UserForSaveDTO;
+import evolution.dto.model.UserForUpdateDTO;
 import evolution.dto.model.UserFullDTO;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -31,9 +30,9 @@ public interface UserRestService {
 
     ResponseEntity<List<UserDTO>> findAll(String sortType, List<String> sortProperties);
 
-    ResponseEntity createNewUser(UserDTOForSave user);
+    ResponseEntity createNewUser(UserForSaveDTO user);
 
-    ResponseEntity update(UserDTOForUpdate user);
+    ResponseEntity update(UserForUpdateDTO user);
 
     ResponseEntity delete(Long id);
 

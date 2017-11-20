@@ -1,7 +1,6 @@
 package evolution.business;
 
 import evolution.business.api.MessageBusinessService;
-import evolution.common.BusinessServiceExecuteStatus;
 import evolution.crud.api.DialogCrudManagerService;
 import evolution.crud.api.MessageCrudManagerService;
 import evolution.crud.api.UserCrudManagerService;
@@ -18,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -26,9 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static evolution.common.BusinessServiceExecuteStatus.EXPECTATION_FAILED;
-import static evolution.common.BusinessServiceExecuteStatus.FORBIDDEN;
-import static evolution.common.BusinessServiceExecuteStatus.OK;
+import static evolution.common.BusinessServiceExecuteStatus.*;
 
 /**
  * Created by Infant on 13.11.2017.
@@ -62,50 +60,78 @@ public class MessageBusinessServiceImpl implements MessageBusinessService {
     }
 
     @Override
+    public Optional<MessageDTO> findOne(Long id) {
+        if (securitySupportService.isAdmin()) {
+            return messageCrudManagerService
+                    .findOne(id)
+                    .map(o -> messageDTOTransfer.modelToDTO(o));
+        } else {
+            User auth = securitySupportService.getAuthenticationPrincipal().getUser();
+            return messageCrudManagerService
+                    .findOneByMessageIdAndSenderId(id, auth.getId())
+                    .map(o -> messageDTOTransfer.modelToDTO(o));
+        }
+    }
+
+    @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<MessageDTO> findAll() {
-        Optional<CustomSecurityUser> optional = securitySupportService.getPrincipal();
         return messageCrudManagerService
                 .findAll().stream()
-                .map(o -> messageDTOTransfer.modelToDTO(o, optional))
+                .map(o -> messageDTOTransfer.modelToDTO(o))
                 .collect(Collectors.toList());
     }
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Page<MessageDTO> findAll(Integer page, Integer size, String sortType, List<String> sortProperties) {
-        Optional<CustomSecurityUser> optional = securitySupportService.getPrincipal();
         return messageCrudManagerService
                 .findAll(page, size, sortType, sortProperties)
-                .map(o -> messageDTOTransfer.modelToDTO(o, optional));
+                .map(o -> messageDTOTransfer.modelToDTO(o));
     }
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<MessageDTO> findAll(String sortType, List<String> sortProperties) {
-        Optional<CustomSecurityUser> optional = securitySupportService.getPrincipal();
         return messageCrudManagerService
                 .findAll(sortType, sortProperties)
                 .stream()
-                .map(o -> messageDTOTransfer.modelToDTO(o, optional))
+                .map(o -> messageDTOTransfer.modelToDTO(o))
                 .collect(Collectors.toList());
     }
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<MessageDTO> findMessageByDialogId(Long dialogId) {
-        return messageCrudManagerService
-                .findMessageByDialogId(dialogId)
-                .stream().map(o -> messageDTOTransfer.modelToDTO(o))
-                .collect(Collectors.toList());
+        if (securitySupportService.isAdmin()) {
+            return messageCrudManagerService
+                    .findMessageByDialogId(dialogId)
+                    .stream()
+                    .map(o -> messageDTOTransfer.modelToDTO(o))
+                    .collect(Collectors.toList());
+        } else {
+            User auth = securitySupportService.getAuthenticationPrincipal().getUser();
+            return messageCrudManagerService
+                    .findMessageByDialogId(dialogId, auth.getId())
+                    .stream()
+                    .map(o -> messageDTOTransfer.modelToDTO(o))
+                    .collect(Collectors.toList());
+        }
     }
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Page<MessageDTO> findMessageByDialogId(Long dialogId, Integer page, Integer size, String sortType, List<String> sortProperties) {
-        return messageCrudManagerService
-                .findMessageByDialogId(dialogId, page, size, sortType, sortProperties)
-                .map(o -> messageDTOTransfer.modelToDTO(o));
+        if (securitySupportService.isAdmin()) {
+            return messageCrudManagerService
+                    .findMessageByDialogId(dialogId, page, size, sortType, sortProperties)
+                    .map(o -> messageDTOTransfer.modelToDTO(o));
+        } else {
+            User auth = securitySupportService.getAuthenticationPrincipal().getUser();
+            return messageCrudManagerService
+                    .findMessageByDialogId(dialogId, auth.getId(), page, size, sortType, sortProperties)
+                    .map(o -> messageDTOTransfer.modelToDTO(o));
+        }
     }
 
     @Override
@@ -160,7 +186,7 @@ public class MessageBusinessServiceImpl implements MessageBusinessService {
 
     @Override
     public BusinessServiceExecuteResult<MessageDTOForSave> createMessage(Long senderId, Long recipientId, String text) {
-        if (!securitySupportService.isAllowed(senderId)) {
+        if (!securitySupportService.isAllowedFull(senderId)) {
             logger.info("FORBIDDEN");
             return BusinessServiceExecuteResult.build(FORBIDDEN);
         }
@@ -185,5 +211,116 @@ public class MessageBusinessServiceImpl implements MessageBusinessService {
         return null;
     }
 
+    @Override
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public BusinessServiceExecuteResult delete(Long id) {
+        try {
+            boolean res = messageCrudManagerService.deleteMessageAndMaybeDialog(id);
+            if (res) {
+                return BusinessServiceExecuteResult.build(OK);
+            } else {
+                return BusinessServiceExecuteResult.build(NOT_FOUNT_OBJECT_FOR_EXECUTE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.warn(e.getMessage());
+            return BusinessServiceExecuteResult.build(CATCH_EXCPETION);
+        }
+    }
 
+    @Override
+    public List<MessageDTO> findLastMessageInMyDialog(Long iam) {
+        if (securitySupportService.isAllowed(iam)) {
+            return messageCrudManagerService
+                    .findLastMessageInMyDialog(iam)
+                    .stream()
+                    .map(o -> messageDTOTransfer.modelToDTO(o, iam))
+                    .collect(Collectors.toList());
+        } else if (securitySupportService.isAdmin()) {
+            return messageCrudManagerService
+                    .findLastMessageInMyDialog(iam)
+                    .stream()
+                    .map(o -> messageDTOTransfer.modelToDTO(o))
+                    .collect(Collectors.toList());
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
+    public Page<MessageDTO> findLastMessageInMyDialog(Long iam, Integer page, Integer size, String sortType, List<String> sortProperties) {
+        if (securitySupportService.isAllowed(iam)) {
+            return messageCrudManagerService
+                    .findLastMessageInMyDialog(iam, page, size, sortType, sortProperties)
+                    .map(o -> messageDTOTransfer.modelToDTO(o, iam));
+        } else if (securitySupportService.isAdmin()) {
+            return messageCrudManagerService
+                    .findLastMessageInMyDialog(iam, page, size, sortType, sortProperties)
+                    .map(o -> messageDTOTransfer.modelToDTO(o));
+        }
+        return new PageImpl<>(new ArrayList<>());
+    }
+
+    @Override
+    public List<MessageDTO> findMessageBySenderId(Long iam) {
+        if (securitySupportService.isAllowed(iam)) {
+            return messageCrudManagerService
+                    .findMessageBySenderId(iam)
+                    .stream()
+                    .map(o -> messageDTOTransfer.modelToDTO(o, iam))
+                    .collect(Collectors.toList());
+        } else if (securitySupportService.isAdmin()) {
+            return messageCrudManagerService
+                    .findMessageBySenderId(iam)
+                    .stream()
+                    .map(o -> messageDTOTransfer.modelToDTO(o))
+                    .collect(Collectors.toList());
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
+    public Page<MessageDTO> findMessageBySenderId(Long iam, Integer page, Integer size, String sortType, List<String> sortProperties) {
+        if (securitySupportService.isAllowed(iam)) {
+            return messageCrudManagerService
+                    .findMessageBySenderId(iam, page, size, sortType, sortProperties)
+                    .map(o -> messageDTOTransfer.modelToDTO(o, iam));
+        } else if (securitySupportService.isAdmin()) {
+            return messageCrudManagerService
+                    .findMessageBySenderId(iam, page, size, sortType, sortProperties)
+                    .map(o -> messageDTOTransfer.modelToDTO(o));
+        }
+        return new PageImpl<>(new ArrayList<>());
+    }
+
+    @Override
+    public List<MessageDTO> findMessageByRecipientId(Long iam) {
+        if (securitySupportService.isAllowed(iam)) {
+            return messageCrudManagerService
+                    .findMessageByRecipientId(iam)
+                    .stream()
+                    .map(o -> messageDTOTransfer.modelToDTO(o, iam))
+                    .collect(Collectors.toList());
+        } else if (securitySupportService.isAdmin()) {
+            return messageCrudManagerService
+                    .findMessageByRecipientId(iam)
+                    .stream()
+                    .map(o -> messageDTOTransfer.modelToDTO(o))
+                    .collect(Collectors.toList());
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
+    public Page<MessageDTO> findMessageByRecipientId(Long iam, Integer page, Integer size, String sortType, List<String> sortProperties) {
+        if (securitySupportService.isAllowed(iam)) {
+            return messageCrudManagerService
+                    .findMessageByRecipientId(iam, page, size, sortType, sortProperties)
+                    .map(o -> messageDTOTransfer.modelToDTO(o, iam));
+        } else if (securitySupportService.isAdmin()) {
+            return messageCrudManagerService
+                    .findMessageByRecipientId(iam, page, size, sortType, sortProperties)
+                    .map(o -> messageDTOTransfer.modelToDTO(o));
+        }
+        return new PageImpl<>(new ArrayList<>());
+    }
 }

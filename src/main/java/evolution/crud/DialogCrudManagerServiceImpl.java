@@ -1,7 +1,9 @@
 package evolution.crud;
 
 import evolution.crud.api.DialogCrudManagerService;
+import evolution.dto.model.MessageDTO;
 import evolution.model.Dialog;
+import evolution.model.Message;
 import evolution.repository.DialogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,7 +11,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +24,15 @@ import java.util.Optional;
 public class DialogCrudManagerServiceImpl implements DialogCrudManagerService {
 
     private final DialogRepository dialogRepository;
+
+    @Value("${model.dialog.maxfetch}")
+    private Integer dialogMaxFetch;
+
+    @Value("${model.dialog.defaultsort}")
+    private String defaultDialogSortType;
+
+    @Value("${model.dialog.defaultsortproperties}")
+    private String defaultDialogSortProperties;
 
     @Autowired
     public DialogCrudManagerServiceImpl(DialogRepository dialogRepository) {
@@ -33,25 +46,29 @@ public class DialogCrudManagerServiceImpl implements DialogCrudManagerService {
 
     @Override
     public List<Dialog> findAll(String sort, List<String> sortProperties) {
-        Sort s = getSort(sort, sortProperties);
+        Sort s = getSortForRestService(sort, sortProperties,
+                this.defaultDialogSortType, this.defaultDialogSortProperties);
         return dialogRepository.findAll(s);
     }
 
     @Override
     public Page<Dialog> findAll(Integer page, Integer size, String sort, List<String> sortProperties) {
-        Pageable pageable = getPageable(page, size, sort, sortProperties);
+        Pageable pageable = getPageableForRestService(page, size, sort, sortProperties,
+                this.dialogMaxFetch, this.defaultDialogSortType, this.defaultDialogSortProperties);
         return dialogRepository.findAll(pageable);
     }
 
     @Override
     public Page<Dialog> findMyDialog(Long iam, Integer page, Integer size, String sort, List<String> sortProperties) {
-        Pageable pageable = getPageable(page, size, sort, sortProperties);
+        Pageable pageable = getPageableForRestService(page, size, sort, sortProperties,
+                this.dialogMaxFetch, this.defaultDialogSortType, this.defaultDialogSortProperties);
         return dialogRepository.findMyDialog(iam, pageable);
     }
 
     @Override
     public List<Dialog> findMyDialog(Long iam, String sort, List<String> sortProperties) {
-        Sort s = getSort(sort, sortProperties);
+        Sort s = getSortForRestService(sort, sortProperties,
+                this.defaultDialogSortType, this.defaultDialogSortProperties);
         return dialogRepository.findMyDialog(iam, s);
     }
 
@@ -76,30 +93,14 @@ public class DialogCrudManagerServiceImpl implements DialogCrudManagerService {
         optional.ifPresent(dialog -> dialogRepository.delete(dialog));
     }
 
-    @Value("${model.dialog.maxfetch}")
-    private Integer dialogMaxFetch;
-
-    @Value("${model.dialog.defaultsort}")
-    private String defaultDialogSortType;
-
-    @Value("${model.dialog.defaultsortproperties}")
-    private String defaultDialogSortProperties;
-
     @Override
-    public Pageable getPageable(Integer page, Integer size, String sort, List<String> sortProperties) {
-        return getPageableForRestService(page, size, sort, sortProperties,
-                this.dialogMaxFetch, this.defaultDialogSortType, this.defaultDialogSortProperties);
-    }
-
-    @Override
-    public Pageable getPageable(Integer page, Integer size) {
-        return getPageableForRestService(page, size,
-                this.dialogMaxFetch);
-    }
-
-    @Override
-    public Sort getSort(String sort, List<String> sortProperties) {
-        return getSortForRestService(sort, sortProperties,
-                this.defaultDialogSortType, this.defaultDialogSortProperties);
+    @Transactional
+    public boolean deleteById(Long aLong) {
+        Optional<Dialog> optional = findOne(aLong);
+        if (!optional.isPresent()) {
+            return false;
+        }
+        optional.ifPresent(dialog -> dialogRepository.delete(dialog));
+        return true;
     }
 }

@@ -6,6 +6,7 @@ import evolution.model.User;
 import evolution.security.model.CustomSecurityUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -39,8 +40,17 @@ public class SecuritySupportService {
         }
     }
 
-    public boolean isAllowed(Long id) {
+    public boolean isAllowedFull(Long id) {
         User user = getAuthenticationPrincipal().getUser();
         return user.getRole().name().equals(UserRoleEnum.ADMIN.name()) || user.getId().equals(id);
+    }
+
+    public boolean isAdmin() {
+        return getAuthenticationPrincipal().getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
+    }
+
+    public boolean isAllowed(Long id) {
+        User user = getAuthenticationPrincipal().getUser();
+        return user.getId().equals(id);
     }
 }

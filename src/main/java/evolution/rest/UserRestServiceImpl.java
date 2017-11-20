@@ -4,8 +4,8 @@ import evolution.business.BusinessServiceExecuteResult;
 import evolution.business.api.UserBusinessService;
 import evolution.common.BusinessServiceExecuteStatus;
 import evolution.dto.model.UserDTO;
-import evolution.dto.model.UserDTOForSave;
-import evolution.dto.model.UserDTOForUpdate;
+import evolution.dto.model.UserForSaveDTO;
+import evolution.dto.model.UserForUpdateDTO;
 import evolution.dto.model.UserFullDTO;
 import evolution.rest.api.UserRestService;
 import org.slf4j.Logger;
@@ -98,7 +98,7 @@ public class UserRestServiceImpl implements UserRestService {
     }
 
     @Override
-    public ResponseEntity createNewUser(UserDTOForSave user) {
+    public ResponseEntity createNewUser(UserForSaveDTO user) {
         BusinessServiceExecuteResult b = userBusinessService.createNewUser(user);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
             return ResponseEntity.status(201).build();
@@ -110,7 +110,7 @@ public class UserRestServiceImpl implements UserRestService {
     }
 
     @Override
-    public ResponseEntity update(UserDTOForUpdate user) {
+    public ResponseEntity update(UserForUpdateDTO user) {
         BusinessServiceExecuteResult b = userBusinessService.update(user);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
             return ResponseEntity.ok().body(b.getExecuteStatus());

@@ -6,8 +6,8 @@ import evolution.common.UserRoleEnum;
 import evolution.crud.api.UserCrudManagerService;
 import evolution.dto.UserDTOTransfer;
 import evolution.dto.model.UserDTO;
-import evolution.dto.model.UserDTOForSave;
-import evolution.dto.model.UserDTOForUpdate;
+import evolution.dto.model.UserForSaveDTO;
+import evolution.dto.model.UserForUpdateDTO;
 import evolution.dto.model.UserFullDTO;
 
 import evolution.model.User;
@@ -58,14 +58,14 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
-    public BusinessServiceExecuteResult<User> createNewUserGlobal(UserDTOForSave userDTOForSave) {
-        Optional<User> ou = userCrudManagerService.findByUsername(userDTOForSave.getUserAdditionalData().getUsername());
+    public BusinessServiceExecuteResult<User> createNewUserGlobal(UserForSaveDTO userForSaveDTO) {
+        Optional<User> ou = userCrudManagerService.findByUsername(userForSaveDTO.getUserAdditionalData().getUsername());
         if (ou.isPresent()) {
-            logger.info("user by username " + userDTOForSave.getUserAdditionalData().getUsername() + ", is already exist !");
+            logger.info("user by username " + userForSaveDTO.getUserAdditionalData().getUsername() + ", is already exist !");
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.USER_IS_ALREADY_EXIST_REGISTRATION_FAILED);
         }
 
-        User user = userDTOTransfer.dtoToModel(userDTOForSave);
+        User user = userDTOTransfer.dtoToModel(userForSaveDTO);
         String encodePassword = passwordEncoder.encode(user.getUserAdditionalData().getPassword());
 
         user.getUserAdditionalData().setPassword(encodePassword);
@@ -83,23 +83,23 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
-    public BusinessServiceExecuteResult<User> updateGlobal(UserDTOForUpdate userDTOForUpdate) {
-        if (!securitySupportService.isAllowed(userDTOForUpdate.getId())) {
+    public BusinessServiceExecuteResult<User> updateGlobal(UserForUpdateDTO userForUpdateDTO) {
+        if (!securitySupportService.isAllowedFull(userForUpdateDTO.getId())) {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
         }
-        Optional<User> optional = userCrudManagerService.findOneLazy(userDTOForUpdate.getId());
+        Optional<User> optional = userCrudManagerService.findOneLazy(userForUpdateDTO.getId());
         if (!optional.isPresent()) {
-            logger.info("user by id " + userDTOForUpdate.getId() + " not found");
+            logger.info("user by id " + userForUpdateDTO.getId() + " not found");
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
         }
         User original = optional.get();
 
-        original.setFirstName(userDTOForUpdate.getFirstName());
-        original.setLastName(userDTOForUpdate.getLastName());
-        original.setNickname(userDTOForUpdate.getNickname());
-        original.getUserAdditionalData().setCountry(userDTOForUpdate.getUserAdditionalData().getCountry());
-        original.getUserAdditionalData().setState(userDTOForUpdate.getUserAdditionalData().getState());
-        original.getUserAdditionalData().setGender(userDTOForUpdate.getUserAdditionalData().getGender());
+        original.setFirstName(userForUpdateDTO.getFirstName());
+        original.setLastName(userForUpdateDTO.getLastName());
+        original.setNickname(userForUpdateDTO.getNickname());
+        original.getUserAdditionalData().setCountry(userForUpdateDTO.getUserAdditionalData().getCountry());
+        original.getUserAdditionalData().setState(userForUpdateDTO.getUserAdditionalData().getState());
+        original.getUserAdditionalData().setGender(userForUpdateDTO.getUserAdditionalData().getGender());
 
         User result = userCrudManagerService.save(original);
 
@@ -107,8 +107,8 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
-    public BusinessServiceExecuteResult<UserFullDTO> createNewUserFull(UserDTOForSave userDTOForSave) {
-        BusinessServiceExecuteResult<User> b = createNewUserGlobal(userDTOForSave);
+    public BusinessServiceExecuteResult<UserFullDTO> createNewUserFull(UserForSaveDTO userForSaveDTO) {
+        BusinessServiceExecuteResult<User> b = createNewUserGlobal(userForSaveDTO);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
             return BusinessServiceExecuteResult
                     .build(BusinessServiceExecuteStatus.OK, b.getResultObjectOptional().map(o -> userDTOTransfer.modelToDTOFull(o)));
@@ -117,8 +117,8 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
-    public BusinessServiceExecuteResult<UserFullDTO> updateFull(UserDTOForUpdate userDTOForUpdate) {
-        BusinessServiceExecuteResult<User> b = updateGlobal(userDTOForUpdate);
+    public BusinessServiceExecuteResult<UserFullDTO> updateFull(UserForUpdateDTO userForUpdateDTO) {
+        BusinessServiceExecuteResult<User> b = updateGlobal(userForUpdateDTO);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
             return BusinessServiceExecuteResult
                     .build(BusinessServiceExecuteStatus.OK, b.getResultObjectOptional().map(o -> userDTOTransfer.modelToDTOFull(o)));
@@ -127,8 +127,8 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
-    public BusinessServiceExecuteResult<UserDTOForSave> createNewUser(UserDTOForSave userDTOForSave) {
-        BusinessServiceExecuteResult<User> b = createNewUserGlobal(userDTOForSave);
+    public BusinessServiceExecuteResult<UserForSaveDTO> createNewUser(UserForSaveDTO userForSaveDTO) {
+        BusinessServiceExecuteResult<User> b = createNewUserGlobal(userForSaveDTO);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
             return BusinessServiceExecuteResult
                     .build(BusinessServiceExecuteStatus.OK, b.getResultObjectOptional().map(o -> userDTOTransfer.modelToDTOForSave(o)));
@@ -137,8 +137,8 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
-    public BusinessServiceExecuteResult<UserDTOForUpdate> update(UserDTOForUpdate userDTOForUpdate) {
-        BusinessServiceExecuteResult<User> b = updateGlobal(userDTOForUpdate);
+    public BusinessServiceExecuteResult<UserForUpdateDTO> update(UserForUpdateDTO userForUpdateDTO) {
+        BusinessServiceExecuteResult<User> b = updateGlobal(userForUpdateDTO);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
             return BusinessServiceExecuteResult
                     .build(BusinessServiceExecuteStatus.OK, b.getResultObjectOptional().map(o -> userDTOTransfer.modelToDTOForUpdate(o)));
@@ -267,7 +267,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
 
     @Override
     public Optional<UserFullDTO> findOneUserFull(Long id) {
-        if (!securitySupportService.isAllowed(id)) {
+        if (!securitySupportService.isAllowedFull(id)) {
             logger.warn("FORBIDDEN !!!");
             return Optional.empty();
         }
@@ -343,7 +343,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
 
     @Override
     public BusinessServiceExecuteResult delete(Long id) {
-        if (!securitySupportService.isAllowed(id)) {
+        if (!securitySupportService.isAllowedFull(id)) {
             logger.warn("FORBIDDEN !!!");
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
         }

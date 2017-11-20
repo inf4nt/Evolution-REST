@@ -14,12 +14,6 @@ import java.util.stream.Collectors;
  */
 public interface PageableManager {
 
-    Pageable getPageable(Integer page, Integer size, String sort, List<String> sortProperties);
-
-    Pageable getPageable(Integer page, Integer size);
-
-    Sort getSort(String sort, List<String> sortProperties);
-
     default Pageable getPageableForRestService(Integer page, Integer size,
                                                Integer defaultMaxFetch) {
         Integer pageResult = 0;

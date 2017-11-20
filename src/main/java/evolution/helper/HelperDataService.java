@@ -47,7 +47,7 @@ public class HelperDataService {
     @Value("${model.dialog.defaultsortproperties}")
     private String defaultDialogSortProperties;
 
-    @Value("${model.friend.maxfetch}")
+    @Value("${model.second.maxfetch}")
     private Integer friendMaxFetch;
 
     @Value("${model.user.maxfetch}")

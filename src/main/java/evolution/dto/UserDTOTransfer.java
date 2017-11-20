@@ -2,17 +2,13 @@ package evolution.dto;
 
 
 import evolution.dto.model.UserDTO;
-import evolution.dto.model.UserDTOForSave;
-import evolution.dto.model.UserDTOForUpdate;
+import evolution.dto.model.UserForSaveDTO;
+import evolution.dto.model.UserForUpdateDTO;
 import evolution.dto.model.UserFullDTO;
 import evolution.model.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by Infant on 11.11.2017.
@@ -31,28 +27,28 @@ public class UserDTOTransfer {
         return modelMapper.map(userFullDTO, User.class);
     }
 
-    public User dtoToModel(UserDTOForUpdate userDTOForUpdate) {
-        return modelMapper.map(userDTOForUpdate, User.class);
+    public User dtoToModel(UserForUpdateDTO userForUpdateDTO) {
+        return modelMapper.map(userForUpdateDTO, User.class);
     }
 
-    public User dtoToModel(UserDTOForSave userDTOForSave) {
-        return modelMapper.map(userDTOForSave, User.class);
+    public User dtoToModel(UserForSaveDTO userForSaveDTO) {
+        return modelMapper.map(userForSaveDTO, User.class);
     }
 
     public User dtoToModel(UserDTO userDTO) {
         return modelMapper.map(userDTO, User.class);
     }
 
-    public UserDTOForUpdate modelToDTOForUpdate(User user) {
-        return modelMapper.map(user, UserDTOForUpdate.class);
+    public UserForUpdateDTO modelToDTOForUpdate(User user) {
+        return modelMapper.map(user, UserForUpdateDTO.class);
     }
 
     public UserFullDTO modelToDTOFull(User user) {
         return modelMapper.map(user, UserFullDTO.class);
     }
 
-    public UserDTOForSave modelToDTOForSave(User user) {
-        return modelMapper.map(user, UserDTOForSave.class);
+    public UserForSaveDTO modelToDTOForSave(User user) {
+        return modelMapper.map(user, UserForSaveDTO.class);
     }
 
     public UserDTO modelToDTO(User user) {

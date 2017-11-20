@@ -14,7 +14,7 @@ public class MessageDTO {
 
     private UserDTO sender;
 
-    private DialogDTO dialogDTO;
+    private DialogDTO dialog;
 
     private String text;
 

@@ -28,9 +28,13 @@ public interface MessageCrudManagerService extends AbstractCrudManagerService<Me
 
     Page<Message> findLastMessageInMyDialog(Long iam, Integer page, Integer size, String sort, List<String> sortProperties);
 
+    List<Message> findLastMessageInMyDialog(Long iam);
+
     List<Message> findLastMessageInMyDialog(Long iam, String sort, List<String> sortProperties);
 
     Page<Message> findMessageBySenderId(Long senderId, Integer page, Integer size, String sort, List<String> sortProperties);
+
+    List<Message> findMessageBySenderId(Long senderId);
 
     List<Message> findMessageBySenderId(Long senderId, String sort, List<String> sortProperties);
 
@@ -38,7 +42,9 @@ public interface MessageCrudManagerService extends AbstractCrudManagerService<Me
 
     List<Message> findMessageByRecipientId(Long recipientId, String sort, List<String> sortProperties);
 
-    void deleteMessageAndMaybeDialog(Long messageId);
+    List<Message> findMessageByRecipientId(Long recipientId);
+
+    boolean deleteMessageAndMaybeDialog(Long messageId);
 
     Message saveMessageAndMaybeCreateNewDialog(String text, Long senderId, Long recipientId, Date createDateUTC);
 }

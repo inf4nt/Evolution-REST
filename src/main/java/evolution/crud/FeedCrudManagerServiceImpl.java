@@ -44,19 +44,4 @@ public class FeedCrudManagerServiceImpl implements FeedCrudManagerService {
     public void delete(Long aLong) {
 
     }
-
-    @Override
-    public Pageable getPageable(Integer page, Integer size, String sort, List<String> sortProperties) {
-        return null;
-    }
-
-    @Override
-    public Pageable getPageable(Integer page, Integer size) {
-        return null;
-    }
-
-    @Override
-    public Sort getSort(String sort, List<String> sortProperties) {
-        return null;
-    }
 }

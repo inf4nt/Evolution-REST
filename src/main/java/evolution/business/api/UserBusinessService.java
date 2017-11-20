@@ -1,8 +1,8 @@
 package evolution.business.api;
 
 import evolution.dto.model.UserDTO;
-import evolution.dto.model.UserDTOForSave;
-import evolution.dto.model.UserDTOForUpdate;
+import evolution.dto.model.UserForSaveDTO;
+import evolution.dto.model.UserForUpdateDTO;
 import evolution.dto.model.UserFullDTO;
 import evolution.business.BusinessServiceExecuteResult;
 import evolution.model.User;
@@ -17,17 +17,17 @@ import java.util.Optional;
 
 public interface UserBusinessService {
 
-    BusinessServiceExecuteResult<UserFullDTO> createNewUserFull(UserDTOForSave userDTOForSave);
+    BusinessServiceExecuteResult<UserFullDTO> createNewUserFull(UserForSaveDTO userForSaveDTO);
 
-    BusinessServiceExecuteResult<UserDTOForSave> createNewUser(UserDTOForSave userDTOForSave);
+    BusinessServiceExecuteResult<UserForSaveDTO> createNewUser(UserForSaveDTO userForSaveDTO);
 
-    BusinessServiceExecuteResult<User> createNewUserGlobal(UserDTOForSave userDTOForSave);
+    BusinessServiceExecuteResult<User> createNewUserGlobal(UserForSaveDTO userForSaveDTO);
 
-    BusinessServiceExecuteResult<UserFullDTO> updateFull(UserDTOForUpdate userDTOForUpdate);
+    BusinessServiceExecuteResult<UserFullDTO> updateFull(UserForUpdateDTO userForUpdateDTO);
 
-    BusinessServiceExecuteResult<UserDTOForUpdate> update(UserDTOForUpdate userDTOForUpdate);
+    BusinessServiceExecuteResult<UserForUpdateDTO> update(UserForUpdateDTO userForUpdateDTO);
 
-    BusinessServiceExecuteResult<User> updateGlobal(UserDTOForUpdate userDTOForUpdate);
+    BusinessServiceExecuteResult<User> updateGlobal(UserForUpdateDTO userForUpdateDTO);
 
     Page<UserDTO> findAll(Integer page, Integer size, String sortType, List<String> sortProperties);
 

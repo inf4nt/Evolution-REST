@@ -1,6 +1,8 @@
 package evolution.crud.api;
 
+import evolution.dto.model.MessageDTO;
 import evolution.model.Dialog;
+import evolution.model.Message;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -17,4 +19,5 @@ public interface DialogCrudManagerService extends AbstractCrudManagerService<Dia
 
     Optional<Dialog> findOne(Long iam, Long dialogId);
 
+    boolean deleteById(Long id);
 }

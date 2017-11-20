@@ -1,13 +1,12 @@
 package evolution.controller;
 
 import evolution.dto.model.UserDTO;
-import evolution.dto.model.UserDTOForSave;
-import evolution.dto.model.UserDTOForUpdate;
+import evolution.dto.model.UserForSaveDTO;
+import evolution.dto.model.UserForUpdateDTO;
 import evolution.dto.model.UserFullDTO;
 import evolution.rest.api.UserRestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -54,12 +53,12 @@ public class UserRestController {
     }
 
     @PostMapping
-    public ResponseEntity save(@RequestBody UserDTOForSave user) {
+    public ResponseEntity save(@RequestBody UserForSaveDTO user) {
         return userRestService.createNewUser(user);
     }
 
     @PutMapping
-    public ResponseEntity update(@RequestBody UserDTOForUpdate user) {
+    public ResponseEntity update(@RequestBody UserForUpdateDTO user) {
         return userRestService.update(user);
     }
 

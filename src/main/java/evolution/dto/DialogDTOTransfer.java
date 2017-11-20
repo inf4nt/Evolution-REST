@@ -79,12 +79,7 @@ public class DialogDTOTransfer {
     }
 
     public DialogDTO modelToDTO(Dialog dialog) {
-        DialogDTO dto = new DialogDTO();
-        dto.setId(dialog.getId());
-
-        dto.setFirst(userDTOTransfer.modelToDTO(dialog.getFirst()));
-        dto.setSecond(userDTOTransfer.modelToDTO(dialog.getSecond()));
-
+        DialogDTO dto = modelMapper.map(dialog, DialogDTO.class);
         dto.setCreatedDateTimestamp(dialog.getCreateDate().getTime());
         dto.setCreatedDateString(dateService.formatDateUTC(dialog.getCreateDate()));
         return dto;

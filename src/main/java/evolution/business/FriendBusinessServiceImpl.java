@@ -16,8 +16,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -117,7 +119,7 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
 
     @Override
     public BusinessServiceExecuteResult<FriendDTOFull> acceptRequest(FriendActionDTO friendActionDTO) {
-        if (!securitySupportService.isAllowed(friendActionDTO.getActionUserId())) {
+        if (!securitySupportService.isAllowedFull(friendActionDTO.getActionUserId())) {
             logger.info("FORBIDDEN");
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
         }
@@ -136,7 +138,7 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
 
     @Override
     public BusinessServiceExecuteResult<FriendDTOFull> deleteFriend(FriendActionDTO friendActionDTO) {
-        if (!securitySupportService.isAllowed(friendActionDTO.getActionUserId())) {
+        if (!securitySupportService.isAllowedFull(friendActionDTO.getActionUserId())) {
             logger.info("FORBIDDEN");
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
         }
@@ -155,7 +157,7 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
 
     @Override
     public BusinessServiceExecuteResult<FriendDTOFull> deleteRequest(FriendActionDTO friendActionDTO) {
-        if (!securitySupportService.isAllowed(friendActionDTO.getActionUserId())) {
+        if (!securitySupportService.isAllowedFull(friendActionDTO.getActionUserId())) {
             logger.info("FORBIDDEN");
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
         }
@@ -174,7 +176,7 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
 
     @Override
     public BusinessServiceExecuteResult<FriendDTOFull> sendRequestToFriend(FriendActionDTO friendActionDTO) {
-        if (!securitySupportService.isAllowed(friendActionDTO.getActionUserId())) {
+        if (!securitySupportService.isAllowedFull(friendActionDTO.getActionUserId())) {
             logger.info("FORBIDDEN");
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
         }
@@ -209,50 +211,98 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
 
     @Override
     public List<FriendDTO> findFriends(Long iam) {
-        return friendCrudManagerService
-                .findProgressByUser(iam)
-                .stream()
-                .map(o -> friendDTOTransfer.modelToDTO(o))
-                .collect(Collectors.toList());
+        if (securitySupportService.isAllowedFull(iam)) {
+            return friendCrudManagerService
+                    .findProgressByUser(iam)
+                    .stream()
+                    .map(o -> friendDTOTransfer.modelToDTO(o, iam))
+                    .collect(Collectors.toList());
+        } else if (securitySupportService.isAdmin()) {
+            return friendCrudManagerService
+                    .findProgressByUser(iam)
+                    .stream()
+                    .map(o -> friendDTOTransfer.modelToDTO(o))
+                    .collect(Collectors.toList());
+        }
+        return new ArrayList<>();
     }
 
     @Override
     public Page<FriendDTO> findFriends(Long iam, Integer page, Integer size) {
-        return friendCrudManagerService
-                .findProgressByUser(iam, page, size)
-                .map(o -> friendDTOTransfer.modelToDTO(o));
+        if (securitySupportService.isAllowedFull(iam)) {
+            return friendCrudManagerService
+                    .findProgressByUser(iam, page, size)
+                    .map(o -> friendDTOTransfer.modelToDTO(o, iam));
+        } else if (securitySupportService.isAdmin()) {
+            return friendCrudManagerService
+                    .findProgressByUser(iam, page, size)
+                    .map(o -> friendDTOTransfer.modelToDTO(o));
+        }
+        return new PageImpl<>(new ArrayList<>());
     }
 
     @Override
     public List<FriendDTO> findFollowers(Long iam) {
-        return friendCrudManagerService
-                .findFollowerByUser(iam)
-                .stream()
-                .map(o -> friendDTOTransfer.modelToDTO(o))
-                .collect(Collectors.toList());
+        if (securitySupportService.isAllowedFull(iam)) {
+            return friendCrudManagerService
+                    .findFollowerByUser(iam)
+                    .stream()
+                    .map(o -> friendDTOTransfer.modelToDTO(o, iam))
+                    .collect(Collectors.toList());
+        } else if (securitySupportService.isAdmin()) {
+            return friendCrudManagerService
+                    .findFollowerByUser(iam)
+                    .stream()
+                    .map(o -> friendDTOTransfer.modelToDTO(o))
+                    .collect(Collectors.toList());
+        }
+        return new ArrayList<>();
     }
 
     @Override
     public Page<FriendDTO> findFollowers(Long iam, Integer page, Integer size) {
-        return friendCrudManagerService
-                .findFollowerByUser(iam, page, size)
-                .map(o -> friendDTOTransfer.modelToDTO(o));
+        if (securitySupportService.isAllowedFull(iam)) {
+            return friendCrudManagerService
+                    .findFollowerByUser(iam, page, size)
+                    .map(o -> friendDTOTransfer.modelToDTO(o, iam));
+        } else if (securitySupportService.isAdmin()) {
+            return friendCrudManagerService
+                    .findFollowerByUser(iam, page, size)
+                    .map(o -> friendDTOTransfer.modelToDTO(o));
+        }
+        return new PageImpl<>(new ArrayList<>());
     }
 
     @Override
     public List<FriendDTO> findRequests(Long iam) {
-        return friendCrudManagerService
-                .findFollowerByUser(iam)
-                .stream()
-                .map(o -> friendDTOTransfer.modelToDTO(o))
-                .collect(Collectors.toList());
+        if (securitySupportService.isAllowedFull(iam)) {
+            return friendCrudManagerService
+                    .findRequestByUser(iam)
+                    .stream()
+                    .map(o -> friendDTOTransfer.modelToDTO(o, iam))
+                    .collect(Collectors.toList());
+        } else if (securitySupportService.isAdmin()) {
+            return friendCrudManagerService
+                    .findRequestByUser(iam)
+                    .stream()
+                    .map(o -> friendDTOTransfer.modelToDTO(o))
+                    .collect(Collectors.toList());
+        }
+        return new ArrayList<>();
     }
 
     @Override
     public Page<FriendDTO> findRequests(Long iam, Integer page, Integer size) {
-        return friendCrudManagerService
-                .findFollowerByUser(iam, page, size)
-                .map(o -> friendDTOTransfer.modelToDTO(o));
+        if (securitySupportService.isAllowedFull(iam)) {
+            return friendCrudManagerService
+                    .findRequestByUser(iam, page, size)
+                    .map(o -> friendDTOTransfer.modelToDTO(o, iam));
+        } else if (securitySupportService.isAdmin()) {
+            return friendCrudManagerService
+                    .findRequestByUser(iam, page, size)
+                    .map(o -> friendDTOTransfer.modelToDTO(o));
+        }
+        return new PageImpl<>(new ArrayList<>());
     }
 
 }

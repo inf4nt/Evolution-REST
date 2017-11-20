@@ -1,6 +1,5 @@
 package evolution.dto;
 
-import evolution.dto.model.DialogDTO;
 import evolution.dto.model.MessageDTO;
 import evolution.dto.model.MessageDTOForSave;
 import evolution.model.Message;
@@ -44,8 +43,7 @@ public class MessageDTOTransfer {
         dto.setText(message.getMessage());
         dto.setSender(userDTOTransfer.modelToDTO(message.getSender()));
 
-
-        dto.setDialogDTO(dialogDTOTransfer.modelToDTO(message.getDialog(), auth));
+        dto.setDialog(dialogDTOTransfer.modelToDTO(message.getDialog(), auth));
 
         return dto;
     }
@@ -61,10 +59,13 @@ public class MessageDTOTransfer {
         dto.setText(message.getMessage());
         dto.setSender(userDTOTransfer.modelToDTO(message.getSender()));
 
-
-        dto.setDialogDTO(dialogDTOTransfer.modelToDTO(message.getDialog(), auth));
+        dto.setDialog(dialogDTOTransfer.modelToDTO(message.getDialog(), auth));
 
         return dto;
+    }
+
+    public MessageDTO modelToDTO(Message message, Long auth) {
+        return modelToDTO(message, new User(auth));
     }
 
     public MessageDTO modelToDTO(Message message) {
@@ -78,16 +79,8 @@ public class MessageDTOTransfer {
         dto.setText(message.getMessage());
         dto.setSender(userDTOTransfer.modelToDTO(message.getSender()));
 
-
-        dto.setDialogDTO(dialogDTOTransfer.modelToDTO(message.getDialog()));
+        dto.setDialog(dialogDTOTransfer.modelToDTO(message.getDialog()));
 
         return dto;
     }
-
-
-    public MessageDTOForSave modelToDTOForSave(Message message, Optional<CustomSecurityUser> auth) {
-        return null;
-    }
-
-
 }

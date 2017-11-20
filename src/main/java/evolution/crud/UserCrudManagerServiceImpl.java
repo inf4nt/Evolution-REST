@@ -24,6 +24,15 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
 
     private final UserRepository userRepository;
 
+    @Value("${model.user.maxfetch}")
+    private Integer userMaxFetch;
+
+    @Value("${model.user.defaultsort}")
+    private String defaultUserSortType;
+
+    @Value("${model.user.defaultsortproperties}")
+    private String defaultUserSortProperties;
+
     @Autowired
     public UserCrudManagerServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -61,25 +70,29 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
 
     @Override
     public Page<User> findUserAllByIsActiveLazy(boolean active, Integer page, Integer size, String sort, List<String> sortProperties) {
-        Pageable p = getPageable(page, size, sort, sortProperties);
+        Pageable p = getPageableForRestService(page, size, sort, sortProperties,
+                this.userMaxFetch, this.defaultUserSortType, this.defaultUserSortProperties);
         return userRepository.findUserAllByIsActiveLazy(active, p);
     }
 
     @Override
     public Page<User> findUserAllByIsBlockLazy(boolean block, Integer page, Integer size, String sort, List<String> sortProperties) {
-        Pageable p = getPageable(page, size, sort, sortProperties);
+        Pageable p = getPageableForRestService(page, size, sort, sortProperties,
+                this.userMaxFetch, this.defaultUserSortType, this.defaultUserSortProperties);
         return userRepository.findUserAllByIsBlock(block, p);
     }
 
     @Override
     public List<User> findUserAllByIsActiveLazy(boolean active, String sort, List<String> sortProperties) {
-        Sort s = getSort(sort, sortProperties);
+        Sort s = getSortForRestService(sort, sortProperties,
+                this.defaultUserSortType, this.defaultUserSortProperties);
         return userRepository.findUserAllByIsActive(active, s);
     }
 
     @Override
     public List<User> findUserAllByIsBlockLazy(boolean block, String sort, List<String> sortProperties) {
-        Sort s = getSort(sort, sortProperties);
+        Sort s = getSortForRestService(sort, sortProperties,
+                this.defaultUserSortType, this.defaultUserSortProperties);
         return userRepository.findUserAllByIsBlockLazy(block, s);
     }
 
@@ -95,7 +108,8 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
 
     @Override
     public List<User> findAll(String sort, List<String> sortProperties) {
-        Sort s = getSort(sort, sortProperties);
+        Sort s = getSortForRestService(sort, sortProperties,
+                this.defaultUserSortType, this.defaultUserSortProperties);
         return userRepository.findAll(s);
     }
 
@@ -106,13 +120,15 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
 
     @Override
     public Page<User> findAll(Integer page, Integer size, String sort, List<String> sortProperties) {
-        Pageable p = getPageable(page, size, sort, sortProperties);
+        Pageable p = getPageableForRestService(page, size, sort, sortProperties,
+                this.userMaxFetch, this.defaultUserSortType, this.defaultUserSortProperties);
         return userRepository.findAll(p);
     }
 
     @Override
     public List<User> findAllLazy(String sort, List<String> sortProperties) {
-        Sort s = getSort(sort, sortProperties);
+        Sort s = getSortForRestService(sort, sortProperties,
+                this.defaultUserSortType, this.defaultUserSortProperties);
         return userRepository.findAllFetchLazy(s);
     }
 
@@ -165,25 +181,29 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
 
     @Override
     public Page<User> findUserAllByIsActive(boolean active, Integer page, Integer size, String sort, List<String> sortProperties) {
-        Pageable p = getPageable(page, size, sort, sortProperties);
+        Pageable p = getPageableForRestService(page, size, sort, sortProperties,
+                this.userMaxFetch, this.defaultUserSortType, this.defaultUserSortProperties);
         return userRepository.findUserAllByIsActive(active, p);
     }
 
     @Override
     public Page<User> findUserAllByIsBlock(boolean block, Integer page, Integer size, String sort, List<String> sortProperties) {
-        Pageable p = getPageable(page, size, sort, sortProperties);
+        Pageable p = getPageableForRestService(page, size, sort, sortProperties,
+                this.userMaxFetch, this.defaultUserSortType, this.defaultUserSortProperties);
         return userRepository.findUserAllByIsBlock(block, p);
     }
 
     @Override
     public List<User> findUserAllByIsActive(boolean active, String sort, List<String> sortProperties) {
-        Sort s = getSort(sort, sortProperties);
+        Sort s = getSortForRestService(sort, sortProperties,
+                this.defaultUserSortType, this.defaultUserSortProperties);
         return userRepository.findUserAllByIsActive(active, s);
     }
 
     @Override
     public List<User> findUserAllByIsBlock(boolean block, String sort, List<String> sortProperties) {
-        Sort s = getSort(sort, sortProperties);
+        Sort s = getSortForRestService(sort, sortProperties,
+                this.defaultUserSortType, this.defaultUserSortProperties);
         return userRepository.findUserAllByIsBlock(block, s);
     }
 
@@ -199,7 +219,8 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
 
     @Override
     public Page<User> findAllLazy(Integer page, Integer size, String sort, List<String> sortProperties) {
-        Pageable p = getPageable(page, size, sort, sortProperties);
+        Pageable p = getPageableForRestService(page, size, sort, sortProperties,
+                this.userMaxFetch, this.defaultUserSortType, this.defaultUserSortProperties);
         return userRepository.findAllFetchLazy(p);
     }
 
@@ -216,32 +237,5 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
         } catch (Exception e) {
             return false;
         }
-    }
-
-    @Value("${model.user.maxfetch}")
-    private Integer userMaxFetch;
-
-    @Value("${model.user.defaultsort}")
-    private String defaultUserSortType;
-
-    @Value("${model.user.defaultsortproperties}")
-    private String defaultUserSortProperties;
-
-    @Override
-    public Pageable getPageable(Integer page, Integer size, String sort, List<String> sortProperties) {
-        return getPageableForRestService(page, size, sort, sortProperties,
-                this.userMaxFetch, this.defaultUserSortType, this.defaultUserSortProperties);
-    }
-
-    @Override
-    public Pageable getPageable(Integer page, Integer size) {
-        return getPageableForRestService(page, size,
-                this.userMaxFetch);
-    }
-
-    @Override
-    public Sort getSort(String sort, List<String> sortProperties) {
-        return getSortForRestService(sort, sortProperties,
-                this.defaultUserSortType, this.defaultUserSortProperties);
     }
 }

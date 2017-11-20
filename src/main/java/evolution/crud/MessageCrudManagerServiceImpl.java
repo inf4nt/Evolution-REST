@@ -30,18 +30,23 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
 
     private final DialogRepository dialogRepository;
 
-    private final DateService dateService;
-
     private final UserRepository userRepository;
+
+    @Value("${model.message.maxfetch}")
+    private Integer messageMaxFetch;
+
+    @Value("${model.message.defaultsort}")
+    private String defaultMessageSortType;
+
+    @Value("${model.message.defaultsortproperties}")
+    private String defaultMessageSortProperties;
 
     @Autowired
     public MessageCrudManagerServiceImpl(MessageRepository messageRepository,
                                          DialogRepository dialogRepository,
-                                         DateService dateService,
                                          UserRepository userRepository) {
         this.messageRepository = messageRepository;
         this.dialogRepository = dialogRepository;
-        this.dateService = dateService;
         this.userRepository = userRepository;
     }
 
@@ -53,13 +58,15 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
 
     @Override
     public List<Message> findAll(String sort, List<String> sortProperties) {
-        Sort s = getSort(sort, sortProperties);
+        Sort s = getSortForRestService(sort, sortProperties,
+                this.defaultMessageSortType, this.defaultMessageSortProperties);
         return messageRepository.findAll(s);
     }
 
     @Override
     public Page<Message> findAll(Integer page, Integer size, String sort, List<String> sortProperties) {
-        Pageable p = getPageable(page, size, sort, sortProperties);
+        Pageable p = getPageableForRestService(page, size, sort, sortProperties,
+                this.messageMaxFetch, this.defaultMessageSortType, this.defaultMessageSortProperties);
         return messageRepository.findAll(p);
     }
 
@@ -116,20 +123,26 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
 
     @Override
     @Transactional
-    public void deleteMessageAndMaybeDialog(Long messageId) {
+    public boolean deleteMessageAndMaybeDialog(Long messageId) {
         Optional<Message> message = messageRepository.findOneMessageById(messageId);
-        if (message.isPresent()) {
-            Dialog dialog = message.get().getDialog();
-            List<Message> messageList = dialog.getMessageList();
-            if (!messageList.isEmpty()) {
-                if (messageList.size() == 1) {
-                    dialogRepository.delete(dialog);
-                } else {
-                    messageList.remove(message.get());
-                    dialogRepository.save(dialog);
-                }
-            }
+        if (!message.isPresent()) {
+            return false;
         }
+
+        Dialog dialog = message.get().getDialog();
+        List<Message> messageList = dialog.getMessageList();
+        if (!messageList.isEmpty()) {
+            if (messageList.size() == 1) {
+                dialogRepository.delete(dialog);
+            } else {
+                messageList.remove(message.get());
+                dialogRepository.save(dialog);
+            }
+        } else {
+            return false;
+        }
+
+        return true;
     }
 
 
@@ -145,25 +158,29 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
 
     @Override
     public List<Message> findMessageByDialogId(Long dialogId, String sort, List<String> sortProperties) {
-        Sort s = getSort(sort, sortProperties);
+        Sort s = getSortForRestService(sort, sortProperties,
+                this.defaultMessageSortType, this.defaultMessageSortProperties);
         return messageRepository.findMessageByRecipientId(dialogId, s);
     }
 
     @Override
     public Page<Message> findMessageByDialogId(Long dialogId, Integer page, Integer size, String sort, List<String> sortProperties) {
-        Pageable p = getPageable(page, size, sort, sortProperties);
+        Pageable p = getPageableForRestService(page, size, sort, sortProperties,
+                this.messageMaxFetch, this.defaultMessageSortType, this.defaultMessageSortProperties);
         return messageRepository.findMessageByDialog(dialogId, p);
     }
 
     @Override
     public Page<Message> findMessageByDialogId(Long dialogId, Long iam, Integer page, Integer size, String sort, List<String> sortProperties) {
-        Pageable p = getPageable(page, size, sort, sortProperties);
+        Pageable p = getPageableForRestService(page, size, sort, sortProperties,
+                this.messageMaxFetch, this.defaultMessageSortType, this.defaultMessageSortProperties);
         return messageRepository.findMessageByDialogAndUserDialog(dialogId, iam, p);
     }
 
     @Override
     public List<Message> findMessageByDialogId(Long dialogId, Long iam, String sort, List<String> sortProperties) {
-        Sort s = getSort(sort, sortProperties);
+        Sort s = getSortForRestService(sort, sortProperties,
+                this.defaultMessageSortType, this.defaultMessageSortProperties);
         return messageRepository.findMessageByDialogAndUserDialog(dialogId, iam, s);
     }
 
@@ -174,65 +191,58 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
 
     @Override
     public Page<Message> findLastMessageInMyDialog(Long iam, Integer page, Integer size, String sort, List<String> sortProperties) {
-        Pageable p = getPageable(page, size, sort, sortProperties);
+        Pageable p = getPageableForRestService(page, size, sort, sortProperties,
+                this.messageMaxFetch, this.defaultMessageSortType, this.defaultMessageSortProperties);
         return messageRepository.findLastMessageInMyDialog(iam, p);
     }
 
     @Override
+    public List<Message> findLastMessageInMyDialog(Long iam) {
+        return messageRepository.findLastMessageInMyDialog(iam);
+    }
+
+    @Override
     public List<Message> findLastMessageInMyDialog(Long iam, String sort, List<String> sortProperties) {
-        Sort s = getSort(sort, sortProperties);
+        Sort s = getSortForRestService(sort, sortProperties,
+                this.defaultMessageSortType, this.defaultMessageSortProperties);
         return messageRepository.findLastMessageInMyDialog(iam, s);
     }
 
     @Override
     public Page<Message> findMessageBySenderId(Long senderId, Integer page, Integer size, String sort, List<String> sortProperties) {
-        Pageable p = getPageable(page, size, sort, sortProperties);
+        Pageable p = getPageableForRestService(page, size, sort, sortProperties,
+                this.messageMaxFetch, this.defaultMessageSortType, this.defaultMessageSortProperties);
         return messageRepository.findMessageBySenderId(senderId, p);
     }
 
     @Override
+    public List<Message> findMessageBySenderId(Long senderId) {
+        return messageRepository.findMessageBySenderId(senderId);
+    }
+
+    @Override
     public List<Message> findMessageBySenderId(Long senderId, String sort, List<String> sortProperties) {
-        Sort s = getSort(sort, sortProperties);
+        Sort s = getSortForRestService(sort, sortProperties,
+                this.defaultMessageSortType, this.defaultMessageSortProperties);
         return messageRepository.findMessageBySenderId(senderId, s);
     }
 
     @Override
     public Page<Message> findMessageByRecipientId(Long recipientId, Integer page, Integer size, String sort, List<String> sortProperties) {
-        Pageable p = getPageable(page, size, sort, sortProperties);
+        Pageable p = getPageableForRestService(page, size, sort, sortProperties,
+                this.messageMaxFetch, this.defaultMessageSortType, this.defaultMessageSortProperties);
         return messageRepository.findMessageByRecipientId(recipientId, p);
     }
 
     @Override
     public List<Message> findMessageByRecipientId(Long recipientId, String sort, List<String> sortProperties) {
-        Sort s = getSort(sort, sortProperties);
+        Sort s = getSortForRestService(sort, sortProperties,
+                this.defaultMessageSortType, this.defaultMessageSortProperties);
         return messageRepository.findMessageByRecipientId(recipientId, s);
     }
 
-
-    @Value("${model.message.maxfetch}")
-    private Integer messageMaxFetch;
-
-    @Value("${model.message.defaultsort}")
-    private String defaultMessageSortType;
-
-    @Value("${model.message.defaultsortproperties}")
-    private String defaultMessageSortProperties;
-
     @Override
-    public Pageable getPageable(Integer page, Integer size, String sortType, List<String> sortProperties) {
-        return getPageableForRestService(page, size, sortType, sortProperties,
-                this.messageMaxFetch, this.defaultMessageSortType, this.defaultMessageSortProperties);
-    }
-
-    @Override
-    public Pageable getPageable(Integer page, Integer size) {
-        return getPageableForRestService(page, size,
-                this.messageMaxFetch);
-    }
-
-    @Override
-    public Sort getSort(String sort, List<String> sortProperties) {
-        return getSortForRestService(sort, sortProperties,
-                this.defaultMessageSortType, this.defaultMessageSortProperties);
+    public List<Message> findMessageByRecipientId(Long recipientId) {
+        return messageRepository.findMessageByRecipientId(recipientId);
     }
 }

@@ -31,13 +31,12 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
 
     private final UserRepository userRepository;
 
-//    private User first;
-//
-//    private User second;
-
     private Long firstId;
 
     private Long secondId;
+
+    @Value("${model.second.maxfetch}")
+    private Integer friendMaxFetch;
 
     @Autowired
     public FriendCrudManagerServiceImpl(FriendRepository friendRepository,
@@ -48,7 +47,8 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
 
     @Override
     public Page<Friend> findAll(Integer page, Integer size) {
-        Pageable pageable = getPageable(page, size);
+        Pageable pageable = getPageableForRestService(page, size,
+                this.friendMaxFetch);
         return friendRepository.findAll(pageable);
     }
 
@@ -65,19 +65,22 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
 
     @Override
     public Page<Friend> findFollowerByUser(Long userId, Integer page, Integer size) {
-        Pageable pageable = getPageable(page, size);
+        Pageable pageable = getPageableForRestService(page, size,
+                this.friendMaxFetch);
         return friendRepository.findFollowerByUser(userId, FriendStatusEnum.FOLLOWER, pageable);
     }
 
     @Override
     public Page<Friend> findRequestByUser(Long userId, Integer page, Integer size) {
-        Pageable pageable = getPageable(page, size);
+        Pageable pageable = getPageableForRestService(page, size,
+                this.friendMaxFetch);
         return friendRepository.findRequestFromUser(userId, FriendStatusEnum.REQUEST, pageable);
     }
 
     @Override
     public Page<Friend> findProgressByUser(Long userId, Integer page, Integer size) {
-        Pageable pageable = getPageable(page, size);
+        Pageable pageable = getPageableForRestService(page, size,
+                this.friendMaxFetch);
         return friendRepository.findProgressByUser(userId, FriendStatusEnum.PROGRESS, pageable);
     }
 
@@ -98,7 +101,8 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
 
     @Override
     public Page<Friend> findRequestFromUser(Long userId, Integer page, Integer size) {
-        Pageable pageable = getPageable(page, size);
+        Pageable pageable = getPageableForRestService(page, size,
+                this.friendMaxFetch);
         return friendRepository.findRequestFromUser(userId, FriendStatusEnum.REQUEST, pageable);
     }
 
@@ -137,7 +141,7 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
             Friend friend = new Friend(first, second, FriendStatusEnum.REQUEST, action);
             return Optional.of(friendRepository.save(friend));
         } else {
-            LOGGER.info("sendRequest friend failed. Action =  " + senderId + ", other " + recipientId + ". Find row = " + exist.get());
+            LOGGER.info("sendRequest second failed. Action =  " + senderId + ", other " + recipientId + ". Find row = " + exist.get());
             return exist;
         }
     }
@@ -185,7 +189,7 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
 
                 return Optional.of(friendRepository.save(friend));
             } else {
-                LOGGER.info("remove friend failed. Action =  " + senderId + ", other " + recipientId + ". Find row = " + progress.get());
+                LOGGER.info("remove second failed. Action =  " + senderId + ", other " + recipientId + ". Find row = " + progress.get());
                 return progress;
             }
 
@@ -222,25 +226,6 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
         return Optional.empty();
     }
 
-    @Value("${model.friend.maxfetch}")
-    private Integer friendMaxFetch;
-
-    @Override
-    public Pageable getPageable(Integer page, Integer size) {
-        return getPageableForRestService(page, size,
-                this.friendMaxFetch);
-    }
-
-    @Override
-    public Pageable getPageable(Integer page, Integer size, String sort, List<String> sortProperties) {
-        throw new UnsupportedOperationException("use  public Pageable getPageable(Integer page, Integer size) ");
-    }
-
-    @Override
-    public Sort getSort(String sort, List<String> sortProperties) {
-        throw new UnsupportedOperationException("sort not supported");
-    }
-    
     private void init(Long senderOrAction, Long recipient) {
         if (senderOrAction > recipient) {
             firstId = senderOrAction;

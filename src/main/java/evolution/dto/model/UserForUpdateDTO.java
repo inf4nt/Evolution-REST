@@ -5,11 +5,13 @@ import evolution.common.GenderEnum;
 import lombok.Data;
 
 /**
- * Created by Infant on 09.11.2017.
+ * Created by Infant on 11.11.2017.
  */
 @Data
 @JsonInclude
-public class UserDTOForSave {
+public class UserForUpdateDTO {
+
+    private Long id;
 
     private String firstName;
 
@@ -17,21 +19,17 @@ public class UserDTOForSave {
 
     private String nickname;
 
-    private UserAdditionalDataDTOForSave userAdditionalData = new UserAdditionalDataDTOForSave();
+    private UserAdditionalDataDTOForUpdate userAdditionalData = new UserAdditionalDataDTOForUpdate();
 
     @Data
     @JsonInclude
-    public static class UserAdditionalDataDTOForSave {
-
-        private String username;
-
-        private String password;
+    public static class UserAdditionalDataDTOForUpdate {
 
         private String country;
 
         private String state;
 
         private GenderEnum gender;
-    }
 
+    }
 }

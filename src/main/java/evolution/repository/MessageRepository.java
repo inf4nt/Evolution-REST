@@ -79,11 +79,26 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
             " order by m.id desc ")
     List<Message> findLastMessageInMyDialog(@Param("userId") Long iam, Sort sort);
 
+    @Query(" select m " +
+            " from Message m " +
+            " where m.id in ( " +
+            " select max (m.id) " +
+            " from Message m " +
+            " join m.dialog as d " +
+            " where d.first.id =:userId " +
+            " or d.second.id =:userId " +
+            " group by m.dialog.id ) " +
+            " order by m.id desc ")
+    List<Message> findLastMessageInMyDialog(@Param("userId") Long iam);
+
     @Query("select m from Message m where m.sender.id =:senderId")
     Page<Message> findMessageBySenderId(@Param("senderId") Long senderId, Pageable pageable);
 
     @Query("select m from Message m where m.sender.id =:senderId")
     List<Message> findMessageBySenderId(@Param("senderId") Long senderId, Sort sort);
+
+    @Query("select m from Message m where m.sender.id =:senderId")
+    List<Message> findMessageBySenderId(@Param("senderId") Long senderId);
 
     @Query(" select m" +
             " from Message m " +
@@ -98,4 +113,11 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
             " where m.sender.id <> recipientId " +
             " and (d.first.id =:recipientId or d.second.id =:recipientId) ")
     List<Message> findMessageByRecipientId(@Param("recipientId") Long recipientId, Sort sort);
+
+    @Query(" select m " +
+            " from Message m " +
+            " join m.dialog as d " +
+            " where m.sender.id <> recipientId " +
+            " and (d.first.id =:recipientId or d.second.id =:recipientId) ")
+    List<Message> findMessageByRecipientId(@Param("recipientId") Long recipientId);
 }
