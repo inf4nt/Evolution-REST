@@ -23,7 +23,6 @@ public class Message {
     @SequenceGenerator(name = "seq_message", sequenceName = "seq_message_id", allocationSize = 1)
     private Long id;
 
-//    @JsonSerialize(using = CustomMessageSerializerDialog.class)
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "dialog_id", updatable = false, nullable = false, columnDefinition = "bigint")
     private Dialog dialog;
@@ -39,7 +38,7 @@ public class Message {
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateDispatch;
 
-    @Column(name = "is_active")
+    @Column(name = "is_active", columnDefinition = "boolean default true")
     private boolean isActive;
 
     @Version

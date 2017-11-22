@@ -7,6 +7,7 @@ import evolution.crud.api.MessageCrudManagerService;
 import evolution.dto.DialogDTOTransfer;
 import evolution.dto.MessageDTOTransfer;
 import evolution.dto.model.DialogDTO;
+import evolution.dto.model.DialogFullDTO;
 import evolution.dto.model.MessageDTO;
 import evolution.model.User;
 import evolution.security.model.CustomSecurityUser;
@@ -52,39 +53,38 @@ public class DialogBusinessServiceImpl implements DialogBusinessService {
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public Optional<DialogDTO> findOne(Long id) {
-        Optional<CustomSecurityUser> auth = securitySupportService.getPrincipal();
+    public Optional<DialogFullDTO> findOne(Long id) {
         return dialogCrudManagerService
                 .findOne(id)
-                .map(o -> dialogDTOTransfer.modelToDTO(o, auth));
+                .map(o -> dialogDTOTransfer.modelToDTOFull(o));
     }
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public List<DialogDTO> findAll() {
+    public List<DialogFullDTO> findAll() {
         return dialogCrudManagerService
                 .findAll()
                 .stream()
-                .map(o -> dialogDTOTransfer.modelToDTO(o))
+                .map(o -> dialogDTOTransfer.modelToDTOFull(o))
                 .collect(Collectors.toList());
     }
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public List<DialogDTO> findAll(String sortType, List<String> sortProperties) {
+    public List<DialogFullDTO> findAll(String sortType, List<String> sortProperties) {
         return dialogCrudManagerService
                 .findAll(sortType, sortProperties)
                 .stream()
-                .map(o -> dialogDTOTransfer.modelToDTO(o))
+                .map(o -> dialogDTOTransfer.modelToDTOFull(o))
                 .collect(Collectors.toList());
     }
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public Page<DialogDTO> findAll(Integer page, Integer size, String sortType, List<String> sortProperties) {
+    public Page<DialogFullDTO> findAll(Integer page, Integer size, String sortType, List<String> sortProperties) {
         return dialogCrudManagerService
                 .findAll(page, size, sortType, sortProperties)
-                .map(o -> dialogDTOTransfer.modelToDTO(o));
+                .map(o -> dialogDTOTransfer.modelToDTOFull(o));
     }
 
     @Override

@@ -5,24 +5,17 @@ import lombok.Data;
 
 import java.util.List;
 
-/**
- * Created by Infant on 08.11.2017.
- */
 @Data
 @JsonInclude
-public class FeedDTO {
+public class FeedForUpdateDTO {
 
     private Long id;
 
     private String content;
 
-    private Long createdDateTimestamp;
+    private Long senderId;
 
-    private String createdDateString;
-
-    private UserDTO sender;
-
-    private UserDTO toUser;
+    private Long toUserId;
 
     private List<String> tags;
 

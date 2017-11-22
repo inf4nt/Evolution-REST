@@ -38,7 +38,7 @@ public class UserAdditionalData {
     @Column(name = "password", nullable = false, columnDefinition = "varchar(255)")
     private String password;
 
-    @Column(name = "registration_date", columnDefinition = "timestamp default current_timestamp")
+    @Column(name = "registration_date", columnDefinition = "timestamp")
     @Temporal(TemporalType.TIMESTAMP)
     private Date registrationDate;
 

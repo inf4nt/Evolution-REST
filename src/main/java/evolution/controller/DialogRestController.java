@@ -1,6 +1,7 @@
 package evolution.controller;
 
 import evolution.dto.model.DialogDTO;
+import evolution.dto.model.DialogFullDTO;
 import evolution.dto.model.MessageDTO;
 import evolution.rest.api.DialogRestService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,20 +29,20 @@ public class DialogRestController {
     }
 
     @GetMapping(value = "/list")
-    public ResponseEntity<List<DialogDTO>> findAll2() {
+    public ResponseEntity<List<DialogFullDTO>> findAll2() {
         return dialogRestService.findAll();
     }
 
     @GetMapping
-    public ResponseEntity<Page<DialogDTO>> findAll(@RequestParam(required = false) Integer page,
-                                                   @RequestParam(required = false) Integer size,
-                                                   @RequestParam(required = false) String sortType,
-                                                   @RequestParam(required = false) List<String> sortProperties) {
+    public ResponseEntity<Page<DialogFullDTO>> findAll(@RequestParam(required = false) Integer page,
+                                                       @RequestParam(required = false) Integer size,
+                                                       @RequestParam(required = false) String sortType,
+                                                       @RequestParam(required = false) List<String> sortProperties) {
         return dialogRestService.findAll(page, size, sortType, sortProperties);
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<DialogDTO> findOne(@PathVariable Long id) {
+    public ResponseEntity<DialogFullDTO> findOne(@PathVariable Long id) {
         return dialogRestService.findOne(id);
     }
 
@@ -58,7 +59,6 @@ public class DialogRestController {
     public ResponseEntity<List<MessageDTO>> findMessageByDialog2(@PathVariable Long id) {
         return dialogRestService.findMessageByDialogAndUserId(id);
     }
-
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<HttpStatus> delete(@PathVariable Long id) {

@@ -25,7 +25,7 @@ public class Feed {
     @Column(name = "feed_content", columnDefinition = "text")
     private String content;
 
-    @Column(name = "date_create")
+    @Column(name = "date_create", columnDefinition = "timestamp", nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
 
@@ -40,7 +40,7 @@ public class Feed {
     @Column(columnDefinition = "text")
     private String tags;
 
-    @Column(name = "is_active")
+    @Column(name = "is_active", columnDefinition = "boolean default true")
     private boolean isActive;
 
     @Version

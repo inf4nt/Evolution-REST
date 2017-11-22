@@ -1,6 +1,7 @@
 package evolution.rest.api;
 
 import evolution.dto.model.DialogDTO;
+import evolution.dto.model.DialogFullDTO;
 import evolution.dto.model.MessageDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -13,11 +14,11 @@ import java.util.List;
  */
 public interface DialogRestService {
 
-    ResponseEntity<List<DialogDTO>> findAll();
+    ResponseEntity<List<DialogFullDTO>> findAll();
 
-    ResponseEntity<Page<DialogDTO>> findAll(Integer page, Integer size, String sort, List<String> sortProperties);
+    ResponseEntity<Page<DialogFullDTO>> findAll(Integer page, Integer size, String sort, List<String> sortProperties);
 
-    ResponseEntity<DialogDTO> findOne(Long dialogId);
+    ResponseEntity<DialogFullDTO> findOne(Long dialogId);
 
     ResponseEntity<Page<MessageDTO>> findMessageByDialog(Long dialogId, Integer page, Integer size, String sort, List<String> sortProperties);
 

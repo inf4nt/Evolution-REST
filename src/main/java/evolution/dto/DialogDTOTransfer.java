@@ -1,6 +1,8 @@
 package evolution.dto;
 
 import evolution.dto.model.DialogDTO;
+import evolution.dto.model.DialogFullDTO;
+import evolution.dto.model.UserDTO;
 import evolution.model.Dialog;
 import evolution.model.User;
 import evolution.security.model.CustomSecurityUser;
@@ -11,7 +13,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Created by Infant on 13.11.2017.
@@ -85,6 +89,48 @@ public class DialogDTOTransfer {
         return dto;
     }
 
+    public DialogFullDTO modelToDTOFull(Dialog dialog) {
+        DialogFullDTO d = new DialogFullDTO();
+
+        List<DialogFullDTO.Message> messageList = dialog.getMessageList()
+                .stream()
+                .map(o -> {
+                    DialogFullDTO.Message m = new DialogFullDTO.Message();
+                    m.setSender(userDTOTransfer.modelToDTO(o.getSender()));
+                    m.setId(o.getId());
+                    m.setText(o.getMessage());
+                    m.setDialogId(o.getDialog().getId());
+                    m.setCreatedDateTimestamp(o.getDateDispatch().getTime());
+                    m.setCreatedDateString(dateService.formatDateUTC(o.getDateDispatch()));
+                    return m;
+                })
+                .collect(Collectors.toList());
+
+        d.setId(dialog.getId());
+        d.setFirst(userDTOTransfer.modelToDTO(dialog.getFirst()));
+        d.setSecond(userDTOTransfer.modelToDTO(dialog.getSecond()));
+        d.setCreatedDateTimestamp(dialog.getCreateDate().getTime());
+        d.setCreatedDateString(dateService.formatDateUTC(dialog.getCreateDate()));
+        d.setMessageList(messageList);
+
+        return d;
+    }
+
+    public DialogFullDTO modelToDTOFull(Dialog dialog, Long auth) {
+        DialogFullDTO d = modelToDTOFull(dialog);
+
+        if (!auth.equals(d.getFirst().getId())) {
+            UserDTO f = d.getSecond();
+            d.setSecond(d.getFirst());
+            d.setFirst(f);
+        }
+
+        return d;
+    }
+
+    public DialogFullDTO modelToDTOFull(Dialog dialog, User auth) {
+        return modelToDTOFull(dialog, auth.getId());
+    }
 
     public Dialog dtoToModel(DialogDTO dialogDTO) {
         return modelMapper.map(dialogDTO, Dialog.class);

@@ -3,6 +3,7 @@ package evolution.business.api;
 
 import evolution.business.BusinessServiceExecuteResult;
 import evolution.dto.model.DialogDTO;
+import evolution.dto.model.DialogFullDTO;
 import evolution.dto.model.MessageDTO;
 import org.springframework.data.domain.Page;
 
@@ -14,13 +15,13 @@ import java.util.Optional;
  */
 public interface DialogBusinessService {
 
-    Optional<DialogDTO> findOne(Long id);
+    Optional<DialogFullDTO> findOne(Long id);
 
-    List<DialogDTO> findAll();
+    List<DialogFullDTO> findAll();
 
-    List<DialogDTO> findAll(String sortType, List<String> sortProperties);
+    List<DialogFullDTO> findAll(String sortType, List<String> sortProperties);
 
-    Page<DialogDTO> findAll(Integer page, Integer size, String sortType, List<String> sortProperties);
+    Page<DialogFullDTO> findAll(Integer page, Integer size, String sortType, List<String> sortProperties);
 
     BusinessServiceExecuteResult delete(Long id);
 

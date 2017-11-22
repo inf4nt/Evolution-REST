@@ -4,6 +4,7 @@ import evolution.business.BusinessServiceExecuteResult;
 import evolution.business.api.DialogBusinessService;
 import evolution.common.BusinessServiceExecuteStatus;
 import evolution.dto.model.DialogDTO;
+import evolution.dto.model.DialogFullDTO;
 import evolution.dto.model.MessageDTO;
 import evolution.rest.api.DialogRestService;
 import org.slf4j.Logger;
@@ -34,8 +35,8 @@ public class DialogRestServiceImpl implements DialogRestService {
     }
 
     @Override
-    public ResponseEntity<List<DialogDTO>> findAll() {
-        List<DialogDTO> list = dialogBusinessService.findAll();
+    public ResponseEntity<List<DialogFullDTO>> findAll() {
+        List<DialogFullDTO> list = dialogBusinessService.findAll();
         if (list.isEmpty()) {
             return ResponseEntity.noContent().build();
         } else {
@@ -44,8 +45,8 @@ public class DialogRestServiceImpl implements DialogRestService {
     }
 
     @Override
-    public ResponseEntity<Page<DialogDTO>> findAll(Integer page, Integer size, String sort, List<String> sortProperties) {
-        Page<DialogDTO> p = dialogBusinessService.findAll(page, size, sort, sortProperties);
+    public ResponseEntity<Page<DialogFullDTO>> findAll(Integer page, Integer size, String sort, List<String> sortProperties) {
+        Page<DialogFullDTO> p = dialogBusinessService.findAll(page, size, sort, sortProperties);
         if (p.getContent().isEmpty()) {
             return ResponseEntity.noContent().build();
         } else {
@@ -54,8 +55,8 @@ public class DialogRestServiceImpl implements DialogRestService {
     }
 
     @Override
-    public ResponseEntity<DialogDTO> findOne(Long dialogId) {
-        Optional<DialogDTO> dialogDTO = dialogBusinessService.findOne(dialogId);
+    public ResponseEntity<DialogFullDTO> findOne(Long dialogId) {
+        Optional<DialogFullDTO> dialogDTO = dialogBusinessService.findOne(dialogId);
         if(dialogDTO.isPresent()) {
             return ResponseEntity.ok(dialogDTO.get());
         } else {

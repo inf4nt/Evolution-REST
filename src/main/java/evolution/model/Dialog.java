@@ -34,7 +34,7 @@ public class Dialog {
     @JoinColumn(name = "second", updatable = false, nullable = false, columnDefinition = "bigint")
     private User second;
 
-    @Column(name = "date_create", nullable = false, updatable = false)
+    @Column(name = "date_create", columnDefinition = "timestamp", nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDate;
 
