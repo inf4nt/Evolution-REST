@@ -133,4 +133,16 @@ public class FeedCrudManagerServiceImpl implements FeedCrudManagerService {
     public Optional<Feed> findFeedByIdAndSenderId(Long feedId, Long senderId) {
         return feedRepository.findFeedByIdAndSenderId(feedId, senderId);
     }
+
+    @Override
+    public List<Feed> findFeedBySender(Long sender) {
+        return feedRepository.findFeedBySender(sender);
+    }
+
+    @Override
+    public Page<Feed> findFeedBySender(Long sender, Integer page, Integer size, String sortType, List<String> sortProperties) {
+        Pageable p = getPageableForRestService(page, size, sortType, sortProperties,
+                this.feedMaxFetch, this.defaultFeedSortType, this.defaultFeedSortProperties);
+        return feedRepository.findFeedBySender(sender, p);
+    }
 }

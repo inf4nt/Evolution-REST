@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -46,4 +47,10 @@ public interface FeedRepository extends JpaRepository<Feed, Long> {
     @Query("select f from Feed f " +
             " where f.id = :id and f.sender.id = :senderId")
     Optional<Feed> findFeedByIdAndSenderId(@Param("id") Long id, @Param("senderId") Long senderId);
+
+    @Query("select f from Feed f where f.sender.id =:s")
+    List<Feed> findFeedBySender(@Param("s") Long sender);
+
+    @Query("select f from Feed f where f.sender.id =:s")
+    Page<Feed> findFeedBySender(@Param("s") Long sender, Pageable pageable);
 }

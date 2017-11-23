@@ -29,17 +29,17 @@ public interface FeedBusinessService {
 
     Page<FeedDTO> findAll(Integer page, Integer size, String sortType, List<String> sortProperties);
 
-    List<FeedDTO> findMyFriendsFeed(Long iam);
+    BusinessServiceExecuteResult<List<FeedDTO>> findMyFriendsFeed(Long iam);
 
-    Page<FeedDTO> findMyFriendsFeed(Long iam, Integer page, Integer size, String sortType, List<String> sortProperties);
+    BusinessServiceExecuteResult<Page<FeedDTO>> findMyFriendsFeed(Long iam, Integer page, Integer size, String sortType, List<String> sortProperties);
 
     List<FeedDTO> findMyFriendsFeed();
 
     Page<FeedDTO> findMyFriendsFeed(Integer page, Integer size, String sortType, List<String> sortProperties);
 
-    List<FeedDTO> findFeedsForMe(Long iam);
+    BusinessServiceExecuteResult<List<FeedDTO>> findFeedsForMe(Long iam);
 
-    Page<FeedDTO> findFeedsForMe(Long iam, Integer page, Integer size, String sortType, List<String> sortProperties);
+    BusinessServiceExecuteResult<Page<FeedDTO>> findFeedsForMe(Long iam, Integer page, Integer size, String sortType, List<String> sortProperties);
 
     List<FeedDTO> findFeedsForMe();
 
@@ -52,4 +52,8 @@ public interface FeedBusinessService {
     Optional<FeedDTO> findFeedByIdAndSenderId(Long feedId);
 
     Optional<FeedDTO> findOne(Long id);
+
+    BusinessServiceExecuteResult<List<FeedDTO>> findFeedBySender(Long sender);
+
+    BusinessServiceExecuteResult<Page<FeedDTO>> findFeedBySender(Long sender, Integer page, Integer size, String sortType, List<String> sortProperties);
 }

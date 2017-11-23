@@ -5,6 +5,7 @@ import evolution.security.model.CustomSecurityUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -15,9 +16,11 @@ import java.util.Map;
 @Component
 public class TokenUtil {
 
-    private String secret = "secret_word";
+    @Value("${security.secret}")
+    private String secret;
 
-    private Long expiration = 60480000L;
+    @Value("${security.token.life}")
+    private Long expiration;
 
     public String getUsernameFromToken(String token) {
         String username;

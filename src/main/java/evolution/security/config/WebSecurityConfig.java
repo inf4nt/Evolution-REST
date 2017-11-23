@@ -1,11 +1,11 @@
 package evolution.security.config;
 
-import evolution.security.AuthenticationEntryPointImpl;
 import evolution.security.AuthenticationTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,41 +22,51 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final AuthenticationEntryPointImpl unauthorizedHandler;
+    private final UserDetailsService userDetailsService;
 
     private final AuthenticationTokenFilter authenticationTokenFilter;
 
-    private final UserDetailsService userDetailsService;
-
-    private final PasswordEncoder passwordEncoder;
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Autowired
-    public WebSecurityConfig(AuthenticationEntryPointImpl unauthorizedHandler, AuthenticationTokenFilter authenticationTokenFilter, UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
-        this.unauthorizedHandler = unauthorizedHandler;
-        this.authenticationTokenFilter = authenticationTokenFilter;
+    public WebSecurityConfig(UserDetailsService userDetailsService,
+                             AuthenticationTokenFilter authenticationTokenFilter) {
         this.userDetailsService = userDetailsService;
-        this.passwordEncoder = passwordEncoder;
+        this.authenticationTokenFilter = authenticationTokenFilter;
     }
 
     @Autowired
     public void configureAuthentication(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         authenticationManagerBuilder
-                .userDetailsService(this.userDetailsService)
-                .passwordEncoder(passwordEncoder);
+                .userDetailsService(userDetailsService)
+                .passwordEncoder(passwordEncoder());
+    }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                .csrf().disable()
-                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .csrf()
+                .disable()
+                .exceptionHandling()
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
                 .authorizeRequests()
-                .antMatchers("/auth/**", "/index/**", "/user/post").permitAll()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .antMatchers("/auth/**", "/index/**", "/user/post").permitAll()
                 .anyRequest().authenticated();
+
         httpSecurity
                 .addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
-        httpSecurity.headers().cacheControl();
     }
 }

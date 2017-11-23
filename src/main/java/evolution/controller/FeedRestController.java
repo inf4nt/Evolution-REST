@@ -1,18 +1,14 @@
 package evolution.controller;
 
-import evolution.model.Feed;
-import evolution.repository.FeedRepository;
-import evolution.repository.FriendRepository;
-import evolution.security.model.CustomSecurityUser;
+import evolution.dto.model.FeedDTO;
+import evolution.dto.model.FeedForSaveDTO;
+import evolution.dto.model.FeedForUpdateDTO;
+import evolution.rest.api.FeedRestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,21 +17,97 @@ import java.util.List;
 @CrossOrigin
 public class FeedRestController {
 
-    @Autowired
-    private FeedRepository feedRepository;
+    private final FeedRestService feedRestService;
 
     @Autowired
-    private FriendRepository friendRepository;
+    public FeedRestController(FeedRestService feedRestService) {
+        this.feedRestService = feedRestService;
+    }
 
     @GetMapping(value = "/list")
-    public List<Feed> findAll(@AuthenticationPrincipal CustomSecurityUser auth) {
-        return feedRepository.findMyFriendsFeed(auth.getUser().getId());
+    public ResponseEntity<List<FeedDTO>> findAll() {
+        return feedRestService.findAll();
     }
 
-    @GetMapping(value = "/page")
-    public Page<Feed> findAll2(@AuthenticationPrincipal CustomSecurityUser auth) {
-        return feedRepository.findMyFriendsFeed(auth.getUser().getId(), new PageRequest(0, 100));
-//        return null;
+    @GetMapping
+    public ResponseEntity<Page<FeedDTO>> findAll2(@RequestParam(required = false) Integer page,
+                                                  @RequestParam(required = false) Integer size,
+                                                  @RequestParam(required = false) String sortType,
+                                                  @RequestParam(required = false) List<String> sortProperties) {
+        return feedRestService.findAll(page, size, sortType, sortProperties);
     }
 
+    @GetMapping("/friends/list")
+    public ResponseEntity<List<FeedDTO>> findMyFriendsFeed() {
+        return feedRestService.findMyFriendsFeed();
+    }
+
+    @GetMapping("/friends")
+    public ResponseEntity<Page<FeedDTO>> findMyFriendsFeed(@RequestParam(required = false) Integer page,
+                                                           @RequestParam(required = false) Integer size,
+                                                           @RequestParam(required = false) String sortType,
+                                                           @RequestParam(required = false) List<String> sortProperties) {
+        return feedRestService.findMyFriendsFeed(page, size, sortType, sortProperties);
+    }
+
+    @GetMapping("/forme/list")
+    public ResponseEntity<List<FeedDTO>> findFeedsForMe() {
+        return feedRestService.findFeedsForMe();
+    }
+
+    @GetMapping("/forme")
+    public ResponseEntity<Page<FeedDTO>> findFeedsForMe(@RequestParam(required = false) Integer page,
+                                                        @RequestParam(required = false) Integer size,
+                                                        @RequestParam(required = false) String sortType,
+                                                        @RequestParam(required = false) List<String> sortProperties) {
+        return feedRestService.findFeedsForMe(page, size, sortType, sortProperties);
+    }
+
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<FeedDTO> findOne(@PathVariable Long id) {
+        return feedRestService.findOne(id);
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<HttpStatus> delete(@PathVariable Long id) {
+        return feedRestService.delete(id);
+    }
+
+    @PostMapping
+    public ResponseEntity<FeedDTO> post(@RequestBody FeedForSaveDTO feed) {
+        return feedRestService.create(feed);
+    }
+
+    @PutMapping
+    public ResponseEntity<FeedDTO> put(@RequestBody FeedForUpdateDTO feed) {
+        return feedRestService.update(feed);
+    }
+
+    @GetMapping("/friends/user/{id}/list")
+    public ResponseEntity<List<FeedDTO>> findMyFriendsFeed2(@PathVariable Long id) {
+        return feedRestService.findMyFriendsFeed(id);
+    }
+
+    @GetMapping("/friends/user/{id}")
+    public ResponseEntity<Page<FeedDTO>> findMyFriendsFeed2(@PathVariable Long id,
+                                                            @RequestParam(required = false) Integer page,
+                                                            @RequestParam(required = false) Integer size,
+                                                            @RequestParam(required = false) String sortType,
+                                                            @RequestParam(required = false) List<String> sortProperties) {
+        return feedRestService.findMyFriendsFeed(id, page, size, sortType, sortProperties);
+    }
+
+    @GetMapping("/forme/user/{id}/list")
+    public ResponseEntity<List<FeedDTO>> findFeedsForMe2(@PathVariable Long id) {
+        return feedRestService.findFeedsForMe(id);
+    }
+
+    @GetMapping("/forme/user/{id}")
+    public ResponseEntity<Page<FeedDTO>> findFeedsForMe2(@PathVariable Long id,
+                                                         @RequestParam(required = false) Integer page,
+                                                         @RequestParam(required = false) Integer size,
+                                                         @RequestParam(required = false) String sortType,
+                                                         @RequestParam(required = false) List<String> sortProperties) {
+        return feedRestService.findFeedsForMe(id, page, size, sortType, sortProperties);
+    }
 }

@@ -28,4 +28,8 @@ public interface FeedCrudManagerService extends AbstractCrudManagerService<Feed,
     Optional<Feed> findFeedByIdAndToUserId(Long feedId, Long toUserId);
 
     Optional<Feed> findFeedByIdAndSenderId(Long feedId, Long senderId);
+
+    List<Feed> findFeedBySender(Long sender);
+
+    Page<Feed> findFeedBySender(Long sender, Integer page, Integer size, String sortType, List<String> sortProperties);
 }

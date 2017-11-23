@@ -144,8 +144,8 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
 
     @Override
     public void delete(Long aLong) {
-        Optional<User> optional = userRepository.findOneUserByIdLazy(aLong);
-        optional.ifPresent(user -> userRepository.delete(user));
+        Optional<User> o = userRepository.findOneUserById(aLong);
+        o.ifPresent(p -> userRepository.delete(p));
     }
 
     @Override

@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -166,19 +167,30 @@ public class FeedBusinessServiceImpl implements FeedBusinessService {
     }
 
     @Override
-    public List<FeedDTO> findMyFriendsFeed(Long iam) {
-        return feedCrudManagerService
-                .findMyFriendsFeed(iam)
-                .stream()
-                .map(o -> feedDTOTransfer.modelToDTO(o))
-                .collect(Collectors.toList());
+    public BusinessServiceExecuteResult<List<FeedDTO>> findMyFriendsFeed(Long iam) {
+        if (securitySupportService.isAllowedFull(iam)) {
+            List<FeedDTO> list = feedCrudManagerService
+                    .findMyFriendsFeed(iam)
+                    .stream()
+                    .map(o -> feedDTOTransfer.modelToDTO(o))
+                    .collect(Collectors.toList());
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, list);
+        } else {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
+        }
+
     }
 
     @Override
-    public Page<FeedDTO> findMyFriendsFeed(Long iam, Integer page, Integer size, String sortType, List<String> sortProperties) {
-        return feedCrudManagerService
-                .findMyFriendsFeed(iam, page, size, sortType, sortProperties)
-                .map(o -> feedDTOTransfer.modelToDTO(o));
+    public BusinessServiceExecuteResult<Page<FeedDTO>> findMyFriendsFeed(Long iam, Integer page, Integer size, String sortType, List<String> sortProperties) {
+        if (securitySupportService.isAllowedFull(iam)) {
+            Page<FeedDTO> p = feedCrudManagerService
+                    .findMyFriendsFeed(iam, page, size, sortType, sortProperties)
+                    .map(o -> feedDTOTransfer.modelToDTO(o));
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, p);
+        } else {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
+        }
     }
 
     @Override
@@ -200,19 +212,29 @@ public class FeedBusinessServiceImpl implements FeedBusinessService {
     }
 
     @Override
-    public List<FeedDTO> findFeedsForMe(Long iam) {
-        return feedCrudManagerService
-                .findFeedsForMe(iam)
-                .stream()
-                .map(o -> feedDTOTransfer.modelToDTO(o))
-                .collect(Collectors.toList());
+    public BusinessServiceExecuteResult<List<FeedDTO>> findFeedsForMe(Long iam) {
+        if (securitySupportService.isAllowedFull(iam)) {
+            List<FeedDTO> list = feedCrudManagerService
+                    .findFeedsForMe(iam)
+                    .stream()
+                    .map(o -> feedDTOTransfer.modelToDTO(o))
+                    .collect(Collectors.toList());
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, list);
+        } else {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
+        }
     }
 
     @Override
-    public Page<FeedDTO> findFeedsForMe(Long iam, Integer page, Integer size, String sortType, List<String> sortProperties) {
-        return feedCrudManagerService
-                .findFeedsForMe(iam, page, size, sortType, sortProperties)
-                .map(o -> feedDTOTransfer.modelToDTO(o));
+    public BusinessServiceExecuteResult<Page<FeedDTO>> findFeedsForMe(Long iam, Integer page, Integer size, String sortType, List<String> sortProperties) {
+        if (securitySupportService.isAllowedFull(iam)) {
+            Page<FeedDTO> p = feedCrudManagerService
+                    .findFeedsForMe(iam, page, size, sortType, sortProperties)
+                    .map(o -> feedDTOTransfer.modelToDTO(o));
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, p);
+        } else {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
+        }
     }
 
     @Override
@@ -266,6 +288,32 @@ public class FeedBusinessServiceImpl implements FeedBusinessService {
             return feedCrudManagerService
                     .findFeedByIdAndSenderId(id, auth)
                     .map(o -> feedDTOTransfer.modelToDTO(o));
+        }
+    }
+
+    @Override
+    public BusinessServiceExecuteResult<List<FeedDTO>> findFeedBySender(Long sender) {
+        if (securitySupportService.isAllowedFull(sender)) {
+            List<FeedDTO> list = feedCrudManagerService
+                    .findFeedBySender(sender)
+                    .stream()
+                    .map(o -> feedDTOTransfer.modelToDTO(o))
+                    .collect(Collectors.toList());
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, list);
+        } else {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
+        }
+    }
+
+    @Override
+    public BusinessServiceExecuteResult<Page<FeedDTO>> findFeedBySender(Long sender, Integer page, Integer size, String sortType, List<String> sortProperties) {
+        if (securitySupportService.isAllowedFull(sender)) {
+            Page<FeedDTO> p = feedCrudManagerService
+                    .findFeedBySender(sender, page, size, sortType, sortProperties)
+                    .map(o -> feedDTOTransfer.modelToDTO(o));
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, p);
+        } else {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
         }
     }
 }

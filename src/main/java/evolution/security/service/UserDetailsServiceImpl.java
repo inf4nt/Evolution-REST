@@ -1,5 +1,6 @@
 package evolution.security.service;
 
+import evolution.crud.api.UserCrudManagerService;
 import evolution.model.User;
 import evolution.repository.UserRepository;
 import evolution.security.model.CustomSecurityUser;
@@ -26,16 +27,16 @@ public class UserDetailsServiceImpl
 
     private Logger LOGGER = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 
-    private final UserRepository userRepository;
+    private final UserCrudManagerService userCrudManagerService;
 
     @Autowired
-    public UserDetailsServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserDetailsServiceImpl(UserCrudManagerService userCrudManagerService) {
+        this.userCrudManagerService = userCrudManagerService;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> optional = userRepository.findUserByUsernameLazy(username);
+        Optional<User> optional = userCrudManagerService.findByUsername(username);
         if (!optional.isPresent()) {
             LOGGER.info("\nuser  username = " + username + ", not found");
             throw new UsernameNotFoundException("user " + username + " not found");
