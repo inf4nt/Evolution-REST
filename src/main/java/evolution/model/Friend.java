@@ -42,8 +42,8 @@ public class Friend {
     @PrePersist
     @PreUpdate
     public void prePersistUpdate() {
-        if (pk.getSecond().getId() > pk.getFirst().getId()) {
-            throw new UnsupportedOperationException("firstUserId always must be > secondUserId");
+        if (pk.getSecond().getId() > pk.getFirst().getId() || pk.getSecond().getId().equals(pk.getFirst().getId())) {
+            throw new UnsupportedOperationException("firstUserId always must be > secondUserId or second == first");
         }
     }
 

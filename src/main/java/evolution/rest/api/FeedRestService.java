@@ -37,5 +37,5 @@ public interface FeedRestService {
 
     ResponseEntity<Page<FeedDTO>> findFeedsForMe(Long iam, Integer page, Integer size, String sortType, List<String> sortProperties);
 
-    ResponseEntity<HttpStatus> delete(Long id);
+    ResponseEntity<FeedDTO> delete(Long id);
 }

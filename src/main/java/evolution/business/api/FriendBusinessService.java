@@ -7,6 +7,7 @@ import evolution.dto.model.FriendDTOFull;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by Infant on 08.11.2017.
@@ -20,6 +21,8 @@ public interface FriendBusinessService {
     BusinessServiceExecuteResult<FriendDTOFull> deleteRequest(FriendActionDTO friendActionDTO);
 
     BusinessServiceExecuteResult<FriendDTOFull> sendRequestToFriend(FriendActionDTO friendActionDTO);
+
+    Optional<FriendDTO> findOne(Long first, Long second);
 
     List<FriendDTOFull> findAll2();
 
@@ -52,4 +55,6 @@ public interface FriendBusinessService {
     List<FriendDTO> findRequests(Long iam);
 
     Page<FriendDTO> findRequests(Long iam, Integer page, Integer size);
+
+    BusinessServiceExecuteResult<FriendDTOFull> action(FriendActionDTO actionDTO);
 }

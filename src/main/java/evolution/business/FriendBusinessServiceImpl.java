@@ -2,6 +2,7 @@ package evolution.business;
 
 import evolution.business.api.FriendBusinessService;
 import evolution.common.BusinessServiceExecuteStatus;
+import evolution.common.FriendActionEnum;
 import evolution.common.FriendStatusEnum;
 import evolution.crud.api.FriendCrudManagerService;
 import evolution.crud.api.UserCrudManagerService;
@@ -168,7 +169,7 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
         }
 
         if (deleteRequest.get().getVersion() == null) {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK);
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, Optional.empty());
         } else {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.EXPECTATION_FAILED, friendDTOTransfer.modelToDTOFull(deleteRequest.get()));
         }
@@ -191,6 +192,13 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
         } else {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.EXPECTATION_FAILED, friendDTOTransfer.modelToDTOFull(friend.get()));
         }
+    }
+
+    @Override
+    public Optional<FriendDTO> findOne(Long first, Long second) {
+        return friendCrudManagerService
+                .findOneFriend(first, second)
+                .map(o -> friendDTOTransfer.modelToDTO(o));
     }
 
     @Override
@@ -261,21 +269,14 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
 
     @Override
     public Page<FriendDTO> findFollowers(Long iam, Integer page, Integer size) {
-        if (securitySupportService.isAllowedFull(iam)) {
-            return friendCrudManagerService
-                    .findFollowerByUser(iam, page, size)
-                    .map(o -> friendDTOTransfer.modelToDTO(o, iam));
-        } else if (securitySupportService.isAdmin()) {
-            return friendCrudManagerService
-                    .findFollowerByUser(iam, page, size)
-                    .map(o -> friendDTOTransfer.modelToDTO(o));
-        }
-        return new PageImpl<>(new ArrayList<>());
+        return friendCrudManagerService
+                .findFollowerByUser(iam, page, size)
+                .map(o -> friendDTOTransfer.modelToDTO(o, iam));
     }
 
     @Override
     public List<FriendDTO> findRequests(Long iam) {
-        if (securitySupportService.isAllowedFull(iam)) {
+        if (securitySupportService.isAllowed(iam)) {
             return friendCrudManagerService
                     .findRequestByUser(iam)
                     .stream()
@@ -303,6 +304,22 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
                     .map(o -> friendDTOTransfer.modelToDTO(o));
         }
         return new PageImpl<>(new ArrayList<>());
+    }
+
+    @Override
+    public BusinessServiceExecuteResult<FriendDTOFull> action(FriendActionDTO actionDTO) {
+
+        if (actionDTO.getAction() == FriendActionEnum.ACCEPT_REQUEST) {
+            return acceptRequest(actionDTO);
+        } else if (actionDTO.getAction() == FriendActionEnum.DELETE_FRIEND) {
+            return deleteFriend(actionDTO);
+        } else if (actionDTO.getAction() == FriendActionEnum.DELETE_REQUEST) {
+            return deleteRequest(actionDTO);
+        } else if (actionDTO.getAction() == FriendActionEnum.SEND_REQUEST_FRIEND) {
+            return sendRequestToFriend(actionDTO);
+        }
+
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.EXPECTATION_FAILED);
     }
 
 }

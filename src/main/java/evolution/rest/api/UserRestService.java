@@ -43,4 +43,6 @@ public interface UserRestService {
     ResponseEntity activated(String key);
 
     ResponseEntity exist(String username);
+
+    ResponseEntity<UserFullDTO> setPassword(UserFullDTO userFullDTO);
 }

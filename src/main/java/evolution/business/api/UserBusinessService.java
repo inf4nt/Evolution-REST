@@ -65,9 +65,9 @@ public interface UserBusinessService {
 
     BusinessServiceExecuteResult setPasswordBySecretKey(String newPassword, String secretKey);
 
-    BusinessServiceExecuteResult setPasswordBySecretKey(String newPassword, Long id);
+    BusinessServiceExecuteResult setPasswordByUserId(String newPassword, Long id);
 
-    BusinessServiceExecuteResult setPasswordByOldPassword(Long userId, UserFullDTO userFullDTO, String newPassword);
+    BusinessServiceExecuteResult<UserFullDTO> setPasswordByOldPassword(UserFullDTO userFullDTO);
 
     BusinessServiceExecuteResult setNewSecretKey(Long id);
 

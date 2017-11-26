@@ -11,4 +11,6 @@ public class FriendActionDTO {
     private Long actionUserId;
 
     private Long recipientUserId;
+
+    private FriendActionEnum action;
 }

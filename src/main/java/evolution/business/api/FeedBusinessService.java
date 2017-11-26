@@ -29,17 +29,17 @@ public interface FeedBusinessService {
 
     Page<FeedDTO> findAll(Integer page, Integer size, String sortType, List<String> sortProperties);
 
-    BusinessServiceExecuteResult<List<FeedDTO>> findMyFriendsFeed(Long iam);
+    List<FeedDTO> findMyFriendsFeed(Long iam);
 
-    BusinessServiceExecuteResult<Page<FeedDTO>> findMyFriendsFeed(Long iam, Integer page, Integer size, String sortType, List<String> sortProperties);
+    Page<FeedDTO> findMyFriendsFeed(Long iam, Integer page, Integer size, String sortType, List<String> sortProperties);
 
     List<FeedDTO> findMyFriendsFeed();
 
     Page<FeedDTO> findMyFriendsFeed(Integer page, Integer size, String sortType, List<String> sortProperties);
 
-    BusinessServiceExecuteResult<List<FeedDTO>> findFeedsForMe(Long iam);
+    List<FeedDTO> findFeedsForMe(Long iam);
 
-    BusinessServiceExecuteResult<Page<FeedDTO>> findFeedsForMe(Long iam, Integer page, Integer size, String sortType, List<String> sortProperties);
+    Page<FeedDTO> findFeedsForMe(Long iam, Integer page, Integer size, String sortType, List<String> sortProperties);
 
     List<FeedDTO> findFeedsForMe();
 

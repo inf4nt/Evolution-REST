@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
-public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFilter {
+public class AuthenticationTokenFilter extends OncePerRequestFilter {
 
     private final Log logger = LogFactory.getLog(this.getClass());
 
@@ -37,17 +37,9 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
     }
 
     @Override
-    @Autowired
-    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
-        super.setAuthenticationManager(authenticationManager);
-    }
-
-    @Override
-    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
-        HttpServletResponse response = (HttpServletResponse) res;
-        HttpServletRequest request = (HttpServletRequest) req;
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+        System.out.println("Auth filter ============================================================");
         String authToken = request.getHeader("Authorization");
-        response.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE, PATCH");
 
         System.out.println("doFilterInternal authToken " + authToken);
 
@@ -59,19 +51,6 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
 
         logger.info("checking authentication für user " + username);
 
-//        //todo: remove after testing
-//        username = "com.infant@gmail.com";
-//
-//        if (SecurityContextHolder.getContext().getAuthentication() == null) {
-//            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-//
-//            UsernamePasswordAuthenticationToken authentication =
-//                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-//            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-//            SecurityContextHolder.getContext().setAuthentication(authentication);
-//
-//        }
-
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
             if (this.tokenUtil.validateToken(authToken, userDetails)) {
@@ -82,6 +61,7 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
             }
         }
 
+        System.out.println("Auth filter ============================================================");
         chain.doFilter(request, response);
     }
 }

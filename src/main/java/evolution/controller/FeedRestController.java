@@ -30,10 +30,10 @@ public class FeedRestController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<FeedDTO>> findAll2(@RequestParam(required = false) Integer page,
-                                                  @RequestParam(required = false) Integer size,
-                                                  @RequestParam(required = false) String sortType,
-                                                  @RequestParam(required = false) List<String> sortProperties) {
+    public ResponseEntity<Page<FeedDTO>> findAllPage(@RequestParam(required = false) Integer page,
+                                                     @RequestParam(required = false) Integer size,
+                                                     @RequestParam(required = false) String sortType,
+                                                     @RequestParam(required = false) List<String> sortProperties) {
         return feedRestService.findAll(page, size, sortType, sortProperties);
     }
 
@@ -69,7 +69,7 @@ public class FeedRestController {
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<HttpStatus> delete(@PathVariable Long id) {
+    public ResponseEntity<FeedDTO> delete(@PathVariable Long id) {
         return feedRestService.delete(id);
     }
 

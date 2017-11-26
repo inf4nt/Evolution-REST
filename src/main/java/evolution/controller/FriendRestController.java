@@ -33,6 +33,12 @@ public class FriendRestController {
         return friendRestService.findAll(page, size);
     }
 
+    @GetMapping(value = "/{first}/{second}")
+    public ResponseEntity<FriendDTO> findOneByUsers(@PathVariable Long first,
+                                                    @PathVariable Long second) {
+        return friendRestService.findOne(first, second);
+    }
+
     @GetMapping(value = "/find/followers/{userId}")
     public ResponseEntity<Page<FriendDTO>> findUserFollowers(@PathVariable Long userId,
                                                              @RequestParam(required = false) Integer page,
@@ -84,22 +90,27 @@ public class FriendRestController {
         return friendRestService.findUserProgress2(userId, page, size);
     }
 
+    @PostMapping(value = "/action")
+    public ResponseEntity<FriendDTOFull> action(@RequestBody FriendActionDTO friendActionDTO) {
+        return friendRestService.action(friendActionDTO);
+    }
+
     @PostMapping(value = "/action/send_request")
     public ResponseEntity<FriendDTOFull> sendRequest(@RequestBody FriendActionDTO friendActionDTO) {
         return friendRestService.sendRequest(friendActionDTO);
     }
 
-    @DeleteMapping(value = "/action/remove_request")
+    @PostMapping(value = "/action/remove_request")
     public ResponseEntity<FriendDTOFull> removeRequest(@RequestBody FriendActionDTO friendActionDTO) {
         return friendRestService.removeRequest(friendActionDTO);
     }
 
-    @DeleteMapping(value = "/action/remove_friend")
+    @PostMapping(value = "/action/remove_friend")
     public ResponseEntity<FriendDTOFull> removeFriend(@RequestBody FriendActionDTO friendActionDTO) {
         return friendRestService.removeFriend(friendActionDTO);
     }
 
-    @PutMapping(value = "/action/accept_request")
+    @PostMapping(value = "/action/accept_request")
     public ResponseEntity<FriendDTOFull> acceptRequest(@RequestBody FriendActionDTO friendActionDTO) {
         return friendRestService.acceptRequest(friendActionDTO);
     }

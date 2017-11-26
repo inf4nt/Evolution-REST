@@ -149,4 +149,16 @@ public class UserRestServiceImpl implements UserRestService {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("User by username, " + username + ", not found!");
         }
     }
+
+    @Override
+    public ResponseEntity<UserFullDTO> setPassword(UserFullDTO userFullDTO) {
+        BusinessServiceExecuteResult<UserFullDTO> b = userBusinessService.setPasswordByOldPassword(userFullDTO);
+        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent()) {
+            return ResponseEntity.ok(b.getResultObject());
+        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.status(417).build();
+    }
 }

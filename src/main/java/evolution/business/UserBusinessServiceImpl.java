@@ -314,7 +314,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public BusinessServiceExecuteResult setPasswordBySecretKey(String newPassword, Long id) {
+    public BusinessServiceExecuteResult setPasswordByUserId(String newPassword, Long id) {
         Optional<User> optional = userCrudManagerService.findOneLazy(id);
         if (!optional.isPresent()) {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
@@ -328,8 +328,18 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
-    public BusinessServiceExecuteResult setPasswordByOldPassword(Long userId, UserFullDTO userFullDTO, String newPassword) {
-        return null;
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public BusinessServiceExecuteResult<UserFullDTO> setPasswordByOldPassword(UserFullDTO userFullDTO) {
+        String newPassword = passwordEncoder.encode(userFullDTO.getUserAdditionalData().getPassword());
+        Optional<User> op = userCrudManagerService.findOneLazy(userFullDTO.getId());
+        if (!op.isPresent()) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
+        }
+        User u = op.get();
+        u.getUserAdditionalData().setPassword(newPassword);
+        userCrudManagerService.save(u);
+
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, userDTOTransfer.modelToDTOFull(u));
     }
 
     @Override

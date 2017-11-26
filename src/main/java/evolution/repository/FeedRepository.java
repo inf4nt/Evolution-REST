@@ -18,14 +18,14 @@ public interface FeedRepository extends JpaRepository<Feed, Long> {
     @Query("select f from Feed f where f.id =:id")
     Optional<Feed> findOneFeed(@Param("id") Long id);
 
-    @Query("select f from Feed f, Friend fr " +
-            "where ( (f.sender.id = fr.pk.second.id and fr.pk.second.id <>:id ) or (f.sender.id = fr.pk.first.id and fr.pk.first.id <>:id ) )" +
-            "or ( (f.toUser.id = fr.pk.second.id and fr.pk.second.id <>:id ) or (f.toUser.id = fr.pk.first.id and fr.pk.first.id <>:id )  )")
+    @Query("select f from Friend fr, Feed f " +
+            "where (  (f.sender.id = fr.pk.first.id and fr.pk.second.id =:id) or (f.sender.id = fr.pk.second.id and fr.pk.first.id =:id) ) " +
+            " or (  (f.toUser.id = fr.pk.first.id and fr.pk.second.id =:id and f.sender <>:id ) or (f.toUser.id = fr.pk.second.id and fr.pk.first.id =:id and f.sender <>:id ) )")
     List<Feed> findMyFriendsFeed(@Param("id") Long userId);
 
-    @Query("select f from Feed f, Friend fr " +
-            "where ( (f.sender.id = fr.pk.second.id and fr.pk.second.id <>:id ) or (f.sender.id = fr.pk.first.id and fr.pk.first.id <>:id ) )" +
-            "or ( (f.toUser.id = fr.pk.second.id and fr.pk.second.id <>:id  ) or (f.toUser.id = fr.pk.first.id and fr.pk.first.id <>:id )  )")
+    @Query("select f from Friend fr, Feed f " +
+            "where (  (f.sender.id = fr.pk.first.id and fr.pk.second.id =:id) or (f.sender.id = fr.pk.second.id and fr.pk.first.id =:id) ) " +
+            " or (  (f.toUser.id = fr.pk.first.id and fr.pk.second.id =:id and f.sender <>:id ) or (f.toUser.id = fr.pk.second.id and fr.pk.first.id =:id and f.sender <>:id ) )")
     Page<Feed> findMyFriendsFeed(@Param("id") Long userId, Pageable pageable);
 
     @Query("select f " +

@@ -13,6 +13,8 @@ import java.util.List;
  */
 public interface FriendRestService {
 
+    ResponseEntity<FriendDTO> findOne(Long first, Long second);
+
     ResponseEntity<List<FriendDTO>> findAll();
 
     ResponseEntity<Page<FriendDTO>> findAll(Integer page, Integer size);
@@ -46,4 +48,6 @@ public interface FriendRestService {
     ResponseEntity<FriendDTOFull> removeFriend(FriendActionDTO friendDTO);
 
     ResponseEntity<FriendDTOFull> acceptRequest(FriendActionDTO friendDTO);
+
+    ResponseEntity<FriendDTOFull> action(FriendActionDTO actionDTO);
 }

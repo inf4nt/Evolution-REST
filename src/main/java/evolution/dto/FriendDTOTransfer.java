@@ -4,6 +4,7 @@ import evolution.dto.model.FriendDTO;
 import evolution.dto.model.FriendDTOFull;
 import evolution.dto.model.UserDTO;
 import evolution.model.Friend;
+import evolution.model.User;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,12 +29,21 @@ public class FriendDTOTransfer {
     public FriendDTO modelToDTO(Friend friend) {
         UserDTO first = userDTOTransfer.modelToDTO(friend.getPk().getFirst());
         UserDTO second = userDTOTransfer.modelToDTO(friend.getPk().getSecond());
-        return new FriendDTO(first, second, friend.getStatus());
+        UserDTO action = null;
+
+        if (first.getId().equals(friend.getActionUser().getId())) {
+            action = first;
+        } else if (second.getId().equals(friend.getActionUser().getId())) {
+            action = second;
+        }
+
+        return new FriendDTO(first, second, action, friend.getStatus());
     }
 
     public FriendDTO modelToDTO(Friend friend, Long auth) {
         UserDTO first;
         UserDTO second;
+
         if (auth.equals(friend.getPk().getFirst().getId())) {
             first = userDTOTransfer.modelToDTO(friend.getPk().getFirst());
             second = userDTOTransfer.modelToDTO(friend.getPk().getSecond());
@@ -42,7 +52,15 @@ public class FriendDTOTransfer {
             first = userDTOTransfer.modelToDTO(friend.getPk().getSecond());
         }
 
-        return new FriendDTO(first, second, friend.getStatus());
+        UserDTO action = null;
+
+        if (first.getId().equals(friend.getActionUser().getId())) {
+            action = first;
+        } else if (second.getId().equals(friend.getActionUser().getId())) {
+            action = second;
+        }
+
+        return new FriendDTO(first, second, action, friend.getStatus());
     }
 
     public FriendDTOFull modelToDTOFull(Friend friend) {

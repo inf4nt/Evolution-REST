@@ -67,7 +67,7 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
     public Page<Friend> findFollowerByUser(Long userId, Integer page, Integer size) {
         Pageable pageable = getPageableForRestService(page, size,
                 this.friendMaxFetch);
-        return friendRepository.findFollowerByUser(userId, FriendStatusEnum.FOLLOWER, pageable);
+        return friendRepository.findFollowerByUser(userId, FriendStatusEnum.REQUEST, pageable);
     }
 
     @Override

@@ -130,65 +130,49 @@ public class FeedRestServiceImpl implements FeedRestService {
 
     @Override
     public ResponseEntity<List<FeedDTO>> findMyFriendsFeed(Long iam) {
-        BusinessServiceExecuteResult<List<FeedDTO>> b = feedBusinessService.findMyFriendsFeed(iam);
-        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {
-            return ResponseEntity.status(403).build();
-        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent() && b.getResultObjectOptional().get().isEmpty()) {
+        List<FeedDTO> list = feedBusinessService.findMyFriendsFeed(iam);
+        if (list.isEmpty()) {
             return ResponseEntity.noContent().build();
-        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent() && !b.getResultObjectOptional().get().isEmpty()) {
-            return ResponseEntity.ok(b.getResultObject());
+        } else {
+            return ResponseEntity.ok(list);
         }
-
-        return ResponseEntity.status(417).build();
     }
 
     @Override
     public ResponseEntity<Page<FeedDTO>> findMyFriendsFeed(Long iam, Integer page, Integer size, String sortType, List<String> sortProperties) {
-        BusinessServiceExecuteResult<Page<FeedDTO>> b = feedBusinessService.findMyFriendsFeed(iam, page, size, sortType, sortProperties);
-        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {
-            return ResponseEntity.status(403).build();
-        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent() && b.getResultObjectOptional().get().getContent().isEmpty()) {
+        Page<FeedDTO> p = feedBusinessService.findMyFriendsFeed(iam, page, size, sortType, sortProperties);
+        if (p.getContent().isEmpty()) {
             return ResponseEntity.noContent().build();
-        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent() && !b.getResultObjectOptional().get().getContent().isEmpty()) {
-            return ResponseEntity.ok(b.getResultObject());
+        } else {
+            return ResponseEntity.ok(p);
         }
-
-        return ResponseEntity.status(417).build();
     }
 
     @Override
     public ResponseEntity<List<FeedDTO>> findFeedsForMe(Long iam) {
-        BusinessServiceExecuteResult<List<FeedDTO>> b = feedBusinessService.findFeedsForMe(iam);
-        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {
-            return ResponseEntity.status(403).build();
-        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent() && b.getResultObjectOptional().get().isEmpty()) {
+        List<FeedDTO> list = feedBusinessService.findFeedsForMe(iam);
+        if (list.isEmpty()) {
             return ResponseEntity.noContent().build();
-        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent() && !b.getResultObjectOptional().get().isEmpty()) {
-            return ResponseEntity.ok(b.getResultObject());
+        } else {
+            return ResponseEntity.ok(list);
         }
-
-        return ResponseEntity.status(417).build();
     }
 
     @Override
     public ResponseEntity<Page<FeedDTO>> findFeedsForMe(Long iam, Integer page, Integer size, String sortType, List<String> sortProperties) {
-        BusinessServiceExecuteResult<Page<FeedDTO>> b = feedBusinessService.findFeedsForMe(iam, page, size, sortType, sortProperties);
-        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {
-            return ResponseEntity.status(403).build();
-        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent() && b.getResultObjectOptional().get().getContent().isEmpty()) {
+        Page<FeedDTO> p = feedBusinessService.findFeedsForMe(iam, page, size, sortType, sortProperties);
+        if (p.getContent().isEmpty()) {
             return ResponseEntity.noContent().build();
-        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent() && !b.getResultObjectOptional().get().getContent().isEmpty()) {
-            return ResponseEntity.ok(b.getResultObject());
+        } else {
+            return ResponseEntity.ok(p);
         }
-
-        return ResponseEntity.status(417).build();
     }
 
     @Override
-    public ResponseEntity<HttpStatus> delete(Long id) {
+    public ResponseEntity<FeedDTO> delete(Long id) {
         BusinessServiceExecuteResult b = feedBusinessService.delete(id);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(new FeedDTO(id));
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE) {
             return ResponseEntity.status(417).build();
         }

@@ -86,4 +86,9 @@ public class UserRestController {
     public ResponseEntity exist(@RequestParam String username) {
         return userRestService.exist(username);
     }
+
+    @PutMapping(value = "/set-password")
+    public ResponseEntity<UserFullDTO> setPassword(@RequestBody UserFullDTO userFullDTO) {
+        return userRestService.setPassword(userFullDTO);
+    }
 }

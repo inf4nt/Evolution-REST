@@ -3,6 +3,7 @@ package evolution.rest;
 import evolution.business.BusinessServiceExecuteResult;
 import evolution.business.api.FriendBusinessService;
 import evolution.common.BusinessServiceExecuteStatus;
+import evolution.common.FriendActionEnum;
 import evolution.dto.model.FriendActionDTO;
 import evolution.dto.model.FriendDTO;
 import evolution.dto.model.FriendDTOFull;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by Infant on 29.10.2017.
@@ -43,6 +45,16 @@ public class FriendRestServiceImpl implements FriendRestService {
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.ok(list);
+        }
+    }
+
+    @Override
+    public ResponseEntity<FriendDTO> findOne(Long first, Long second) {
+        Optional<FriendDTO> op = friendBusinessService.findOne(first, second);
+        if (op.isPresent()) {
+            return ResponseEntity.ok(op.get());
+        } else {
+            return ResponseEntity.noContent().build();
         }
     }
 
@@ -219,5 +231,21 @@ public class FriendRestServiceImpl implements FriendRestService {
         }
 
         return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<FriendDTOFull> action(FriendActionDTO actionDTO) {
+        if (actionDTO.getAction() == FriendActionEnum.ACCEPT_REQUEST) {
+            return acceptRequest(actionDTO);
+        } else if (actionDTO.getAction() == FriendActionEnum.DELETE_FRIEND) {
+            return removeFriend(actionDTO);
+        } else if (actionDTO.getAction() == FriendActionEnum.DELETE_REQUEST) {
+            return removeRequest(actionDTO);
+        } else if (actionDTO.getAction() == FriendActionEnum.SEND_REQUEST_FRIEND) {
+            return sendRequest(actionDTO);
+        }
+
+
+        return ResponseEntity.status(500).build();
     }
 }

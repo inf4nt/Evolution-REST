@@ -103,21 +103,21 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     @Query(" select m" +
             " from Message m " +
             " join m.dialog as d " +
-            " where m.sender.id <> recipientId " +
+            " where m.sender.id <> :recipientId " +
             " and (d.first.id =:recipientId or d.second.id =:recipientId) ")
     Page<Message> findMessageByRecipientId(@Param("recipientId") Long recipientId, Pageable pageable);
 
     @Query(" select m " +
             " from Message m " +
             " join m.dialog as d " +
-            " where m.sender.id <> recipientId " +
+            " where m.sender.id <> :recipientId " +
             " and (d.first.id =:recipientId or d.second.id =:recipientId) ")
     List<Message> findMessageByRecipientId(@Param("recipientId") Long recipientId, Sort sort);
 
     @Query(" select m " +
             " from Message m " +
             " join m.dialog as d " +
-            " where m.sender.id <> recipientId " +
+            " where m.sender.id <> :recipientId " +
             " and (d.first.id =:recipientId or d.second.id =:recipientId) ")
     List<Message> findMessageByRecipientId(@Param("recipientId") Long recipientId);
 
