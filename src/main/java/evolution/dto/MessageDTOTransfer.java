@@ -37,6 +37,8 @@ public class MessageDTOTransfer {
         MessageDTO dto = new MessageDTO();
         dto.setId(message.getId());
 
+        dto.setContent(message.getMessage());
+
         dto.setCreatedDateTimestamp(message.getDateDispatch().getTime());
         dto.setCreatedDateString(dateService.formatDateUTC(message.getDateDispatch().getTime()));
 
@@ -52,6 +54,8 @@ public class MessageDTOTransfer {
 
         MessageDTO dto = new MessageDTO();
         dto.setId(message.getId());
+
+        dto.setContent(message.getMessage());
 
         dto.setCreatedDateTimestamp(message.getDateDispatch().getTime());
         dto.setCreatedDateString(dateService.formatDateUTC(message.getDateDispatch().getTime()));
@@ -72,6 +76,8 @@ public class MessageDTOTransfer {
 
         MessageDTO dto = new MessageDTO();
         dto.setId(message.getId());
+
+        dto.setContent(message.getMessage());
 
         dto.setCreatedDateTimestamp(message.getDateDispatch().getTime());
         dto.setCreatedDateString(dateService.formatDateUTC(message.getDateDispatch().getTime()));

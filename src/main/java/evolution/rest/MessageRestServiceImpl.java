@@ -134,7 +134,7 @@ public class MessageRestServiceImpl implements MessageRestService {
     public ResponseEntity<HttpStatus> delete(Long messageId) {
         BusinessServiceExecuteResult b = messageBusinessService.delete(messageId);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE) {
             return ResponseEntity.status(417).build();
         }

@@ -98,7 +98,7 @@ public class DialogRestServiceImpl implements DialogRestService {
     public ResponseEntity<HttpStatus> delete(Long id) {
         BusinessServiceExecuteResult b = dialogBusinessService.delete(id);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.EXPECTATION_FAILED){
             return ResponseEntity.status(417).build();
         } else {

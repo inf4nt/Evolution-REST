@@ -193,7 +193,7 @@ public class FriendRestServiceImpl implements FriendRestService {
         BusinessServiceExecuteResult<FriendDTOFull> b = friendBusinessService.deleteRequest(friendDTO);
 
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.EXPECTATION_FAILED) {
             return ResponseEntity.status(417).body(b.getResultObject());
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {

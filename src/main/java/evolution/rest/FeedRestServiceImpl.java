@@ -172,7 +172,7 @@ public class FeedRestServiceImpl implements FeedRestService {
     public ResponseEntity<FeedDTO> delete(Long id) {
         BusinessServiceExecuteResult b = feedBusinessService.delete(id);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
-            return ResponseEntity.ok(new FeedDTO(id));
+            return ResponseEntity.noContent().build();
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE) {
             return ResponseEntity.status(417).build();
         }

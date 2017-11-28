@@ -12,6 +12,8 @@ public class MessageDTO {
 
     private Long id;
 
+    private String content;
+
     private UserDTO sender;
 
     private DialogDTO dialog;

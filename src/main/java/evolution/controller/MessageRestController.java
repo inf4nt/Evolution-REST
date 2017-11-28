@@ -39,7 +39,6 @@ public class MessageRestController {
         return messageRestService.findAllMessage(page, size, sortType, sortProperties);
     }
 
-    //todo return messageDTO
     @PostMapping
     public ResponseEntity<MessageDTO> postMessage(@RequestBody MessageDTOForSave message) {
         return messageRestService.save(message);
