@@ -1,11 +1,7 @@
 package evolution.model;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import evolution.serialization.jackson.CustomMessageSerializerDialog;
-import lombok.*;
-import org.joda.time.DateTime;
 
+import lombok.*;
 import javax.persistence.*;
 import java.util.Date;
 

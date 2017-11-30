@@ -1,9 +1,6 @@
 package evolution.model;
 
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import evolution.serialization.jackson.CustomDialogSerializerMessageList;
 import lombok.*;
 
 import javax.persistence.*;

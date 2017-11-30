@@ -1,15 +1,9 @@
 package evolution.model;
 
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import evolution.common.UserRoleEnum;
 import evolution.security.model.CustomSecurityUser;
-import evolution.serialization.jackson.CustomUserSerializerUserAdditionalData;
 import lombok.*;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-
 import javax.persistence.*;
 
 /**
