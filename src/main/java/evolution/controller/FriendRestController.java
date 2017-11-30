@@ -4,6 +4,7 @@ package evolution.controller;
 import evolution.dto.model.FriendActionDTO;
 import evolution.dto.model.FriendDTO;
 import evolution.dto.model.FriendDTOFull;
+import evolution.dto.model.FriendResultActionDTO;
 import evolution.rest.api.FriendRestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -91,27 +92,37 @@ public class FriendRestController {
     }
 
     @PostMapping(value = "/action")
-    public ResponseEntity<FriendDTOFull> action(@RequestBody FriendActionDTO friendActionDTO) {
+    public ResponseEntity<FriendResultActionDTO> action(@RequestBody FriendActionDTO friendActionDTO) {
         return friendRestService.action(friendActionDTO);
     }
 
+    @GetMapping(value = "/next-action/{first}/{second}")
+    public ResponseEntity<FriendResultActionDTO> action(@PathVariable Long first, @PathVariable Long second) {
+        return friendRestService.findNexAction(first, second);
+    }
+
+    @GetMapping(value = "/next-action/{second}")
+    public ResponseEntity<FriendResultActionDTO> action(@PathVariable Long second) {
+        return friendRestService.findNexAction(second);
+    }
+
     @PostMapping(value = "/action/send_request")
-    public ResponseEntity<FriendDTOFull> sendRequest(@RequestBody FriendActionDTO friendActionDTO) {
+    public ResponseEntity<FriendResultActionDTO> sendRequest(@RequestBody FriendActionDTO friendActionDTO) {
         return friendRestService.sendRequest(friendActionDTO);
     }
 
     @PostMapping(value = "/action/remove_request")
-    public ResponseEntity<FriendDTOFull> removeRequest(@RequestBody FriendActionDTO friendActionDTO) {
+    public ResponseEntity<FriendResultActionDTO> removeRequest(@RequestBody FriendActionDTO friendActionDTO) {
         return friendRestService.removeRequest(friendActionDTO);
     }
 
     @PostMapping(value = "/action/remove_friend")
-    public ResponseEntity<FriendDTOFull> removeFriend(@RequestBody FriendActionDTO friendActionDTO) {
+    public ResponseEntity<FriendResultActionDTO> removeFriend(@RequestBody FriendActionDTO friendActionDTO) {
         return friendRestService.removeFriend(friendActionDTO);
     }
 
     @PostMapping(value = "/action/accept_request")
-    public ResponseEntity<FriendDTOFull> acceptRequest(@RequestBody FriendActionDTO friendActionDTO) {
+    public ResponseEntity<FriendResultActionDTO> acceptRequest(@RequestBody FriendActionDTO friendActionDTO) {
         return friendRestService.acceptRequest(friendActionDTO);
     }
 }

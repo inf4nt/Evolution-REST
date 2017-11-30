@@ -183,7 +183,7 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
                 Friend friend = progress.get();
                 friend.setStatus(FriendStatusEnum.REQUEST);
 
-                action = getUserByIdFromFriendPk(senderId, friend);
+                action = getUserByIdFromFriendPk(recipientId, friend);
 
                 friend.setActionUser(action);
 

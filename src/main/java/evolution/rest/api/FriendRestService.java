@@ -3,6 +3,7 @@ package evolution.rest.api;
 import evolution.dto.model.FriendActionDTO;
 import evolution.dto.model.FriendDTO;
 import evolution.dto.model.FriendDTOFull;
+import evolution.dto.model.FriendResultActionDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 
@@ -41,13 +42,17 @@ public interface FriendRestService {
 
     ResponseEntity<List<FriendDTOFull>> findUserProgress(Long userId);
 
-    ResponseEntity<FriendDTOFull> sendRequest(FriendActionDTO friendDTO);
+    ResponseEntity<FriendResultActionDTO> sendRequest(FriendActionDTO friendDTO);
 
-    ResponseEntity<FriendDTOFull> removeRequest(FriendActionDTO friendDTO);
+    ResponseEntity<FriendResultActionDTO> removeRequest(FriendActionDTO friendDTO);
 
-    ResponseEntity<FriendDTOFull> removeFriend(FriendActionDTO friendDTO);
+    ResponseEntity<FriendResultActionDTO> removeFriend(FriendActionDTO friendDTO);
 
-    ResponseEntity<FriendDTOFull> acceptRequest(FriendActionDTO friendDTO);
+    ResponseEntity<FriendResultActionDTO> acceptRequest(FriendActionDTO friendDTO);
 
-    ResponseEntity<FriendDTOFull> action(FriendActionDTO actionDTO);
+    ResponseEntity<FriendResultActionDTO> action(FriendActionDTO actionDTO);
+
+    ResponseEntity<FriendResultActionDTO> findNexAction(Long first, Long second);
+
+    ResponseEntity<FriendResultActionDTO> findNexAction(Long second);
 }

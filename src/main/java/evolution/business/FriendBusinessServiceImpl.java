@@ -11,7 +11,9 @@ import evolution.dto.UserDTOTransfer;
 import evolution.dto.model.FriendActionDTO;
 import evolution.dto.model.FriendDTO;
 import evolution.dto.model.FriendDTOFull;
+import evolution.dto.model.FriendResultActionDTO;
 import evolution.model.Friend;
+import evolution.model.User;
 import evolution.service.SecuritySupportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,7 +121,7 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
     }
 
     @Override
-    public BusinessServiceExecuteResult<FriendDTOFull> acceptRequest(FriendActionDTO friendActionDTO) {
+    public BusinessServiceExecuteResult<FriendResultActionDTO> acceptRequest(FriendActionDTO friendActionDTO) {
         if (!securitySupportService.isAllowedFull(friendActionDTO.getActionUserId())) {
             logger.info("FORBIDDEN");
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
@@ -130,15 +132,18 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
         }
 
+        FriendResultActionDTO dto = friendDTOTransfer.modelToResultActionDTO(request.get());
+        dto.setNextAction(getNextAction(request.get()));
+
         if (request.get().getStatus() == FriendStatusEnum.PROGRESS) {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, friendDTOTransfer.modelToDTOFull(request.get()));
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, dto);
         } else {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.EXPECTATION_FAILED, friendDTOTransfer.modelToDTOFull(request.get()));
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.EXPECTATION_FAILED, dto);
         }
     }
 
     @Override
-    public BusinessServiceExecuteResult<FriendDTOFull> deleteFriend(FriendActionDTO friendActionDTO) {
+    public BusinessServiceExecuteResult<FriendResultActionDTO> deleteFriend(FriendActionDTO friendActionDTO) {
         if (!securitySupportService.isAllowedFull(friendActionDTO.getActionUserId())) {
             logger.info("FORBIDDEN");
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
@@ -149,15 +154,18 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
         }
 
+        FriendResultActionDTO dto = friendDTOTransfer.modelToResultActionDTO(delete.get());
+        dto.setNextAction(getNextAction(delete.get()));
+
         if (delete.get().getStatus() == FriendStatusEnum.REQUEST) {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, friendDTOTransfer.modelToDTOFull(delete.get()));
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, dto);
         } else {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.EXPECTATION_FAILED, friendDTOTransfer.modelToDTOFull(delete.get()));
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.EXPECTATION_FAILED, dto);
         }
     }
 
     @Override
-    public BusinessServiceExecuteResult<FriendDTOFull> deleteRequest(FriendActionDTO friendActionDTO) {
+    public BusinessServiceExecuteResult<FriendResultActionDTO> deleteRequest(FriendActionDTO friendActionDTO) {
         if (!securitySupportService.isAllowedFull(friendActionDTO.getActionUserId())) {
             logger.info("FORBIDDEN");
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
@@ -168,15 +176,18 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
         }
 
+        FriendResultActionDTO dto = new FriendResultActionDTO();
+        dto.setNextAction(FriendActionEnum.SEND_REQUEST_FRIEND);
+
         if (deleteRequest.get().getVersion() == null) {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, Optional.empty());
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, dto);
         } else {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.EXPECTATION_FAILED, friendDTOTransfer.modelToDTOFull(deleteRequest.get()));
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.EXPECTATION_FAILED, dto);
         }
     }
 
     @Override
-    public BusinessServiceExecuteResult<FriendDTOFull> sendRequestToFriend(FriendActionDTO friendActionDTO) {
+    public BusinessServiceExecuteResult<FriendResultActionDTO> sendRequestToFriend(FriendActionDTO friendActionDTO) {
         if (!securitySupportService.isAllowedFull(friendActionDTO.getActionUserId())) {
             logger.info("FORBIDDEN");
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
@@ -187,10 +198,13 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
         }
 
+        FriendResultActionDTO dto = friendDTOTransfer.modelToResultActionDTO(friend.get());
+        dto.setNextAction(getNextAction(friend.get()));
+
         if (friend.get().getStatus() == FriendStatusEnum.REQUEST) {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, friendDTOTransfer.modelToDTOFull(friend.get()));
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, dto);
         } else {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.EXPECTATION_FAILED, friendDTOTransfer.modelToDTOFull(friend.get()));
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.EXPECTATION_FAILED, dto);
         }
     }
 
@@ -307,7 +321,7 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
     }
 
     @Override
-    public BusinessServiceExecuteResult<FriendDTOFull> action(FriendActionDTO actionDTO) {
+    public BusinessServiceExecuteResult<FriendResultActionDTO> action(FriendActionDTO actionDTO) {
 
         if (actionDTO.getAction() == FriendActionEnum.ACCEPT_REQUEST) {
             return acceptRequest(actionDTO);
@@ -320,6 +334,56 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
         }
 
         return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.EXPECTATION_FAILED);
+    }
+
+    @Override
+    public FriendActionEnum getNextAction(Friend friend) {
+        User auth = securitySupportService.getAuthenticationPrincipal().getUser();
+        if (friend.getStatus() == FriendStatusEnum.PROGRESS) {
+            return FriendActionEnum.DELETE_FRIEND;
+        } else if (friend.getStatus() == FriendStatusEnum.REQUEST && !friend.getActionUser().getId().equals(auth.getId())) {
+            return FriendActionEnum.ACCEPT_REQUEST;
+        } else if (friend.getStatus() == FriendStatusEnum.REQUEST && friend.getActionUser().getId().equals(auth.getId())) {
+            return FriendActionEnum.DELETE_REQUEST;
+        } else {
+            return FriendActionEnum.SEND_REQUEST_FRIEND;
+        }
+    }
+
+    @Override
+    public BusinessServiceExecuteResult<FriendResultActionDTO> findNextAction(Long first, Long second) {
+        if (securitySupportService.isAllowedFull(first) || securitySupportService.isAllowedFull(second)) {
+            Optional<Friend> next = friendCrudManagerService.findOneFriend(first, second);
+            if (!next.isPresent()) {
+                return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
+            }
+
+            FriendResultActionDTO dto = friendDTOTransfer.modelToResultActionDTO(next.get());
+            dto.setNextAction(getNextAction(next.get()));
+
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, dto);
+        } else {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
+        }
+    }
+
+    @Override
+    public BusinessServiceExecuteResult<FriendResultActionDTO> findNextAction(Long second) {
+        Long auth = securitySupportService.getAuthenticationPrincipal().getUser().getId();
+        FriendResultActionDTO dto;
+
+        Optional<Friend> next = friendCrudManagerService.findOneFriend(auth, second);
+        if (!next.isPresent()) {
+            dto = new FriendResultActionDTO();
+            dto.setNextAction(FriendActionEnum.SEND_REQUEST_FRIEND);
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, dto);
+        }
+
+        dto = friendDTOTransfer.modelToResultActionDTO(next.get());
+        dto.setNextAction(getNextAction(next.get()));
+
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, dto);
+
     }
 
 }

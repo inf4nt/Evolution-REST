@@ -14,6 +14,8 @@ public class FriendDTOFull {
 
     private UserDTO actionUser;
 
+    private FriendActionDTO nextAction;
+
     @Data
     @JsonInclude
     public static class FriendEmbeddableDTO {

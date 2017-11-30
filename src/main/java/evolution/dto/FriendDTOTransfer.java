@@ -2,6 +2,7 @@ package evolution.dto;
 
 import evolution.dto.model.FriendDTO;
 import evolution.dto.model.FriendDTOFull;
+import evolution.dto.model.FriendResultActionDTO;
 import evolution.dto.model.UserDTO;
 import evolution.model.Friend;
 import evolution.model.User;
@@ -67,5 +68,14 @@ public class FriendDTOTransfer {
         FriendDTOFull f = modelMapper.map(friend, FriendDTOFull.class);
         f.setActionUser(userDTOTransfer.modelToDTO(friend.getActionUser()));
         return f;
+    }
+
+    public FriendResultActionDTO modelToResultActionDTO(Friend friend) {
+        FriendResultActionDTO dto = new FriendResultActionDTO();
+        dto.setFirst(userDTOTransfer.modelToDTO(friend.getPk().getFirst()));
+        dto.setSecond(userDTOTransfer.modelToDTO(friend.getPk().getSecond()));
+        dto.setAction(userDTOTransfer.modelToDTO(friend.getActionUser()));
+        dto.setStatus(friend.getStatus());
+        return dto;
     }
 }

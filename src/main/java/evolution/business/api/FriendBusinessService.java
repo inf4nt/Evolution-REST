@@ -1,9 +1,12 @@
 package evolution.business.api;
 
 import evolution.business.BusinessServiceExecuteResult;
+import evolution.common.FriendActionEnum;
 import evolution.dto.model.FriendActionDTO;
 import evolution.dto.model.FriendDTO;
 import evolution.dto.model.FriendDTOFull;
+import evolution.dto.model.FriendResultActionDTO;
+import evolution.model.Friend;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -14,13 +17,13 @@ import java.util.Optional;
  */
 public interface FriendBusinessService {
 
-    BusinessServiceExecuteResult<FriendDTOFull> acceptRequest(FriendActionDTO friendActionDTO);
+    BusinessServiceExecuteResult<FriendResultActionDTO> acceptRequest(FriendActionDTO friendActionDTO);
 
-    BusinessServiceExecuteResult<FriendDTOFull> deleteFriend(FriendActionDTO friendActionDTO);
+    BusinessServiceExecuteResult<FriendResultActionDTO> deleteFriend(FriendActionDTO friendActionDTO);
 
-    BusinessServiceExecuteResult<FriendDTOFull> deleteRequest(FriendActionDTO friendActionDTO);
+    BusinessServiceExecuteResult<FriendResultActionDTO> deleteRequest(FriendActionDTO friendActionDTO);
 
-    BusinessServiceExecuteResult<FriendDTOFull> sendRequestToFriend(FriendActionDTO friendActionDTO);
+    BusinessServiceExecuteResult<FriendResultActionDTO> sendRequestToFriend(FriendActionDTO friendActionDTO);
 
     Optional<FriendDTO> findOne(Long first, Long second);
 
@@ -56,5 +59,11 @@ public interface FriendBusinessService {
 
     Page<FriendDTO> findRequests(Long iam, Integer page, Integer size);
 
-    BusinessServiceExecuteResult<FriendDTOFull> action(FriendActionDTO actionDTO);
+    BusinessServiceExecuteResult<FriendResultActionDTO> action(FriendActionDTO actionDTO);
+
+    FriendActionEnum getNextAction(Friend friend);
+
+    BusinessServiceExecuteResult<FriendResultActionDTO> findNextAction(Long first, Long second);
+
+    BusinessServiceExecuteResult<FriendResultActionDTO> findNextAction(Long second);
 }

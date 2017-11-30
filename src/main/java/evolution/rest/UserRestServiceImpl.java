@@ -44,7 +44,7 @@ public class UserRestServiceImpl implements UserRestService {
     @Override
     public ResponseEntity<UserDTO> findOne(Long userId) {
         return userBusinessService.findOne(userId)
-                .map(ResponseEntity::ok)
+                .map(o -> ResponseEntity.ok(o))
                 .orElse(ResponseEntity.noContent().build());
     }
 

@@ -7,6 +7,7 @@ import evolution.common.FriendActionEnum;
 import evolution.dto.model.FriendActionDTO;
 import evolution.dto.model.FriendDTO;
 import evolution.dto.model.FriendDTOFull;
+import evolution.dto.model.FriendResultActionDTO;
 import evolution.rest.api.FriendRestService;
 import evolution.service.SecuritySupportService;
 import org.slf4j.Logger;
@@ -174,8 +175,8 @@ public class FriendRestServiceImpl implements FriendRestService {
     }
 
     @Override
-    public ResponseEntity<FriendDTOFull> sendRequest(FriendActionDTO friendDTO) {
-        BusinessServiceExecuteResult<FriendDTOFull> b = friendBusinessService.sendRequestToFriend(friendDTO);
+    public ResponseEntity<FriendResultActionDTO> sendRequest(FriendActionDTO friendDTO) {
+        BusinessServiceExecuteResult<FriendResultActionDTO> b = friendBusinessService.sendRequestToFriend(friendDTO);
 
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
             return ResponseEntity.status(201).body(b.getResultObject());
@@ -189,11 +190,11 @@ public class FriendRestServiceImpl implements FriendRestService {
     }
 
     @Override
-    public ResponseEntity<FriendDTOFull> removeRequest(FriendActionDTO friendDTO) {
-        BusinessServiceExecuteResult<FriendDTOFull> b = friendBusinessService.deleteRequest(friendDTO);
+    public ResponseEntity<FriendResultActionDTO> removeRequest(FriendActionDTO friendDTO) {
+        BusinessServiceExecuteResult<FriendResultActionDTO> b = friendBusinessService.deleteRequest(friendDTO);
 
-        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
-            return ResponseEntity.noContent().build();
+        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent()) {
+            return ResponseEntity.ok(b.getResultObjectOptional().get());
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.EXPECTATION_FAILED) {
             return ResponseEntity.status(417).body(b.getResultObject());
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {
@@ -204,23 +205,8 @@ public class FriendRestServiceImpl implements FriendRestService {
     }
 
     @Override
-    public ResponseEntity<FriendDTOFull> removeFriend(FriendActionDTO friendDTO) {
-        BusinessServiceExecuteResult<FriendDTOFull> b = friendBusinessService.deleteFriend(friendDTO);
-
-        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
-            return ResponseEntity.status(200).body(b.getResultObject());
-        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.EXPECTATION_FAILED) {
-            return ResponseEntity.status(417).body(b.getResultObject());
-        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {
-            return ResponseEntity.status(403).build();
-        }
-
-        return ResponseEntity.noContent().build();
-    }
-
-    @Override
-    public ResponseEntity<FriendDTOFull> acceptRequest(FriendActionDTO friendDTO) {
-        BusinessServiceExecuteResult<FriendDTOFull> b = friendBusinessService.acceptRequest(friendDTO);
+    public ResponseEntity<FriendResultActionDTO> removeFriend(FriendActionDTO friendDTO) {
+        BusinessServiceExecuteResult<FriendResultActionDTO> b = friendBusinessService.deleteFriend(friendDTO);
 
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
             return ResponseEntity.status(200).body(b.getResultObject());
@@ -234,7 +220,22 @@ public class FriendRestServiceImpl implements FriendRestService {
     }
 
     @Override
-    public ResponseEntity<FriendDTOFull> action(FriendActionDTO actionDTO) {
+    public ResponseEntity<FriendResultActionDTO> acceptRequest(FriendActionDTO friendDTO) {
+        BusinessServiceExecuteResult<FriendResultActionDTO> b = friendBusinessService.acceptRequest(friendDTO);
+
+        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
+            return ResponseEntity.status(200).body(b.getResultObject());
+        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.EXPECTATION_FAILED) {
+            return ResponseEntity.status(417).body(b.getResultObject());
+        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {
+            return ResponseEntity.status(403).build();
+        }
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<FriendResultActionDTO> action(FriendActionDTO actionDTO) {
         if (actionDTO.getAction() == FriendActionEnum.ACCEPT_REQUEST) {
             return acceptRequest(actionDTO);
         } else if (actionDTO.getAction() == FriendActionEnum.DELETE_FRIEND) {
@@ -247,5 +248,33 @@ public class FriendRestServiceImpl implements FriendRestService {
 
 
         return ResponseEntity.status(500).build();
+    }
+
+    @Override
+    public ResponseEntity<FriendResultActionDTO> findNexAction(Long first, Long second) {
+        BusinessServiceExecuteResult<FriendResultActionDTO> b = friendBusinessService.findNextAction(first, second);
+        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {
+            return ResponseEntity.status(403).build();
+        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE) {
+            return ResponseEntity.noContent().build();
+        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent()) {
+            return ResponseEntity.ok(b.getResultObjectOptional().get());
+        }
+
+        return ResponseEntity.status(417).build();
+    }
+
+    @Override
+    public ResponseEntity<FriendResultActionDTO> findNexAction(Long second) {
+        BusinessServiceExecuteResult<FriendResultActionDTO> b = friendBusinessService.findNextAction(second);
+        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {
+            return ResponseEntity.status(403).build();
+        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE) {
+            return ResponseEntity.noContent().build();
+        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent()) {
+            return ResponseEntity.ok(b.getResultObjectOptional().get());
+        }
+
+        return ResponseEntity.status(417).build();
     }
 }
