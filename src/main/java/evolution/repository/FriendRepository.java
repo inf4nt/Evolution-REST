@@ -1,5 +1,6 @@
 package evolution.repository;
 
+import evolution.common.FriendActionEnum;
 import evolution.common.FriendStatusEnum;
 import evolution.model.Friend;
 import org.springframework.data.domain.Page;
@@ -17,68 +18,47 @@ import java.util.Optional;
 public interface FriendRepository extends JpaRepository<Friend, Friend.FriendEmbeddable> {
 
 //-- получить подписчиков пользователя с ид = ???
-//
-//    SELECT *
-//    FROM friends f
-//    WHERE f.status = 'REQUEST'
-//    AND f.action_user_id <> :user_id
-//    AND (f.first_user_id = :user_id OR f.second_user_id = :user_id);
+    @Query("select f " +
+            " from Friend f  " +
+            " where f.action =:action " +
+            " and f.actionUser.id <>:userId " +
+            " and (f.pk.first.id =:userId or f.pk.second.id =:userId)")
+    List<Friend> findFollowerByUser(@Param("userId") Long userId, @Param("action") FriendActionEnum sendRequestToFriend);
 
     @Query("select f " +
             " from Friend f  " +
-            " where f.status =:status " +
+            " where f.action =:action " +
             " and f.actionUser.id <>:userId " +
             " and (f.pk.first.id =:userId or f.pk.second.id =:userId)")
-    List<Friend> findFollowerByUser(@Param("userId") Long userId, @Param("status") FriendStatusEnum requestStatus);
-
-    @Query("select f " +
-            " from Friend f  " +
-            " where f.status =:status " +
-            " and f.actionUser.id <>:userId " +
-            " and (f.pk.first.id =:userId or f.pk.second.id =:userId)")
-    Page<Friend> findFollowerByUser(@Param("userId") Long userId, @Param("status") FriendStatusEnum requestStatus, Pageable pageable);
+    Page<Friend> findFollowerByUser(@Param("userId") Long userId, @Param("action") FriendActionEnum sendRequestToFriend, Pageable pageable);
 
 //-- получить заявки исходящие от пользователя с ид = ???
     //  или получить запросы в друзья исходящие от пользователя с ид = ???
-//
-//    SELECT *
-//    FROM friends f
-//    WHERE f.status = 'REQUEST'
-//    AND f.action_user_id = :user_id;
 
     @Query("select f " +
             " from Friend f " +
-            " where f.status =:status " +
+            " where f.action =:action " +
             " and f.actionUser.id =:userId ")
-    List<Friend> findRequestFromUser(@Param("userId") Long userId, @Param("status") FriendStatusEnum requestStatus);
+    List<Friend> findRequestFromUser(@Param("userId") Long userId, @Param("action") FriendActionEnum sendRequestToFriend);
 
     @Query("select f " +
             " from Friend f " +
-            " where f.status =:status " +
+            " where f.action =:action " +
             " and f.actionUser.id =:userId ")
-    Page<Friend> findRequestFromUser(@Param("userId") Long userId, @Param("status") FriendStatusEnum requestStatus, Pageable pageable);
-
-
+    Page<Friend> findRequestFromUser(@Param("userId") Long userId, @Param("action") FriendActionEnum sendRequestToFriend, Pageable pageable);
 
 //-- получить друзей пользователя с ид = ???
-//
-//    SELECT *
-//    FROM friends f
-//    WHERE f.status = 'PROGRESS'
-//    AND (f.first_user_id = :user_id OR f.second_user_id = :user_id);
+    @Query("select f" +
+            " from Friend f" +
+            " where f.action =:action" +
+            " and (f.pk.first.id =:userId or f.pk.second.id =:userId)")
+    List<Friend> findProgressByUser(@Param("userId") Long userId, @Param("action") FriendActionEnum acceptRequest);
 
     @Query("select f" +
             " from Friend f" +
-            " where f.status =:status" +
+            " where f.action =:action" +
             " and (f.pk.first.id =:userId or f.pk.second.id =:userId)")
-    List<Friend> findProgressByUser(@Param("userId") Long userId, @Param("status") FriendStatusEnum progressStatus);
-
-    @Query("select f" +
-            " from Friend f" +
-            " where f.status =:status" +
-            " and (f.pk.first.id =:userId or f.pk.second.id =:userId)")
-    Page<Friend> findProgressByUser(@Param("userId") Long userId, @Param("status") FriendStatusEnum progressStatus, Pageable pageable);
-
+    Page<Friend> findProgressByUser(@Param("userId") Long userId, @Param("action") FriendActionEnum acceptRequest, Pageable pageable);
 
     @Query("select f from Friend f " +
             " where f.pk.first.id =:first " +

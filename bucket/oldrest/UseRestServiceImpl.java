@@ -2,7 +2,6 @@ package evolution.common.oldrest;
 
 import evolution.common.UserRoleEnum;
 import evolution.data.UserDataService;
-import evolution.helper.HelperDataService;
 import evolution.helper.HelperRestService;
 import evolution.model.User;
 import evolution.service.SecuritySupportService;

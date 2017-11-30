@@ -37,71 +37,43 @@ public class MessageRestServiceImpl implements MessageRestService {
     @Override
     public ResponseEntity<List<MessageDTO>> findAll() {
         List<MessageDTO> list = messageBusinessService.findAll();
-        if (list.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(list);
-        }
+        return response(list);
     }
 
     @Override
     public ResponseEntity<Page<MessageDTO>> findAllMessage(Integer page, Integer size, String sort, List<String> sortProperties) {
         Page<MessageDTO> p = messageBusinessService.findAll(page, size, sort, sortProperties);
-        if (p.getContent().isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok().body(p);
-        }
+        return response(p);
     }
 
     @Override
     public ResponseEntity<Page<MessageDTO>> findMessageRecipientId(Long recipient, Integer page, Integer size, String sort, List<String> sortProperties) {
         Page<MessageDTO> p = messageBusinessService.findMessageByRecipientId(recipient, page, size, sort, sortProperties);
-        if (p.getContent().isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(p);
-        }
+        return response(p);
     }
 
     @Override
     public ResponseEntity<Page<MessageDTO>> findMessageSenderId(Long sender, Integer page, Integer size, String sort, List<String> sortProperties) {
         Page<MessageDTO> p = messageBusinessService.findMessageBySenderId(sender, page, size, sort, sortProperties);
-        if (p.getContent().isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok().body(p);
-        }
+        return response(p);
     }
 
     @Override
     public ResponseEntity<Page<MessageDTO>> findLastMessageInMyDialog(Long userId, Integer page, Integer size, String sort, List<String> sortProperties) {
         Page<MessageDTO> p = messageBusinessService.findLastMessageInMyDialog(userId, page, size, sort, sortProperties);
-        if (p.getContent().isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok().body(p);
-        }
+        return response(p);
     }
 
     @Override
     public ResponseEntity<List<MessageDTO>> findLastMessageInMyDialog(Long userId) {
         List<MessageDTO> list = messageBusinessService.findLastMessageInMyDialog(userId);
-        if (list.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(list);
-        }
+        return response(list);
     }
 
     @Override
     public ResponseEntity<MessageDTO> findOneMessage(Long id) {
         Optional<MessageDTO> m = messageBusinessService.findOne(id);
-        if (m.isPresent()) {
-            return ResponseEntity.ok(m.get());
-        } else {
-            return ResponseEntity.noContent().build();
-        }
+        return response(m);
     }
 
     @Override
@@ -149,11 +121,7 @@ public class MessageRestServiceImpl implements MessageRestService {
     @Override
     public ResponseEntity<Page<MessageDTO>> findMessageByDialog(Long dialogId, Integer page, Integer size, String sort, List<String> sortProperties) {
         Page<MessageDTO> p = messageBusinessService.findMessageByDialogId(dialogId, page, size, sort, sortProperties);
-        if (p.getContent().isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok().body(p);
-        }
+        return response(p);
     }
 
     @Override
@@ -164,31 +132,19 @@ public class MessageRestServiceImpl implements MessageRestService {
     @Override
     public ResponseEntity<List<MessageDTO>> findMessageByDialog(Long dialogId) {
         List<MessageDTO> list = messageBusinessService.findMessageByDialogId(dialogId);
-        if (list.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(list);
-        }
+        return response(list);
     }
 
     @Override
     public ResponseEntity<List<MessageDTO>> findMessageByInterlocutor(Long interlocutor) {
         List<MessageDTO> list = messageBusinessService.findMessageByInterlocutor(interlocutor);
-        if (list.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(list);
-        }
+        return response(list);
     }
 
     @Override
     public ResponseEntity<Page<MessageDTO>> findMessageByInterlocutor(Long interlocutor, Integer page, Integer size, String sort, List<String> sortProperties) {
         Page<MessageDTO> p = messageBusinessService.findMessageByInterlocutor(interlocutor, page, size, sort, sortProperties);
-        if (p.getContent().isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok().body(p);
-        }
+        return response(p);
     }
 
 }

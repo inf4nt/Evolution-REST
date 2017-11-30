@@ -13,6 +13,7 @@ import evolution.dto.model.UserFullDTO;
 import evolution.model.User;
 import evolution.service.DateService;
 import evolution.service.SecuritySupportService;
+import evolution.service.UserTechnicalService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,20 +41,19 @@ public class UserBusinessServiceImpl implements UserBusinessService {
 
     private final DateService dateService;
 
-    private final PasswordEncoder passwordEncoder;
-
     private final UserDTOTransfer userDTOTransfer;
+
+    @Autowired
+    private UserTechnicalService userTechnicalService;
 
     @Autowired
     public UserBusinessServiceImpl(SecuritySupportService securitySupportService,
                                    UserCrudManagerService userCrudManagerService,
                                    DateService dateService,
-                                   PasswordEncoder passwordEncoder,
                                    UserDTOTransfer userDTOTransfer) {
         this.securitySupportService = securitySupportService;
         this.userCrudManagerService = userCrudManagerService;
         this.dateService = dateService;
-        this.passwordEncoder = passwordEncoder;
         this.userDTOTransfer = userDTOTransfer;
     }
 
@@ -67,7 +67,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
 
         User user = userDTOTransfer.dtoToModel(userForSaveDTO);
 
-        String encodePassword = passwordEncoder.encode(userForSaveDTO.getPassword());
+        String encodePassword = userTechnicalService.encodePassword(userForSaveDTO.getPassword());
         user.getUserAdditionalData().setUsername(userForSaveDTO.getUsername());
         user.getUserAdditionalData().setCountry(userForSaveDTO.getCountry());
         user.getUserAdditionalData().setState(userForSaveDTO.getState());
@@ -305,7 +305,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
         }
 
-        String newPasswordEncode = passwordEncoder.encode(newPassword);
+        String newPasswordEncode = userTechnicalService.encodePassword(newPassword);
         optional.get().getUserAdditionalData().setPassword(newPasswordEncode);
         User r = userCrudManagerService.save(optional.get());
         //todo maybe set new secret key
@@ -320,7 +320,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
         }
 
-        String newPasswordEncode = passwordEncoder.encode(newPassword);
+        String newPasswordEncode = userTechnicalService.encodePassword(newPassword);
         optional.get().getUserAdditionalData().setPassword(newPasswordEncode);
         User r = userCrudManagerService.save(optional.get());
         //todo maybe set new secret key
@@ -330,7 +330,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public BusinessServiceExecuteResult<UserFullDTO> setPasswordByOldPassword(UserFullDTO userFullDTO) {
-        String newPassword = passwordEncoder.encode(userFullDTO.getUserAdditionalData().getPassword());
+        String newPassword = userTechnicalService.encodePassword(userFullDTO.getUserAdditionalData().getPassword());
         Optional<User> op = userCrudManagerService.findOneLazy(userFullDTO.getId());
         if (!op.isPresent()) {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);

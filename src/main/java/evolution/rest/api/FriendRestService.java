@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by Infant on 14.10.2017.
  */
-public interface FriendRestService {
+public interface FriendRestService extends AbstractRestService {
 
     ResponseEntity<FriendDTO> findOne(Long first, Long second);
 

@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by Infant on 28.10.2017.
  */
-public interface MessageRestService {
+public interface MessageRestService extends AbstractRestService {
 
     ResponseEntity<List<MessageDTO>> findAll();
 

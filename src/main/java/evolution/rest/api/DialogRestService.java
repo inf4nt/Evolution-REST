@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by Infant on 05.11.2017.
  */
-public interface DialogRestService {
+public interface DialogRestService extends AbstractRestService {
 
     ResponseEntity<List<DialogFullDTO>> findAll();
 

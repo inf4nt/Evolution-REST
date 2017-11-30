@@ -13,9 +13,7 @@ public class FriendResultActionDTO {
 
     private UserDTO second;
 
-    private UserDTO action;
-
-    private FriendStatusEnum status;
+    private UserDTO actionUser;
 
     private FriendActionEnum nextAction;
 

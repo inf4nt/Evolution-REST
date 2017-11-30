@@ -42,21 +42,13 @@ public class FriendRestServiceImpl implements FriendRestService {
     @Override
     public ResponseEntity<List<FriendDTOFull>> findAll2() {
         List<FriendDTOFull> list = friendBusinessService.findAll2();
-        if (list.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(list);
-        }
+        return response(list);
     }
 
     @Override
     public ResponseEntity<FriendDTO> findOne(Long first, Long second) {
         Optional<FriendDTO> op = friendBusinessService.findOne(first, second);
-        if (op.isPresent()) {
-            return ResponseEntity.ok(op.get());
-        } else {
-            return ResponseEntity.noContent().build();
-        }
+        return response(op);
     }
 
     @Override
@@ -67,111 +59,67 @@ public class FriendRestServiceImpl implements FriendRestService {
     @Override
     public ResponseEntity<Page<FriendDTO>> findAll(Integer page, Integer size) {
         Page<FriendDTO> p = friendBusinessService.findAll(page, size);
-        if (p.getContent().isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(p);
-        }
+        return response(p);
     }
 
     @Override
     public ResponseEntity<Page<FriendDTOFull>> findAll2(Integer page, Integer size) {
         Page<FriendDTOFull> p = friendBusinessService.findAll2(page, size);
-        if (p.getContent().isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(p);
-        }
+        return response(p);
     }
 
     @Override
     public ResponseEntity<Page<FriendDTO>> findUserFollower(Long userId, Integer page, Integer size) {
         Page<FriendDTO> p = friendBusinessService.findFollowers(userId, page, size);
-        if (p.getContent().isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(p);
-        }
+        return response(p);
     }
 
     @Override
     public ResponseEntity<Page<FriendDTO>> findUserRequest(Long userId, Integer page, Integer size) {
         Page<FriendDTO> p = friendBusinessService.findRequests(userId, page, size);
-        if (p.getContent().isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(p);
-        }
+        return response(p);
     }
 
     @Override
     public ResponseEntity<Page<FriendDTO>> findUserProgress(Long userId, Integer page, Integer size) {
         Page<FriendDTO> p = friendBusinessService.findFriends(userId, page, size);
-        if (p.getContent().isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(p);
-        }
+        return response(p);
     }
 
     @Override
     public ResponseEntity<Page<FriendDTOFull>> findUserFollower2(Long userId, Integer page, Integer size) {
         Page<FriendDTOFull> p = friendBusinessService.findFollowers2(userId, page, size);
-        if (p.getContent().isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(p);
-        }
+        return response(p);
     }
 
     @Override
     public ResponseEntity<Page<FriendDTOFull>> findUserRequest2(Long userId, Integer page, Integer size) {
         Page<FriendDTOFull> p = friendBusinessService.findRequests2(userId, page, size);
-        if (p.getContent().isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(p);
-        }
+        return response(p);
     }
 
     @Override
     public ResponseEntity<Page<FriendDTOFull>> findUserProgress2(Long userId, Integer page, Integer size) {
         Page<FriendDTOFull> p = friendBusinessService.findFriends2(userId, page, size);
-        if (p.getContent().isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(p);
-        }
+        return response(p);
     }
 
     @Override
     public ResponseEntity<List<FriendDTOFull>> findUserFollower(Long userId) {
         List<FriendDTOFull> list = friendBusinessService.findFollowers2(userId);
-        if (list.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(list);
-        }
+        return response(list);
     }
 
     @Override
     public ResponseEntity<List<FriendDTOFull>> findUserRequest(Long userId) {
         List<FriendDTOFull> list = friendBusinessService.findRequests2(userId);
-        if (list.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(list);
-        }
+        return response(list);
     }
 
     @Override
     public ResponseEntity<List<FriendDTOFull>> findUserProgress(Long userId) {
         List<FriendDTOFull> list = friendBusinessService.findFriends2(userId);
-        if (list.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(list);
-        }
+        return response(list);
     }
 
     @Override
@@ -242,7 +190,7 @@ public class FriendRestServiceImpl implements FriendRestService {
             return removeFriend(actionDTO);
         } else if (actionDTO.getAction() == FriendActionEnum.DELETE_REQUEST) {
             return removeRequest(actionDTO);
-        } else if (actionDTO.getAction() == FriendActionEnum.SEND_REQUEST_FRIEND) {
+        } else if (actionDTO.getAction() == FriendActionEnum.SEND_REQUEST_TO_FRIEND) {
             return sendRequest(actionDTO);
         }
 

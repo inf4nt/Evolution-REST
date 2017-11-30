@@ -1,12 +1,11 @@
 package evolution.model;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import evolution.common.FriendStatusEnum;
-import lombok.*;
 
+import evolution.common.FriendActionEnum;
+import lombok.*;
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+
 
 /**
  * Created by Infant on 03.10.2017.
@@ -23,7 +22,7 @@ public class Friend {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private FriendStatusEnum status;
+    private FriendActionEnum action;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "action_user_id", columnDefinition = "bigint", nullable = false)
@@ -33,9 +32,13 @@ public class Friend {
     @Column(columnDefinition = "bigint")
     private Long version;
 
-    public Friend(User first, User second, FriendStatusEnum status, User actionUser) {
+    public Friend(FriendActionEnum action) {
+        this.action = action;
+    }
+
+    public Friend(User first, User second, FriendActionEnum action, User actionUser) {
         this.pk = new FriendEmbeddable(first, second);
-        this.status = status;
+        this.action = action;
         this.actionUser = actionUser;
     }
 

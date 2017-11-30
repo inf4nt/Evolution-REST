@@ -1,6 +1,7 @@
 package evolution.dto.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import evolution.common.FriendActionEnum;
 import evolution.common.FriendStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,5 +22,5 @@ public class FriendDTO {
 
     private UserDTO action;
 
-    private FriendStatusEnum status;
+    private FriendActionEnum actionStatus;
 }

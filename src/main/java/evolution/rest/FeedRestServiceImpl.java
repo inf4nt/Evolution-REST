@@ -29,31 +29,19 @@ public class FeedRestServiceImpl implements FeedRestService {
     @Override
     public ResponseEntity<FeedDTO> findOne(Long id) {
         Optional<FeedDTO> o = feedBusinessService.findOne(id);
-        if (o.isPresent()) {
-            return ResponseEntity.ok(o.get());
-        } else {
-            return ResponseEntity.noContent().build();
-        }
+        return response(o);
     }
 
     @Override
     public ResponseEntity<List<FeedDTO>> findAll() {
         List<FeedDTO> list = feedBusinessService.findAll();
-        if (list.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(list);
-        }
+        return response(list);
     }
 
     @Override
     public ResponseEntity<Page<FeedDTO>> findAll(Integer page, Integer size, String sortType, List<String> sortProperties) {
         Page<FeedDTO> p = feedBusinessService.findAll(page, size, sortType, sortProperties);
-        if (p.getContent().isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(p);
-        }
+        return response(p);
     }
 
     @Override
@@ -91,81 +79,49 @@ public class FeedRestServiceImpl implements FeedRestService {
     @Override
     public ResponseEntity<List<FeedDTO>> findMyFriendsFeed() {
         List<FeedDTO> list = feedBusinessService.findMyFriendsFeed();
-        if (list.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(list);
-        }
+        return response(list);
     }
 
     @Override
     public ResponseEntity<Page<FeedDTO>> findMyFriendsFeed(Integer page, Integer size, String sortType, List<String> sortProperties) {
         Page<FeedDTO> p = feedBusinessService.findMyFriendsFeed(page, size, sortType, sortProperties);
-        if (p.getContent().isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(p);
-        }
+        return response(p);
     }
 
     @Override
     public ResponseEntity<List<FeedDTO>> findFeedsForMe() {
         List<FeedDTO> list = feedBusinessService.findFeedsForMe();
-        if (list.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(list);
-        }
+        return response(list);
     }
 
     @Override
     public ResponseEntity<Page<FeedDTO>> findFeedsForMe(Integer page, Integer size, String sortType, List<String> sortProperties) {
         Page<FeedDTO> p = feedBusinessService.findFeedsForMe(page, size, sortType, sortProperties);
-        if (p.getContent().isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(p);
-        }
+        return response(p);
     }
 
     @Override
     public ResponseEntity<List<FeedDTO>> findMyFriendsFeed(Long iam) {
         List<FeedDTO> list = feedBusinessService.findMyFriendsFeed(iam);
-        if (list.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(list);
-        }
+        return response(list);
     }
 
     @Override
     public ResponseEntity<Page<FeedDTO>> findMyFriendsFeed(Long iam, Integer page, Integer size, String sortType, List<String> sortProperties) {
         Page<FeedDTO> p = feedBusinessService.findMyFriendsFeed(iam, page, size, sortType, sortProperties);
-        if (p.getContent().isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(p);
-        }
+        return response(p);
     }
 
     @Override
     public ResponseEntity<List<FeedDTO>> findFeedsForMe(Long iam) {
         List<FeedDTO> list = feedBusinessService.findFeedsForMe(iam);
-        if (list.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(list);
-        }
+        return response(list);
     }
 
     @Override
     public ResponseEntity<Page<FeedDTO>> findFeedsForMe(Long iam, Integer page, Integer size, String sortType, List<String> sortProperties) {
         Page<FeedDTO> p = feedBusinessService.findFeedsForMe(iam, page, size, sortType, sortProperties);
-        if (p.getContent().isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(p);
-        }
+        return response(p);
     }
 
     @Override

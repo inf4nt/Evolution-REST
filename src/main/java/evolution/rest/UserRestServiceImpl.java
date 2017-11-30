@@ -27,69 +27,49 @@ public class UserRestServiceImpl implements UserRestService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    private final UserBusinessService userBusinessService;
+
     @Autowired
-    private UserBusinessService userBusinessService;
+    public UserRestServiceImpl(UserBusinessService userBusinessService) {
+        this.userBusinessService = userBusinessService;
+    }
 
     @Override
     public ResponseEntity<Page<UserDTO>> findAll(Integer page, Integer size, String sortType, List<String> sortProperties) {
         Page<UserDTO> p = userBusinessService.findAll(page, size, sortType, sortProperties);
-
-        if (p.getContent().isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(p);
-        }
+        return response(p);
     }
 
     @Override
     public ResponseEntity<UserDTO> findOne(Long userId) {
-        return userBusinessService.findOne(userId)
-                .map(o -> ResponseEntity.ok(o))
-                .orElse(ResponseEntity.noContent().build());
+        return response(userBusinessService.findOne(userId));
     }
 
     @Override
     public ResponseEntity<UserFullDTO> findOneFull(Long userId) {
-        return userBusinessService
-                .findOneUserFull(userId)
-                .map(o -> ResponseEntity.ok(o))
-                .orElse(ResponseEntity.noContent().build());
+        return response(userBusinessService.findOneUserFull(userId));
     }
 
     @Override
     public ResponseEntity<UserDTO> findByUsername(String username) {
-        return userBusinessService
-                .findByUsername(username)
-                .map(o -> ResponseEntity.ok(o))
-                .orElse(ResponseEntity.noContent().build());
+        return response(userBusinessService.findByUsername(username));
     }
 
     @Override
     public ResponseEntity<UserFullDTO> findByUsernameFull(String username) {
-        return userBusinessService
-                .findByUsernameFull(username)
-                .map(o -> ResponseEntity.ok(o))
-                .orElse(ResponseEntity.noContent().build());
+        return response(userBusinessService.findByUsernameFull(username));
     }
 
     @Override
     public ResponseEntity<List<UserDTO>> findAll(String sortType, List<String> sortProperties) {
         List<UserDTO> list = userBusinessService.findAll(sortType, sortProperties);
-        if (list.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(list);
-        }
+        return response(list);
     }
 
     @Override
     public ResponseEntity<List<UserFullDTO>> findAllFull(String sortType, List<String> sortProperties) {
         List<UserFullDTO> list = userBusinessService.findAllFull(sortType, sortProperties);
-        if (list.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(list);
-        }
+        return response(list);
     }
 
     @Override
@@ -141,12 +121,12 @@ public class UserRestServiceImpl implements UserRestService {
     }
 
     @Override
-    public ResponseEntity exist(String username) {
+    public ResponseEntity<HttpStatus> exist(String username) {
         Optional<UserDTO> optional = userBusinessService.findByUsername(username);
         if (optional.isPresent()) {
-            return ResponseEntity.ok().body("User by username, " + username + ", exist");
+            return ResponseEntity.ok().build();
         } else {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("User by username, " + username + ", not found!");
+            return ResponseEntity.noContent().build();
         }
     }
 

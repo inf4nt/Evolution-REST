@@ -5,6 +5,7 @@ import evolution.dto.model.UserForSaveDTO;
 import evolution.dto.model.UserForUpdateDTO;
 import evolution.dto.model.UserFullDTO;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 /**
  * Created by Infant on 29.10.2017.
  */
-public interface UserRestService {
+public interface UserRestService extends AbstractRestService {
 
     ResponseEntity<Page<UserDTO>> findAll(Integer page, Integer size, String sortType, List<String> sortProperties);
 
@@ -42,7 +43,7 @@ public interface UserRestService {
 
     ResponseEntity activated(String key);
 
-    ResponseEntity exist(String username);
+    ResponseEntity<HttpStatus> exist(String username);
 
     ResponseEntity<UserFullDTO> setPassword(UserFullDTO userFullDTO);
 }

@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
-public interface FeedRestService {
+public interface FeedRestService extends AbstractRestService {
 
     ResponseEntity<FeedDTO> findOne(Long id);
 

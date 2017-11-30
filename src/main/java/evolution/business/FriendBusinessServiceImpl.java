@@ -126,20 +126,15 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
             logger.info("FORBIDDEN");
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
         }
-
+        FriendResultActionDTO dto = new FriendResultActionDTO();
+        dto.setNextAction(FriendActionEnum.SEND_REQUEST_TO_FRIEND);
         Optional<Friend> request = friendCrudManagerService.acceptRequest(friendActionDTO.getActionUserId(), friendActionDTO.getRecipientUserId());
-        if (!request.isPresent()) {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
-        }
+        if (request.isPresent()) {
+            dto = friendDTOTransfer.modelToResultActionDTO(request.get());
+            dto.setNextAction(getNextAction(request.get()));
 
-        FriendResultActionDTO dto = friendDTOTransfer.modelToResultActionDTO(request.get());
-        dto.setNextAction(getNextAction(request.get()));
-
-        if (request.get().getStatus() == FriendStatusEnum.PROGRESS) {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, dto);
-        } else {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.EXPECTATION_FAILED, dto);
         }
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, dto);
     }
 
     @Override
@@ -149,19 +144,14 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
         }
 
+        FriendResultActionDTO dto = new FriendResultActionDTO();
+        dto.setNextAction(FriendActionEnum.SEND_REQUEST_TO_FRIEND);
         Optional<Friend> delete = friendCrudManagerService.removeFriend(friendActionDTO.getActionUserId(), friendActionDTO.getRecipientUserId());
-        if (!delete.isPresent()) {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
+        if (delete.isPresent()) {
+            dto = friendDTOTransfer.modelToResultActionDTO(delete.get());
+            dto.setNextAction(getNextAction(delete.get()));
         }
-
-        FriendResultActionDTO dto = friendDTOTransfer.modelToResultActionDTO(delete.get());
-        dto.setNextAction(getNextAction(delete.get()));
-
-        if (delete.get().getStatus() == FriendStatusEnum.REQUEST) {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, dto);
-        } else {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.EXPECTATION_FAILED, dto);
-        }
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, dto);
     }
 
     @Override
@@ -172,18 +162,13 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
         }
 
         Optional<Friend> deleteRequest = friendCrudManagerService.removeRequest(friendActionDTO.getActionUserId(), friendActionDTO.getRecipientUserId());
-        if (!deleteRequest.isPresent()) {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
-        }
-
         FriendResultActionDTO dto = new FriendResultActionDTO();
-        dto.setNextAction(FriendActionEnum.SEND_REQUEST_FRIEND);
-
-        if (deleteRequest.get().getVersion() == null) {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, dto);
-        } else {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.EXPECTATION_FAILED, dto);
+        dto.setNextAction(FriendActionEnum.SEND_REQUEST_TO_FRIEND);
+        if (deleteRequest.isPresent()) {
+            dto = new FriendResultActionDTO();
+            dto.setNextAction(getNextAction(deleteRequest.get()));
         }
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, dto);
     }
 
     @Override
@@ -194,18 +179,13 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
         }
 
         Optional<Friend> friend = friendCrudManagerService.sendRequestToFriend(friendActionDTO.getActionUserId(), friendActionDTO.getRecipientUserId());
-        if (!friend.isPresent()) {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
+        FriendResultActionDTO dto = new FriendResultActionDTO();
+        dto.setNextAction(FriendActionEnum.SEND_REQUEST_TO_FRIEND);
+        if (friend.isPresent()) {
+            dto = new FriendResultActionDTO();
+            dto.setNextAction(getNextAction(friend.get()));
         }
-
-        FriendResultActionDTO dto = friendDTOTransfer.modelToResultActionDTO(friend.get());
-        dto.setNextAction(getNextAction(friend.get()));
-
-        if (friend.get().getStatus() == FriendStatusEnum.REQUEST) {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, dto);
-        } else {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.EXPECTATION_FAILED, dto);
-        }
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, dto);
     }
 
     @Override
@@ -329,7 +309,7 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
             return deleteFriend(actionDTO);
         } else if (actionDTO.getAction() == FriendActionEnum.DELETE_REQUEST) {
             return deleteRequest(actionDTO);
-        } else if (actionDTO.getAction() == FriendActionEnum.SEND_REQUEST_FRIEND) {
+        } else if (actionDTO.getAction() == FriendActionEnum.SEND_REQUEST_TO_FRIEND) {
             return sendRequestToFriend(actionDTO);
         }
 
@@ -339,15 +319,35 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
     @Override
     public FriendActionEnum getNextAction(Friend friend) {
         User auth = securitySupportService.getAuthenticationPrincipal().getUser();
-        if (friend.getStatus() == FriendStatusEnum.PROGRESS) {
-            return FriendActionEnum.DELETE_FRIEND;
-        } else if (friend.getStatus() == FriendStatusEnum.REQUEST && !friend.getActionUser().getId().equals(auth.getId())) {
-            return FriendActionEnum.ACCEPT_REQUEST;
-        } else if (friend.getStatus() == FriendStatusEnum.REQUEST && friend.getActionUser().getId().equals(auth.getId())) {
-            return FriendActionEnum.DELETE_REQUEST;
-        } else {
-            return FriendActionEnum.SEND_REQUEST_FRIEND;
+
+        if (friend.getAction() == FriendActionEnum.NO_ACTION) {
+            return FriendActionEnum.SEND_REQUEST_TO_FRIEND;
         }
+
+        if (friend.getActionUser().getId().equals(auth.getId())) {
+
+            if (friend.getAction() == FriendActionEnum.SEND_REQUEST_TO_FRIEND) {
+                return FriendActionEnum.DELETE_REQUEST;
+            } else if (friend.getAction() == FriendActionEnum.ACCEPT_REQUEST) {
+                return FriendActionEnum.DELETE_FRIEND;
+            } else if (friend.getAction() == FriendActionEnum.DELETE_FRIEND) {
+                return FriendActionEnum.ACCEPT_REQUEST;
+            }
+
+
+        } else {
+
+            if (friend.getAction() == FriendActionEnum.SEND_REQUEST_TO_FRIEND) {
+                return FriendActionEnum.ACCEPT_REQUEST;
+            } else if (friend.getAction() == FriendActionEnum.ACCEPT_REQUEST) {
+                return FriendActionEnum.DELETE_FRIEND;
+            } else if (friend.getAction() == FriendActionEnum.DELETE_FRIEND) {
+                return FriendActionEnum.DELETE_REQUEST;
+            }
+
+        }
+
+        return FriendActionEnum.SEND_REQUEST_TO_FRIEND;
     }
 
     @Override
@@ -375,7 +375,7 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
         Optional<Friend> next = friendCrudManagerService.findOneFriend(auth, second);
         if (!next.isPresent()) {
             dto = new FriendResultActionDTO();
-            dto.setNextAction(FriendActionEnum.SEND_REQUEST_FRIEND);
+            dto.setNextAction(FriendActionEnum.SEND_REQUEST_TO_FRIEND);
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, dto);
         }
 

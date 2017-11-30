@@ -7,6 +7,7 @@ import evolution.dto.model.UserFullDTO;
 import evolution.rest.api.UserRestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -83,7 +84,7 @@ public class UserRestController {
     }
 
     @GetMapping(value = "/exist")
-    public ResponseEntity exist(@RequestParam String username) {
+    public ResponseEntity<HttpStatus> exist(@RequestParam String username) {
         return userRestService.exist(username);
     }
 
