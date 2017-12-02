@@ -17,27 +17,27 @@ import java.util.Properties;
 @Configuration
 public class AppConfig {
 
-    @Value("${spring.datasource.driver}")
-    private String driver;
-
-    @Value("${spring.datasource.url}")
-    private String url;
-
-    @Value("${spring.datasource.username}")
-    private String username;
-
-    @Value("${spring.datasource.password}")
-    private String password;
-
-    @Bean
-    public DataSource dataSource() {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(driver);
-        dataSource.setUrl(url);
-        dataSource.setUsername(username);
-        dataSource.setPassword(password);
-        return dataSource;
-    }
+//    @Value("${spring.datasource.driver}")
+//    private String driver;
+//
+//    @Value("${spring.datasource.url}")
+//    private String url;
+//
+//    @Value("${spring.datasource.username}")
+//    private String username;
+//
+//    @Value("${spring.datasource.password}")
+//    private String password;
+//
+//    @Bean
+//    public DataSource dataSource() {
+//        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+//        dataSource.setDriverClassName(driver);
+//        dataSource.setUrl(url);
+//        dataSource.setUsername(username);
+//        dataSource.setPassword(password);
+//        return dataSource;
+//    }
 
     @Bean
     public ModelMapper modelMapper() {

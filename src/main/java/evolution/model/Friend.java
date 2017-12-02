@@ -1,11 +1,9 @@
 package evolution.model;
 
-
-import evolution.common.FriendActionEnum;
+import evolution.common.RelationshipStatus;
 import lombok.*;
 import javax.persistence.*;
 import java.io.Serializable;
-
 
 /**
  * Created by Infant on 03.10.2017.
@@ -22,7 +20,7 @@ public class Friend {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private FriendActionEnum action;
+    private RelationshipStatus status;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "action_user_id", columnDefinition = "bigint", nullable = false)
@@ -32,13 +30,13 @@ public class Friend {
     @Column(columnDefinition = "bigint")
     private Long version;
 
-    public Friend(FriendActionEnum action) {
-        this.action = action;
+    public Friend(RelationshipStatus status) {
+        this.status = status;
     }
 
-    public Friend(User first, User second, FriendActionEnum action, User actionUser) {
+    public Friend(User first, User second, RelationshipStatus status, User actionUser) {
         this.pk = new FriendEmbeddable(first, second);
-        this.action = action;
+        this.status = status;
         this.actionUser = actionUser;
     }
 

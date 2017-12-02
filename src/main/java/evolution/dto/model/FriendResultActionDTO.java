@@ -2,7 +2,7 @@ package evolution.dto.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import evolution.common.FriendActionEnum;
-import evolution.common.FriendStatusEnum;
+import evolution.common.RelationshipStatus;
 import lombok.Data;
 
 @Data
@@ -14,6 +14,8 @@ public class FriendResultActionDTO {
     private UserDTO second;
 
     private UserDTO actionUser;
+
+    private RelationshipStatus status;
 
     private FriendActionEnum nextAction;
 

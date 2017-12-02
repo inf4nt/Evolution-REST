@@ -38,7 +38,7 @@ public class FriendDTOTransfer {
             action = second;
         }
 
-        return new FriendDTO(first, second, action, friend.getAction());
+        return new FriendDTO(first, second, action, friend.getStatus());
     }
 
     public FriendDTO modelToDTO(Friend friend, Long auth) {
@@ -61,7 +61,7 @@ public class FriendDTOTransfer {
             action = second;
         }
 
-        return new FriendDTO(first, second, action, friend.getAction());
+        return new FriendDTO(first, second, action, friend.getStatus());
     }
 
     public FriendDTOFull modelToDTOFull(Friend friend) {
@@ -75,6 +75,7 @@ public class FriendDTOTransfer {
         dto.setFirst(userDTOTransfer.modelToDTO(friend.getPk().getFirst()));
         dto.setSecond(userDTOTransfer.modelToDTO(friend.getPk().getSecond()));
         dto.setActionUser(userDTOTransfer.modelToDTO(friend.getActionUser()));
+        dto.setStatus(friend.getStatus());
         return dto;
     }
 }

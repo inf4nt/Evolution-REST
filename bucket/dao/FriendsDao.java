@@ -1,6 +1,5 @@
 package evolution.dao;
 
-import evolution.common.FriendStatusEnum;
 import evolution.model.friend.Friends;
 import evolution.model.user.UserLight;
 import evolution.model.user.User;

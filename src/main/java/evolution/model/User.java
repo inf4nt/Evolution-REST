@@ -83,4 +83,8 @@ public class User {
                 ", version=" + version +
                 '}';
     }
+
+    public boolean equalsById(Long id) {
+        return this.id.equals(id);
+    }
 }

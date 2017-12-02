@@ -3,7 +3,7 @@ package evolution.business;
 import evolution.business.api.FriendBusinessService;
 import evolution.common.BusinessServiceExecuteStatus;
 import evolution.common.FriendActionEnum;
-import evolution.common.FriendStatusEnum;
+import evolution.common.RelationshipStatus;
 import evolution.crud.api.FriendCrudManagerService;
 import evolution.crud.api.UserCrudManagerService;
 import evolution.dto.FriendDTOTransfer;
@@ -13,7 +13,6 @@ import evolution.dto.model.FriendDTO;
 import evolution.dto.model.FriendDTOFull;
 import evolution.dto.model.FriendResultActionDTO;
 import evolution.model.Friend;
-import evolution.model.User;
 import evolution.service.SecuritySupportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,10 +128,12 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
         FriendResultActionDTO dto = new FriendResultActionDTO();
         dto.setNextAction(FriendActionEnum.SEND_REQUEST_TO_FRIEND);
         Optional<Friend> request = friendCrudManagerService.acceptRequest(friendActionDTO.getActionUserId(), friendActionDTO.getRecipientUserId());
-        if (request.isPresent()) {
-            dto = friendDTOTransfer.modelToResultActionDTO(request.get());
+        if (request.isPresent() && request.get().getVersion() == null) {
             dto.setNextAction(getNextAction(request.get()));
 
+        } else {
+            dto = friendDTOTransfer.modelToResultActionDTO(request.get());
+            dto.setNextAction(getNextAction(request.get()));
         }
         return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, dto);
     }
@@ -318,33 +319,22 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
 
     @Override
     public FriendActionEnum getNextAction(Friend friend) {
-        User auth = securitySupportService.getAuthenticationPrincipal().getUser();
+        Long auth = securitySupportService.getAuthenticationPrincipal().getUser().getId();
 
-        if (friend.getAction() == FriendActionEnum.NO_ACTION) {
+        if (friend.getStatus() == RelationshipStatus.NOT_FOUND) {
             return FriendActionEnum.SEND_REQUEST_TO_FRIEND;
         }
 
-        if (friend.getActionUser().getId().equals(auth.getId())) {
+        if (friend.getStatus() == RelationshipStatus.ACCEPTED) {
+            return FriendActionEnum.DELETE_FRIEND;
+        }
 
-            if (friend.getAction() == FriendActionEnum.SEND_REQUEST_TO_FRIEND) {
-                return FriendActionEnum.DELETE_REQUEST;
-            } else if (friend.getAction() == FriendActionEnum.ACCEPT_REQUEST) {
-                return FriendActionEnum.DELETE_FRIEND;
-            } else if (friend.getAction() == FriendActionEnum.DELETE_FRIEND) {
-                return FriendActionEnum.ACCEPT_REQUEST;
-            }
+        if (friend.getStatus() == RelationshipStatus.PENDING && friend.getActionUser().equalsById(auth)) {
+            return FriendActionEnum.DELETE_REQUEST;
+        }
 
-
-        } else {
-
-            if (friend.getAction() == FriendActionEnum.SEND_REQUEST_TO_FRIEND) {
-                return FriendActionEnum.ACCEPT_REQUEST;
-            } else if (friend.getAction() == FriendActionEnum.ACCEPT_REQUEST) {
-                return FriendActionEnum.DELETE_FRIEND;
-            } else if (friend.getAction() == FriendActionEnum.DELETE_FRIEND) {
-                return FriendActionEnum.DELETE_REQUEST;
-            }
-
+        if (friend.getStatus() == RelationshipStatus.PENDING && !friend.getActionUser().equalsById(auth)) {
+            return FriendActionEnum.ACCEPT_REQUEST;
         }
 
         return FriendActionEnum.SEND_REQUEST_TO_FRIEND;

@@ -1,7 +1,6 @@
 package evolution.crud;
 
-import evolution.common.FriendActionEnum;
-import evolution.common.FriendStatusEnum;
+import evolution.common.RelationshipStatus;
 import evolution.crud.api.FriendCrudManagerService;
 import evolution.model.Friend;
 import evolution.model.User;
@@ -13,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,48 +66,48 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
     public Page<Friend> findFollowerByUser(Long userId, Integer page, Integer size) {
         Pageable pageable = getPageableForRestService(page, size,
                 this.friendMaxFetch);
-        return friendRepository.findFollowerByUser(userId, FriendActionEnum.SEND_REQUEST_TO_FRIEND, pageable);
+        return friendRepository.findFollowerByUser(userId, RelationshipStatus.PENDING, pageable);
     }
 
     @Override
     public Page<Friend> findRequestByUser(Long userId, Integer page, Integer size) {
         Pageable pageable = getPageableForRestService(page, size,
                 this.friendMaxFetch);
-        return friendRepository.findRequestFromUser(userId, FriendActionEnum.SEND_REQUEST_TO_FRIEND, pageable);
+        return friendRepository.findRequestFromUser(userId, RelationshipStatus.PENDING, pageable);
     }
 
     @Override
     public Page<Friend> findProgressByUser(Long userId, Integer page, Integer size) {
         Pageable pageable = getPageableForRestService(page, size,
                 this.friendMaxFetch);
-        return friendRepository.findProgressByUser(userId, FriendActionEnum.ACCEPT_REQUEST, pageable);
+        return friendRepository.findProgressByUser(userId, RelationshipStatus.ACCEPTED, pageable);
     }
 
     @Override
     public List<Friend> findFollowerByUser(Long userId) {
-        return friendRepository.findFollowerByUser(userId, FriendActionEnum.SEND_REQUEST_TO_FRIEND);
+        return friendRepository.findFollowerByUser(userId, RelationshipStatus.PENDING);
     }
 
     @Override
     public List<Friend> findRequestByUser(Long userId) {
-        return friendRepository.findRequestFromUser(userId, FriendActionEnum.SEND_REQUEST_TO_FRIEND);
+        return friendRepository.findRequestFromUser(userId, RelationshipStatus.PENDING);
     }
 
     @Override
     public List<Friend> findProgressByUser(Long userId) {
-        return friendRepository.findProgressByUser(userId, FriendActionEnum.ACCEPT_REQUEST);
+        return friendRepository.findProgressByUser(userId, RelationshipStatus.ACCEPTED);
     }
 
     @Override
     public Page<Friend> findRequestFromUser(Long userId, Integer page, Integer size) {
         Pageable pageable = getPageableForRestService(page, size,
                 this.friendMaxFetch);
-        return friendRepository.findRequestFromUser(userId, FriendActionEnum.SEND_REQUEST_TO_FRIEND, pageable);
+        return friendRepository.findRequestFromUser(userId, RelationshipStatus.PENDING, pageable);
     }
 
     @Override
     public List<Friend> findRequestFromUser(Long userId) {
-        return friendRepository.findRequestFromUser(userId, FriendActionEnum.SEND_REQUEST_TO_FRIEND);
+        return friendRepository.findRequestFromUser(userId, RelationshipStatus.PENDING);
     }
 
     @Override
@@ -139,7 +137,7 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
                 action = second;
             }
 
-            Friend friend = new Friend(first, second, FriendActionEnum.SEND_REQUEST_TO_FRIEND, action);
+            Friend friend = new Friend(first, second, RelationshipStatus.PENDING, action);
             return Optional.of(friendRepository.save(friend));
         } else {
             LOGGER.info("sendRequest second failed. Action =  " + senderId + ", other " + recipientId + ". Find row = " + exist.get());
@@ -156,16 +154,19 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
 
         if (request.isPresent()) {
 
-            boolean m1 = FriendActionEnum.SEND_REQUEST_TO_FRIEND == request.get().getAction()
-                    && request.get().getActionUser().getId().equals(senderId);
+//            boolean m1 = FriendActionEnum.SEND_REQUEST_TO_FRIEND == request.get().getAction()
+//                    && request.get().getActionUser().getId().equals(senderId);
+//
+//            boolean m2 = FriendActionEnum.DELETE_FRIEND == request.get().getAction()
+//                    && request.get().getActionUser().getId().equals(recipientId);
 
-            boolean m2 = FriendActionEnum.DELETE_FRIEND == request.get().getAction()
-                    && request.get().getActionUser().getId().equals(recipientId);
+            boolean m = RelationshipStatus.PENDING == request.get().getStatus()
+                    && request.get().getActionUser().equalsById(senderId);
 
-            if (m1 || m2) {
+            if (m) {
                 friendRepository.delete(request.get());
                 LOGGER.info("remove sendRequest successful");
-                return Optional.of(new Friend(FriendActionEnum.NO_ACTION));
+                return Optional.of(new Friend(RelationshipStatus.NOT_FOUND));
             } else {
                 LOGGER.info("remove sendRequest failed. Action =  " + senderId + ", other " + recipientId + ". Find row = " + request.get());
                 return request;
@@ -173,7 +174,7 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
 
         }
 
-        return Optional.of(new Friend(FriendActionEnum.NO_ACTION));
+        return Optional.of(new Friend(RelationshipStatus.NOT_FOUND));
     }
 
     @Override
@@ -185,11 +186,11 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
 
         if (progress.isPresent()) {
 
-            if (FriendActionEnum.ACCEPT_REQUEST == progress.get().getAction()) {
+            if (RelationshipStatus.ACCEPTED == progress.get().getStatus()) {
                 Friend friend = progress.get();
-                friend.setAction(FriendActionEnum.DELETE_FRIEND);
+                friend.setStatus(RelationshipStatus.PENDING);
 
-                action = getUserByIdFromFriendPk(senderId, friend);
+                action = getUserByIdFromFriendPk(recipientId, friend); // Типа мне кидают заявку
 
                 friend.setActionUser(action);
 
@@ -199,9 +200,9 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
                 return progress;
             }
 
-        } else {
-            return Optional.of(new Friend(FriendActionEnum.NO_ACTION));
         }
+
+        return Optional.of(new Friend(RelationshipStatus.NOT_FOUND));
     }
 
     @Override
@@ -214,15 +215,18 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
         Optional<Friend> request = findOneFriend(firstId, secondId);
         if (request.isPresent()) {
 
-            boolean m1 = request.get().getActionUser().getId().equals(senderId)
-                    && request.get().getAction() == FriendActionEnum.DELETE_FRIEND;
+//            boolean m1 = request.get().getActionUser().getId().equals(senderId)
+//                    && request.get().getAction() == FriendActionEnum.DELETE_FRIEND;
+//
+//            boolean m2 = request.get().getActionUser().getId().equals(recipientId)
+//                    && request.get().getAction() == FriendActionEnum.SEND_REQUEST_TO_FRIEND;
 
-            boolean m2 = request.get().getActionUser().getId().equals(recipientId)
-                    && request.get().getAction() == FriendActionEnum.SEND_REQUEST_TO_FRIEND;
+            boolean m = request.get().getStatus() == RelationshipStatus.PENDING
+                    && request.get().getActionUser().equalsById(recipientId);
 
-            if (m1 || m2) {
+            if (m) {
                 Friend friend = request.get();
-                friend.setAction(FriendActionEnum.ACCEPT_REQUEST);
+                friend.setStatus(RelationshipStatus.ACCEPTED);
 
                 action = getUserByIdFromFriendPk(senderId, friend);
 
@@ -235,7 +239,7 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
 
         }
 
-        return Optional.of(new Friend(FriendActionEnum.NO_ACTION));
+        return Optional.of(new Friend(RelationshipStatus.NOT_FOUND));
     }
 
     private void init(Long senderOrAction, Long recipient) {
