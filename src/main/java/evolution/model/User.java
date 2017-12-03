@@ -26,10 +26,10 @@ public class User {
     @SequenceGenerator(name = "seq_user", sequenceName = "seq_user_data_id", allocationSize = 1)
     private Long id;
 
-    @Column(name = "first_name", columnDefinition = "varchar(255)")
+    @Column(name = "first_name", columnDefinition = "varchar(255)", nullable = false)
     private String firstName;
 
-    @Column(name = "last_name", columnDefinition = "varchar(255)")
+    @Column(name = "last_name", columnDefinition = "varchar(255)", nullable = false)
     private String lastName;
 
     @Column(name = "nickname", columnDefinition = "varchar(255)")
