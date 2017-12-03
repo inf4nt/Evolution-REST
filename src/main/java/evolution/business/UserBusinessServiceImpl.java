@@ -100,9 +100,9 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         original.setFirstName(userForUpdateDTO.getFirstName());
         original.setLastName(userForUpdateDTO.getLastName());
         original.setNickname(userForUpdateDTO.getNickname());
-        original.getUserAdditionalData().setCountry(userForUpdateDTO.getUserAdditionalData().getCountry());
-        original.getUserAdditionalData().setState(userForUpdateDTO.getUserAdditionalData().getState());
-        original.getUserAdditionalData().setGender(userForUpdateDTO.getUserAdditionalData().getGender());
+        original.getUserAdditionalData().setCountry(userForUpdateDTO.getCountry());
+        original.getUserAdditionalData().setState(userForUpdateDTO.getState());
+        original.getUserAdditionalData().setGender(userForUpdateDTO.getGender());
 
         User result = userCrudManagerService.save(original);
 
@@ -140,11 +140,11 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
-    public BusinessServiceExecuteResult<UserForUpdateDTO> update(UserForUpdateDTO userForUpdateDTO) {
+    public BusinessServiceExecuteResult<UserFullDTO> update(UserForUpdateDTO userForUpdateDTO) {
         BusinessServiceExecuteResult<User> b = updateGlobal(userForUpdateDTO);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
             return BusinessServiceExecuteResult
-                    .build(BusinessServiceExecuteStatus.OK, b.getResultObjectOptional().map(o -> userDTOTransfer.modelToDTOForUpdate(o)));
+                    .build(BusinessServiceExecuteStatus.OK, b.getResultObjectOptional().map(o -> userDTOTransfer.modelToDTOFull(o)));
         }
         return BusinessServiceExecuteResult.build(b.getExecuteStatus());
     }

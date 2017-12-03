@@ -33,7 +33,7 @@ public interface UserRestService extends AbstractRestService {
 
     ResponseEntity<UserFullDTO> createNewUser(UserForSaveDTO user);
 
-    ResponseEntity update(UserForUpdateDTO user);
+    ResponseEntity<UserFullDTO> update(UserForUpdateDTO user);
 
     ResponseEntity delete(Long id);
 

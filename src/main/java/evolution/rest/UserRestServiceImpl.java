@@ -90,12 +90,12 @@ public class UserRestServiceImpl implements UserRestService {
     }
 
     @Override
-    public ResponseEntity update(UserForUpdateDTO user) {
-        BusinessServiceExecuteResult b = userBusinessService.update(user);
-        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
-            return ResponseEntity.ok().body(b.getExecuteStatus());
+    public ResponseEntity<UserFullDTO> update(UserForUpdateDTO user) {
+        BusinessServiceExecuteResult<UserFullDTO> b = userBusinessService.update(user);
+        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent()) {
+            return ResponseEntity.ok(b.getResultObjectOptional().get());
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE) {
-            return ResponseEntity.status(417).body(b.getExecuteStatus());
+            return ResponseEntity.status(417).build();
         }
         return ResponseEntity.status(417).build();
     }

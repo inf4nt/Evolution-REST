@@ -59,7 +59,7 @@ public class UserRestController {
     }
 
     @PutMapping
-    public ResponseEntity update(@RequestBody UserForUpdateDTO user) {
+    public ResponseEntity<UserFullDTO> update(@RequestBody UserForUpdateDTO user) {
         return userRestService.update(user);
     }
 

@@ -25,7 +25,7 @@ public interface UserBusinessService {
 
     BusinessServiceExecuteResult<UserFullDTO> updateFull(UserForUpdateDTO userForUpdateDTO);
 
-    BusinessServiceExecuteResult<UserForUpdateDTO> update(UserForUpdateDTO userForUpdateDTO);
+    BusinessServiceExecuteResult<UserFullDTO> update(UserForUpdateDTO userForUpdateDTO);
 
     BusinessServiceExecuteResult<User> updateGlobal(UserForUpdateDTO userForUpdateDTO);
 

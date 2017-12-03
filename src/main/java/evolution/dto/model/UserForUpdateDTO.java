@@ -19,17 +19,10 @@ public class UserForUpdateDTO {
 
     private String nickname;
 
-    private UserAdditionalDataDTOForUpdate userAdditionalData = new UserAdditionalDataDTOForUpdate();
+    private String country;
 
-    @Data
-    @JsonInclude
-    public static class UserAdditionalDataDTOForUpdate {
+    private String state;
 
-        private String country;
+    private GenderEnum gender;
 
-        private String state;
-
-        private GenderEnum gender;
-
-    }
 }
