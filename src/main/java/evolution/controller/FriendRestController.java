@@ -91,6 +91,11 @@ public class FriendRestController {
         return friendRestService.findUserProgress2(userId, page, size);
     }
 
+    @GetMapping(value = "/find/random/progress/{id}")
+    public ResponseEntity<Page<FriendDTO>> findRandomProgress(@PathVariable Long id) {
+        return friendRestService.findRandomProgress(id);
+    }
+
     @PostMapping(value = "/action")
     public ResponseEntity<FriendResultActionDTO> action(@RequestBody FriendActionDTO friendActionDTO) {
         return friendRestService.action(friendActionDTO);

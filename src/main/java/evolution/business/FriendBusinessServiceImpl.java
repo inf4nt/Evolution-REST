@@ -13,6 +13,7 @@ import evolution.dto.model.FriendDTO;
 import evolution.dto.model.FriendDTOFull;
 import evolution.dto.model.FriendResultActionDTO;
 import evolution.model.Friend;
+import evolution.model.User;
 import evolution.service.SecuritySupportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -345,6 +346,13 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
 
         return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, dto);
 
+    }
+
+    @Override
+    public Page<FriendDTO> findRandomFriends(Long user) {
+        return friendCrudManagerService
+                .findRandomFriends(user, 6)
+                .map(o -> friendDTOTransfer.modelToDTO(o, user));
     }
 
 

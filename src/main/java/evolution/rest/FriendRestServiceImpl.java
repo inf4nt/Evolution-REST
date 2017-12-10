@@ -225,4 +225,14 @@ public class FriendRestServiceImpl implements FriendRestService {
 
         return ResponseEntity.status(417).build();
     }
+
+    @Override
+    public ResponseEntity<Page<FriendDTO>> findRandomProgress(Long user) {
+        Page<FriendDTO> b = friendBusinessService.findRandomFriends(user);
+        if (b.getContent().isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(b);
+        }
+    }
 }

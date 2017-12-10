@@ -66,5 +66,12 @@ public interface FriendRepository extends JpaRepository<Friend, Friend.FriendEmb
 
     @Query("select f from Friend f where f.pk.first.id =:id or f.pk.second.id =:id")
     List<Friend> findRowByIam(@Param("id") Long id);
+
+    @Query("select f" +
+            " from Friend f" +
+            " where f.status =:status" +
+            " and (f.pk.first.id =:userId or f.pk.second.id =:userId)" +
+            " order by rand() ")
+    Page<Friend> findRandomFriend(@Param("userId") Long user, @Param("status") RelationshipStatus accepted, Pageable pageable);
 }
 

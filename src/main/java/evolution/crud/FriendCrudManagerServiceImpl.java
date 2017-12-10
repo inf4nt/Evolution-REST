@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +43,11 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
                                         UserRepository userRepository) {
         this.friendRepository = friendRepository;
         this.userRepository = userRepository;
+    }
+
+    @Override
+    public Page<Friend> findRandomFriends(Long user, Integer size) {
+        return friendRepository.findRandomFriend(user, RelationshipStatus.ACCEPTED, new PageRequest(0, size));
     }
 
     @Override

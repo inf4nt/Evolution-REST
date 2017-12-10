@@ -66,4 +66,6 @@ public interface FriendBusinessService {
     BusinessServiceExecuteResult<FriendResultActionDTO> findNextAction(Long first, Long second);
 
     BusinessServiceExecuteResult<FriendResultActionDTO> findNextAction(Long second);
+
+    Page<FriendDTO> findRandomFriends(Long user);
 }

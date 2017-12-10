@@ -11,6 +11,8 @@ import java.util.Optional;
  */
 public interface FriendCrudManagerService extends PageableManager {
 
+    Page<Friend> findRandomFriends(Long user, Integer size);
+
     Page<Friend> findAll(Integer page, Integer size);
 
     List<Friend> findAll();

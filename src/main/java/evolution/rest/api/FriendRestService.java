@@ -55,4 +55,6 @@ public interface FriendRestService extends AbstractRestService {
     ResponseEntity<FriendResultActionDTO> findNexAction(Long first, Long second);
 
     ResponseEntity<FriendResultActionDTO> findNexAction(Long second);
+
+    ResponseEntity<Page<FriendDTO>> findRandomProgress(Long user);
 }
