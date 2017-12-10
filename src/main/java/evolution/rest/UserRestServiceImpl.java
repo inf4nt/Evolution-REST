@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -102,7 +103,22 @@ public class UserRestServiceImpl implements UserRestService {
 
     @Override
     public ResponseEntity delete(Long id) {
-        return null;
+        BusinessServiceExecuteResult b = userBusinessService.delete(id);
+        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
+            return ResponseEntity.ok().build();
+        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {
+            return ResponseEntity.status(403).build();
+        }
+        return ResponseEntity.status(417).build();
+    }
+
+    @Override
+    public ResponseEntity delete(List<Long> id) {
+        BusinessServiceExecuteResult b = userBusinessService.delete(id);
+        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.status(417).build();
     }
 
     @Override

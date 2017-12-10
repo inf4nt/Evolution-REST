@@ -68,6 +68,12 @@ public class UserRestController {
         return userRestService.delete(id);
     }
 
+    @DeleteMapping(value = "/delete")
+    public ResponseEntity deleteById(@RequestParam List<Long> ids) {
+        return userRestService.delete(ids);
+    }
+
+
     @GetMapping(value = "/block/{id}")
     public ResponseEntity blockUser(@PathVariable Long id) {
         return userRestService.block(id);

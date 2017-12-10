@@ -2,6 +2,7 @@ package evolution.controller;
 
 import evolution.dto.model.MessageDTO;
 import evolution.dto.model.MessageDTOForSave;
+import evolution.dto.model.MessageForUpdateDTO;
 import evolution.rest.api.MessageRestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -37,6 +38,11 @@ public class MessageRestController {
                                                     @RequestParam(required = false) String sortType,
                                                     @RequestParam(required = false) List<String> sortProperties) {
         return messageRestService.findAllMessage(page, size, sortType, sortProperties);
+    }
+
+    @PutMapping
+    public ResponseEntity<MessageDTO> putMessage(@RequestBody MessageForUpdateDTO message) {
+        return messageRestService.updateAfterReturn(message);
     }
 
     @PostMapping

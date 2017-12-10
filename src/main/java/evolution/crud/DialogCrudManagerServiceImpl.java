@@ -5,6 +5,7 @@ import evolution.dto.model.MessageDTO;
 import evolution.model.Dialog;
 import evolution.model.Message;
 import evolution.repository.DialogRepository;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -102,5 +103,12 @@ public class DialogCrudManagerServiceImpl implements DialogCrudManagerService {
         }
         optional.ifPresent(dialog -> dialogRepository.delete(dialog));
         return true;
+    }
+
+    @Override
+    public void deleteAllDialogRowByUser(Long id) {
+        List<Dialog> list = dialogRepository.findMyDialog(id);
+        list.forEach(o -> Hibernate.initialize(o.getMessageList().size()));
+        dialogRepository.delete(list);
     }
 }

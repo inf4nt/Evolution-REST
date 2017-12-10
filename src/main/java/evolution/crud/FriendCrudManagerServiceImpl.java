@@ -154,12 +154,6 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
 
         if (request.isPresent()) {
 
-//            boolean m1 = FriendActionEnum.SEND_REQUEST_TO_FRIEND == request.get().getAction()
-//                    && request.get().getActionUser().getId().equals(senderId);
-//
-//            boolean m2 = FriendActionEnum.DELETE_FRIEND == request.get().getAction()
-//                    && request.get().getActionUser().getId().equals(recipientId);
-
             boolean m = RelationshipStatus.PENDING == request.get().getStatus()
                     && request.get().getActionUser().equalsById(senderId);
 
@@ -215,12 +209,6 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
         Optional<Friend> request = findOneFriend(firstId, secondId);
         if (request.isPresent()) {
 
-//            boolean m1 = request.get().getActionUser().getId().equals(senderId)
-//                    && request.get().getAction() == FriendActionEnum.DELETE_FRIEND;
-//
-//            boolean m2 = request.get().getActionUser().getId().equals(recipientId)
-//                    && request.get().getAction() == FriendActionEnum.SEND_REQUEST_TO_FRIEND;
-
             boolean m = request.get().getStatus() == RelationshipStatus.PENDING
                     && request.get().getActionUser().equalsById(recipientId);
 
@@ -240,6 +228,12 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
         }
 
         return Optional.of(new Friend(RelationshipStatus.NOT_FOUND));
+    }
+
+    @Override
+    public void deleteAllFriendRowByUser(Long id) {
+        List<Friend> list = friendRepository.findRowByIam(id);
+        friendRepository.delete(list);
     }
 
     private void init(Long senderOrAction, Long recipient) {

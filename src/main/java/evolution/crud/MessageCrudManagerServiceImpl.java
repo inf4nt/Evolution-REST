@@ -279,4 +279,9 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
     public List<Message> findMessageByRecipientId(Long recipientId) {
         return messageRepository.findMessageByRecipientId(recipientId);
     }
+
+    @Override
+    public Optional<Message> update(Message message) {
+        return Optional.ofNullable(messageRepository.save(message));
+    }
 }

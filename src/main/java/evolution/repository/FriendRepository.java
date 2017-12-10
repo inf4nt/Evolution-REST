@@ -63,5 +63,8 @@ public interface FriendRepository extends JpaRepository<Friend, Friend.FriendEmb
             " where f.pk.first.id =:first " +
             " and f.pk.second.id =:second ")
     Optional<Friend> findOneFriend(@Param("first") Long first, @Param("second") Long second);
+
+    @Query("select f from Friend f where f.pk.first.id =:id or f.pk.second.id =:id")
+    List<Friend> findRowByIam(@Param("id") Long id);
 }
 

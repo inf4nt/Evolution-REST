@@ -5,6 +5,7 @@ import evolution.dto.MessageDTOTransfer;
 import evolution.dto.model.MessageDTO;
 import evolution.dto.model.MessageDTOForSave;
 import evolution.dto.model.MessageDTOFull;
+import evolution.dto.model.MessageForUpdateDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 
@@ -35,6 +36,8 @@ public interface MessageBusinessService {
     BusinessServiceExecuteResult<MessageDTO> createMessage(Long senderId, Long recipientId, String text);
 
     BusinessServiceExecuteResult delete(Long id);
+
+    BusinessServiceExecuteResult<MessageDTO> update(MessageForUpdateDTO messageForUpdateDTO);
 
     List<MessageDTO> findLastMessageInMyDialog(Long iam);
 

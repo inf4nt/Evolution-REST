@@ -32,4 +32,6 @@ public interface FeedCrudManagerService extends AbstractCrudManagerService<Feed,
     List<Feed> findFeedBySender(Long sender);
 
     Page<Feed> findFeedBySender(Long sender, Integer page, Integer size, String sortType, List<String> sortProperties);
+
+    void deleteAllFeedRowByUser(Long id);
 }

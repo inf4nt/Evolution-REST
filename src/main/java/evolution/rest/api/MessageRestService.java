@@ -32,7 +32,7 @@ public interface MessageRestService extends AbstractRestService {
 
     ResponseEntity<HttpStatus> update(MessageForUpdateDTO message);
 
-    ResponseEntity<MessageForUpdateDTO> updateAfterReturn(MessageForUpdateDTO message);
+    ResponseEntity<MessageDTO> updateAfterReturn(MessageForUpdateDTO message);
 
     ResponseEntity<HttpStatus> updateMessage(MessageForUpdateDTO message);
 

@@ -45,6 +45,8 @@ public interface MessageCrudManagerService extends AbstractCrudManagerService<Me
 
     List<Message> findMessageByRecipientId(Long recipientId);
 
+    Optional<Message> update(Message message);
+
     boolean deleteMessageAndMaybeDialog(Long messageId);
 
     boolean deleteMessageAndMaybeDialog(Long messageId, Long senderId);

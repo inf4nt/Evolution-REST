@@ -53,4 +53,7 @@ public interface FeedRepository extends JpaRepository<Feed, Long> {
 
     @Query("select f from Feed f where f.sender.id =:s")
     Page<Feed> findFeedBySender(@Param("s") Long sender, Pageable pageable);
+
+    @Query("select f from Feed f where f.sender.id =:id or f.toUser.id =:id")
+    List<Feed> findAllFeedByToUserOrSender(@Param("id") Long id);
 }

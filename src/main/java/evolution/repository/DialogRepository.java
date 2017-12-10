@@ -42,4 +42,9 @@ public interface DialogRepository extends JpaRepository<Dialog, Long> {
             " from Dialog d " +
             " where d.first.id =:iam or d.second.id =:iam  ")
     List<Dialog> findMyDialog(@Param("iam") Long iam, Sort sort);
+
+    @Query(" select d " +
+            " from Dialog d " +
+            " where d.first.id =:iam or d.second.id =:iam  ")
+    List<Dialog> findMyDialog(@Param("iam") Long id);
 }

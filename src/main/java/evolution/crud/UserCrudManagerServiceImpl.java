@@ -1,8 +1,14 @@
 package evolution.crud;
 
+import evolution.crud.api.DialogCrudManagerService;
+import evolution.crud.api.FeedCrudManagerService;
+import evolution.crud.api.FriendCrudManagerService;
 import evolution.crud.api.UserCrudManagerService;
 import evolution.model.User;
 import evolution.model.UserAdditionalData;
+import evolution.repository.DialogRepository;
+import evolution.repository.FriendRepository;
+import evolution.repository.MessageRepository;
 import evolution.repository.UserRepository;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +39,21 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
     @Value("${model.user.defaultsortproperties}")
     private String defaultUserSortProperties;
 
+    private final FriendCrudManagerService friendCrudManagerService;
+
+    private final FeedCrudManagerService feedCrudManagerService;
+
+    private final DialogCrudManagerService dialogCrudManagerService;
+
     @Autowired
-    public UserCrudManagerServiceImpl(UserRepository userRepository) {
+    public UserCrudManagerServiceImpl(UserRepository userRepository,
+                                      FriendCrudManagerService friendCrudManagerService,
+                                      FeedCrudManagerService feedCrudManagerService,
+                                      DialogCrudManagerService dialogCrudManagerService) {
         this.userRepository = userRepository;
+        this.friendCrudManagerService = friendCrudManagerService;
+        this.feedCrudManagerService = feedCrudManagerService;
+        this.dialogCrudManagerService = dialogCrudManagerService;
     }
 
     @Override
@@ -145,7 +163,12 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
     @Override
     public void delete(Long aLong) {
         Optional<User> o = userRepository.findOneUserById(aLong);
-        o.ifPresent(p -> userRepository.delete(p));
+        if (o.isPresent()) {
+            feedCrudManagerService.deleteAllFeedRowByUser(o.get().getId());
+            friendCrudManagerService.deleteAllFriendRowByUser(o.get().getId());
+            dialogCrudManagerService.deleteAllDialogRowByUser(o.get().getId());
+            userRepository.delete(o.get());
+        }
     }
 
     @Override

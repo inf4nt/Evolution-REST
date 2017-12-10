@@ -145,4 +145,10 @@ public class FeedCrudManagerServiceImpl implements FeedCrudManagerService {
                 this.feedMaxFetch, this.defaultFeedSortType, this.defaultFeedSortProperties);
         return feedRepository.findFeedBySender(sender, p);
     }
+
+    @Override
+    public void deleteAllFeedRowByUser(Long id) {
+        List<Feed> list = feedRepository.findAllFeedByToUserOrSender(id);
+        feedRepository.delete(list);
+    }
 }

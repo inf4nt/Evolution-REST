@@ -37,6 +37,8 @@ public interface UserRestService extends AbstractRestService {
 
     ResponseEntity delete(Long id);
 
+    ResponseEntity delete(List<Long> id);
+
     ResponseEntity block(Long id);
 
     ResponseEntity anBlock(Long id);

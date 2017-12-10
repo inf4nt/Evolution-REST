@@ -8,6 +8,7 @@ import evolution.dto.MessageDTOTransfer;
 import evolution.dto.model.MessageDTO;
 import evolution.dto.model.MessageDTOForSave;
 import evolution.dto.model.MessageDTOFull;
+import evolution.dto.model.MessageForUpdateDTO;
 import evolution.model.Message;
 import evolution.model.User;
 import evolution.security.model.CustomSecurityUser;
@@ -185,6 +186,27 @@ public class MessageBusinessServiceImpl implements MessageBusinessService {
             e.printStackTrace();
             logger.warn(e.getMessage());
             return BusinessServiceExecuteResult.build(CATCH_EXCPETION);
+        }
+    }
+
+    @Override
+    public BusinessServiceExecuteResult<MessageDTO> update(MessageForUpdateDTO messageForUpdateDTO) {
+        Optional<Message> original = messageCrudManagerService.findOne(messageForUpdateDTO.getId());
+        if (original.isPresent()) {
+            if (securitySupportService.isAllowedFull(original.get().getSender().getId())) {
+                Message m = original.get();
+                m.setMessage(messageForUpdateDTO.getContent());
+
+                Optional<Message> res = messageCrudManagerService.update(m);
+                return res
+                        .map(message -> BusinessServiceExecuteResult.build(OK, messageDTOTransfer.modelToDTO(message)))
+                        .orElseGet(() -> BusinessServiceExecuteResult.build(NOT_FOUNT_OBJECT_FOR_EXECUTE));
+
+            } else {
+                return BusinessServiceExecuteResult.build(FORBIDDEN);
+            }
+        } else {
+            return BusinessServiceExecuteResult.build(NOT_FOUNT_OBJECT_FOR_EXECUTE);
         }
     }
 
