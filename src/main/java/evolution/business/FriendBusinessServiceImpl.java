@@ -214,59 +214,30 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
 
     @Override
     public List<FriendDTO> findFriends(Long iam) {
-        if (securitySupportService.isAllowedFull(iam)) {
-            return friendCrudManagerService
-                    .findProgressByUser(iam)
-                    .stream()
-                    .map(o -> friendDTOTransfer.modelToDTO(o, iam))
-                    .collect(Collectors.toList());
-        } else if (securitySupportService.isAdmin()) {
-            return friendCrudManagerService
-                    .findProgressByUser(iam)
-                    .stream()
-                    .map(o -> friendDTOTransfer.modelToDTO(o))
-                    .collect(Collectors.toList());
-        }
-        return new ArrayList<>();
+        List<Friend> progress = friendCrudManagerService
+                .findProgressByUser(iam);
+        return result(progress, iam);
     }
 
     @Override
     public Page<FriendDTO> findFriends(Long iam, Integer page, Integer size) {
-        if (securitySupportService.isAllowedFull(iam)) {
-            return friendCrudManagerService
-                    .findProgressByUser(iam, page, size)
-                    .map(o -> friendDTOTransfer.modelToDTO(o, iam));
-        } else if (securitySupportService.isAdmin()) {
-            return friendCrudManagerService
-                    .findProgressByUser(iam, page, size)
-                    .map(o -> friendDTOTransfer.modelToDTO(o));
-        }
-        return new PageImpl<>(new ArrayList<>());
+        Page<Friend> p = friendCrudManagerService
+                .findProgressByUser(iam, page, size);
+        return result(p, iam);
     }
 
     @Override
     public List<FriendDTO> findFollowers(Long iam) {
-        if (securitySupportService.isAllowedFull(iam)) {
-            return friendCrudManagerService
-                    .findFollowerByUser(iam)
-                    .stream()
-                    .map(o -> friendDTOTransfer.modelToDTO(o, iam))
-                    .collect(Collectors.toList());
-        } else if (securitySupportService.isAdmin()) {
-            return friendCrudManagerService
-                    .findFollowerByUser(iam)
-                    .stream()
-                    .map(o -> friendDTOTransfer.modelToDTO(o))
-                    .collect(Collectors.toList());
-        }
-        return new ArrayList<>();
+        List<Friend> followers = friendCrudManagerService
+                .findFollowerByUser(iam);
+       return result(followers, iam);
     }
 
     @Override
     public Page<FriendDTO> findFollowers(Long iam, Integer page, Integer size) {
-        return friendCrudManagerService
-                .findFollowerByUser(iam, page, size)
-                .map(o -> friendDTOTransfer.modelToDTO(o, iam));
+        Page<Friend> p = friendCrudManagerService
+                .findFollowerByUser(iam, page, size);
+        return result(p, iam);
     }
 
     @Override
@@ -376,4 +347,14 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
 
     }
 
+
+    private List<FriendDTO> result(List<Friend> list, Long iam) {
+        return list.stream()
+                .map(o -> friendDTOTransfer.modelToDTO(o, iam))
+                .collect(Collectors.toList());
+    }
+
+    private Page<FriendDTO> result(Page<Friend> page, Long iam) {
+        return page.map(o -> friendDTOTransfer.modelToDTO(o, iam));
+    }
 }
