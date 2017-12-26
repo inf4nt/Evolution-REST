@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.method.P;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -140,11 +141,11 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
-    public BusinessServiceExecuteResult<UserFullDTO> update(UserForUpdateDTO userForUpdateDTO) {
+    public BusinessServiceExecuteResult<evolution.dto.model2.UserDTO> update(UserForUpdateDTO userForUpdateDTO) {
         BusinessServiceExecuteResult<User> b = updateGlobal(userForUpdateDTO);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
             return BusinessServiceExecuteResult
-                    .build(BusinessServiceExecuteStatus.OK, b.getResultObjectOptional().map(o -> userDTOTransfer.modelToDTOFull(o)));
+                    .build(BusinessServiceExecuteStatus.OK, b.getResultObjectOptional().map(o -> userDTOTransfer.modelToDTO2(o)));
         }
         return BusinessServiceExecuteResult.build(b.getExecuteStatus());
     }
@@ -269,14 +270,20 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
-    public Optional<UserFullDTO> findOneUserFull(Long id) {
+    public BusinessServiceExecuteResult<evolution.dto.model2.UserDTO> findOneUserFull(Long id) {
         if (!securitySupportService.isAllowedFull(id)) {
             logger.warn("FORBIDDEN !!!");
-            return Optional.empty();
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN, Optional.empty());
         }
-        return userCrudManagerService
+        Optional<evolution.dto.model2.UserDTO> o = userCrudManagerService
                 .findOneLazy(id)
-                .map(o -> userDTOTransfer.modelToDTOFull(o));
+                .map(op -> userDTOTransfer.modelToDTO2(op));
+
+        if (o.isPresent()) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, o.get());
+        } else {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NO_CONTENT, Optional.empty());
+        }
     }
 
     @Override

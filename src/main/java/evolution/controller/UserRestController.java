@@ -5,6 +5,7 @@ import evolution.dto.model.UserForSaveDTO;
 import evolution.dto.model.UserForUpdateDTO;
 import evolution.dto.model.UserFullDTO;
 import evolution.rest.api.UserRestService;
+import evolution.service.SecuritySupportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -49,17 +50,22 @@ public class UserRestController {
     }
 
     @GetMapping(value = "/{id}/lazy")
-    public ResponseEntity<UserFullDTO> findOneLazy(@PathVariable Long id) {
+    public ResponseEntity<evolution.dto.model2.UserDTO> findOneLazy(@PathVariable Long id) {
        return userRestService.findOneFull(id);
     }
 
     @PostMapping(value = "/post")
+    public ResponseEntity<UserFullDTO> save2(@RequestBody UserForSaveDTO user) {
+        return save(user);
+    }
+
+    @PostMapping
     public ResponseEntity<UserFullDTO> save(@RequestBody UserForSaveDTO user) {
         return userRestService.createNewUser(user);
     }
 
     @PutMapping
-    public ResponseEntity<UserFullDTO> update(@RequestBody UserForUpdateDTO user) {
+    public ResponseEntity<evolution.dto.model2.UserDTO> update(@RequestBody UserForUpdateDTO user) {
         return userRestService.update(user);
     }
 
@@ -72,7 +78,6 @@ public class UserRestController {
     public ResponseEntity deleteById(@RequestParam List<Long> ids) {
         return userRestService.delete(ids);
     }
-
 
     @GetMapping(value = "/block/{id}")
     public ResponseEntity blockUser(@PathVariable Long id) {

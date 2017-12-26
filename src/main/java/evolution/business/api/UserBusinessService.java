@@ -25,7 +25,7 @@ public interface UserBusinessService {
 
     BusinessServiceExecuteResult<UserFullDTO> updateFull(UserForUpdateDTO userForUpdateDTO);
 
-    BusinessServiceExecuteResult<UserFullDTO> update(UserForUpdateDTO userForUpdateDTO);
+    BusinessServiceExecuteResult<evolution.dto.model2.UserDTO> update(UserForUpdateDTO userForUpdateDTO);
 
     BusinessServiceExecuteResult<User> updateGlobal(UserForUpdateDTO userForUpdateDTO);
 
@@ -57,7 +57,7 @@ public interface UserBusinessService {
 
     List<UserFullDTO> findAllIsBlockFull(boolean isBlock);
 
-    Optional<UserFullDTO> findOneUserFull(Long id);
+    BusinessServiceExecuteResult<evolution.dto.model2.UserDTO> findOneUserFull(Long id);
 
     Optional<UserDTO> findOneIsBlock(Long id, boolean isBlock);
 

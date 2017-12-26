@@ -47,8 +47,16 @@ public class UserRestServiceImpl implements UserRestService {
     }
 
     @Override
-    public ResponseEntity<UserFullDTO> findOneFull(Long userId) {
-        return response(userBusinessService.findOneUserFull(userId));
+    public ResponseEntity<evolution.dto.model2.UserDTO> findOneFull(Long userId) {
+        BusinessServiceExecuteResult<evolution.dto.model2.UserDTO> b = userBusinessService.findOneUserFull(userId);
+        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {
+            return ResponseEntity.status(403).build();
+        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.NO_CONTENT) {
+            return ResponseEntity.status(204).build();
+        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
+            return ResponseEntity.ok(b.getResultObject());
+        }
+        return ResponseEntity.status(417).build();
     }
 
     @Override
@@ -91,12 +99,14 @@ public class UserRestServiceImpl implements UserRestService {
     }
 
     @Override
-    public ResponseEntity<UserFullDTO> update(UserForUpdateDTO user) {
-        BusinessServiceExecuteResult<UserFullDTO> b = userBusinessService.update(user);
+    public ResponseEntity<evolution.dto.model2.UserDTO> update(UserForUpdateDTO user) {
+        BusinessServiceExecuteResult<evolution.dto.model2.UserDTO> b = userBusinessService.update(user);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent()) {
             return ResponseEntity.ok(b.getResultObjectOptional().get());
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE) {
             return ResponseEntity.status(417).build();
+        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {
+            return ResponseEntity.status(403).build();
         }
         return ResponseEntity.status(417).build();
     }

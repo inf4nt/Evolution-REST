@@ -23,7 +23,7 @@ public interface UserRestService extends AbstractRestService {
 
     ResponseEntity<UserDTO> findOne(Long userId);
 
-    ResponseEntity<UserFullDTO> findOneFull(Long userId);
+    ResponseEntity<evolution.dto.model2.UserDTO> findOneFull(Long userId);
 
     ResponseEntity<UserDTO> findByUsername(String username);
 
@@ -33,7 +33,7 @@ public interface UserRestService extends AbstractRestService {
 
     ResponseEntity<UserFullDTO> createNewUser(UserForSaveDTO user);
 
-    ResponseEntity<UserFullDTO> update(UserForUpdateDTO user);
+    ResponseEntity<evolution.dto.model2.UserDTO> update(UserForUpdateDTO user);
 
     ResponseEntity delete(Long id);
 

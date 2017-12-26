@@ -47,6 +47,26 @@ public class UserDTOTransfer {
         return modelMapper.map(user, UserFullDTO.class);
     }
 
+    public evolution.dto.model2.UserDTO modelToDTO2(User user) {
+        return evolution.dto.model2.UserDTO
+                .builder()
+                .id(user.getId())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .nickname(user.getNickname())
+                .role(user.getRole().name())
+                .idAdditionalData(user.getUserAdditionalData().getId())
+                .username(user.getUserAdditionalData().getUsername())
+                .registrationDate(user.getUserAdditionalData().getRegistrationDate())
+                .country(user.getUserAdditionalData().getCountry())
+                .state(user.getUserAdditionalData().getState())
+                .gender(user.getUserAdditionalData().getGender())
+                .isBlock(user.getUserAdditionalData().isBlock())
+                .isActive(user.getUserAdditionalData().isActive())
+                .secretKey(user.getUserAdditionalData().getSecretKey())
+                .build();
+    }
+
     public UserForSaveDTO modelToDTOForSave(User user) {
         return modelMapper.map(user, UserForSaveDTO.class);
     }
