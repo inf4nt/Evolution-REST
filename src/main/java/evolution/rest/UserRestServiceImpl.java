@@ -82,6 +82,12 @@ public class UserRestServiceImpl implements UserRestService {
     }
 
     @Override
+    public ResponseEntity<List<UserDTO>> findAll2(String sortType, List<String> sortProperties) {
+        List<UserDTO> list = userBusinessService.findAll2(sortType, sortProperties);
+        return response(list);
+    }
+
+    @Override
     public ResponseEntity<Page<UserFullDTO>> findAllFullPage(Integer page, Integer size, String sortType, List<String> sortProperties) {
         return null;
     }

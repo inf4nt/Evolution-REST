@@ -19,6 +19,8 @@ public interface UserRestService extends AbstractRestService {
 
     ResponseEntity<List<UserFullDTO>> findAllFull(String sortType, List<String> sortProperties);
 
+    ResponseEntity<List<UserDTO>> findAll2(String sortType, List<String> sortProperties);
+
     ResponseEntity<Page<UserFullDTO>> findAllFullPage(Integer page, Integer size, String sortType, List<String> sortProperties);
 
     ResponseEntity<UserDTO> findOne(Long userId);

@@ -38,10 +38,16 @@ public class UserRestController {
         return userRestService.findAll(page, size, sort, sortProperties);
     }
 
-    @GetMapping(value = "/list")
+    @GetMapping(value = "/list/lazy")
     public ResponseEntity<List<UserFullDTO>> findAllList(@RequestParam(required = false) String sort,
                                                          @RequestParam(required = false) List<String> sortProperties) {
         return userRestService.findAllFull(sort, sortProperties);
+    }
+
+    @GetMapping(value = "/list")
+    public ResponseEntity<List<UserDTO>> findAll2(@RequestParam(required = false) String sort,
+                                                      @RequestParam(required = false) List<String> sortProperties) {
+        return userRestService.findAll2(sort, sortProperties);
     }
 
     @GetMapping(value = "/{id}")

@@ -39,6 +39,8 @@ public interface UserBusinessService {
 
     List<UserFullDTO> findAllFull(String sortType, List<String> sortProperties);
 
+    List<UserDTO> findAll2(String sortType, List<String> sortProperties);
+
     Optional<UserFullDTO> findByUsernameFull(String username);
 
     Optional<UserDTO> findByUsername(String username);

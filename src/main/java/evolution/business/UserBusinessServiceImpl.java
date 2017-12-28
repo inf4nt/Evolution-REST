@@ -195,6 +195,14 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
+    public List<UserDTO> findAll2(String sortType, List<String> sortProperties) {
+        return userCrudManagerService.findAll(sortType, sortProperties)
+                .stream()
+                .map(o -> userDTOTransfer.modelToDTO(o))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Optional<UserFullDTO> findByUsernameFull(String username) {
         return userCrudManagerService
