@@ -1,5 +1,6 @@
 package evolution.security.controller;
 
+import evolution.common.UserRoleEnum;
 import evolution.model.User;
 import evolution.security.TokenUtil;
 import evolution.security.model.AuthenticationRequest;
@@ -37,7 +38,7 @@ public class AuthController {
     }
 
     @PostMapping
-    public ResponseEntity authenticationRequest(@RequestBody AuthenticationRequest authenticationRequest)
+    public ResponseEntity<AuthenticationResponse> authenticationRequest(@RequestBody AuthenticationRequest authenticationRequest)
             throws AuthenticationException {
 
         System.out.println("run auth " + authenticationRequest);
@@ -57,4 +58,14 @@ public class AuthController {
         System.out.println("TOKEN " + token);
         return ResponseEntity.ok(new AuthenticationResponse(token, new User(userDetails)));
     }
+
+    @PostMapping(value = "/admin")
+    public ResponseEntity<AuthenticationResponse> authenticationRequestAdmin(@RequestBody AuthenticationRequest authenticationRequest) throws AuthenticationException {
+        ResponseEntity<AuthenticationResponse> responseEntity = authenticationRequest(authenticationRequest);
+        if (responseEntity.getBody().getUser().getRole() != UserRoleEnum.ADMIN) {
+            return ResponseEntity.status(403).build();
+        }
+        return responseEntity;
+    }
+
 }
