@@ -1,16 +1,11 @@
 package evolution.controller;
 
-import evolution.dto.model.UserDTO;
-import evolution.dto.model.UserForSaveDTO;
-import evolution.dto.model.UserForUpdateDTO;
-import evolution.dto.model.UserFullDTO;
+import evolution.dto.model.*;
 import evolution.rest.api.UserRestService;
-import evolution.service.SecuritySupportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -106,7 +101,7 @@ public class UserRestController {
     }
 
     @PutMapping(value = "/set-password")
-    public ResponseEntity<UserFullDTO> setPassword(@RequestBody UserFullDTO userFullDTO) {
-        return userRestService.setPassword(userFullDTO);
+    public ResponseEntity setPassword(@RequestBody UserSetPasswordDTO userSetPasswordDTO) {
+        return userRestService.setPassword(userSetPasswordDTO);
     }
 }

@@ -3,10 +3,7 @@ package evolution.rest;
 import evolution.business.BusinessServiceExecuteResult;
 import evolution.business.api.UserBusinessService;
 import evolution.common.BusinessServiceExecuteStatus;
-import evolution.dto.model.UserDTO;
-import evolution.dto.model.UserForSaveDTO;
-import evolution.dto.model.UserForUpdateDTO;
-import evolution.dto.model.UserFullDTO;
+import evolution.dto.model.*;
 import evolution.rest.api.UserRestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -163,14 +159,16 @@ public class UserRestServiceImpl implements UserRestService {
     }
 
     @Override
-    public ResponseEntity<UserFullDTO> setPassword(UserFullDTO userFullDTO) {
-        BusinessServiceExecuteResult<UserFullDTO> b = userBusinessService.setPasswordByOldPassword(userFullDTO);
-        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent()) {
-            return ResponseEntity.ok(b.getResultObject());
+    public ResponseEntity setPassword(UserSetPasswordDTO userSetPasswordDTO) {
+        BusinessServiceExecuteResult b = userBusinessService.setPasswordByOldPassword(userSetPasswordDTO);
+        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
+            return ResponseEntity.ok().build();
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE) {
             return ResponseEntity.noContent().build();
+        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {
+            return ResponseEntity.status(403).build();
         }
 
-        return ResponseEntity.status(417).build();
+        return ResponseEntity.status(204).build();
     }
 }

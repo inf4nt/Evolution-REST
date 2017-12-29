@@ -5,10 +5,7 @@ import evolution.common.BusinessServiceExecuteStatus;
 import evolution.common.UserRoleEnum;
 import evolution.crud.api.UserCrudManagerService;
 import evolution.dto.UserDTOTransfer;
-import evolution.dto.model.UserDTO;
-import evolution.dto.model.UserForSaveDTO;
-import evolution.dto.model.UserForUpdateDTO;
-import evolution.dto.model.UserFullDTO;
+import evolution.dto.model.*;
 
 import evolution.model.User;
 import evolution.service.DateService;
@@ -18,9 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.security.access.method.P;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -343,18 +338,24 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public BusinessServiceExecuteResult<UserFullDTO> setPasswordByOldPassword(UserFullDTO userFullDTO) {
-        String newPassword = userTechnicalService.encodePassword(userFullDTO.getUserAdditionalData().getPassword());
-        Optional<User> op = userCrudManagerService.findOneLazy(userFullDTO.getId());
+    public BusinessServiceExecuteResult setPasswordByOldPassword(UserSetPasswordDTO user) {
+        if (!securitySupportService.isAllowed(user.getId())) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
+        }
+
+        Optional<User> op = userCrudManagerService.findOneLazy(user.getId());
         if (!op.isPresent()) {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
         }
         User u = op.get();
+        String newPassword = userTechnicalService.encodePassword(user.getNewPassword());
+        if (!userTechnicalService.matches(user.getOldPassword(), u.getUserAdditionalData().getPassword())) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.EXPECTATION_FAILED);
+        }
         u.getUserAdditionalData().setPassword(newPassword);
         userCrudManagerService.save(u);
 
-        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, userDTOTransfer.modelToDTOFull(u));
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK);
     }
 
     @Override

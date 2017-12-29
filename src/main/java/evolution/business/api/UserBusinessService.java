@@ -1,9 +1,6 @@
 package evolution.business.api;
 
-import evolution.dto.model.UserDTO;
-import evolution.dto.model.UserForSaveDTO;
-import evolution.dto.model.UserForUpdateDTO;
-import evolution.dto.model.UserFullDTO;
+import evolution.dto.model.*;
 import evolution.business.BusinessServiceExecuteResult;
 import evolution.model.User;
 import org.springframework.data.domain.Page;
@@ -69,7 +66,7 @@ public interface UserBusinessService {
 
     BusinessServiceExecuteResult setPasswordByUserId(String newPassword, Long id);
 
-    BusinessServiceExecuteResult<UserFullDTO> setPasswordByOldPassword(UserFullDTO userFullDTO);
+    BusinessServiceExecuteResult setPasswordByOldPassword(UserSetPasswordDTO userSetPasswordDTO);
 
     BusinessServiceExecuteResult setNewSecretKey(Long id);
 

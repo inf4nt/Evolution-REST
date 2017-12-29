@@ -1,9 +1,6 @@
 package evolution.rest.api;
 
-import evolution.dto.model.UserDTO;
-import evolution.dto.model.UserForSaveDTO;
-import evolution.dto.model.UserForUpdateDTO;
-import evolution.dto.model.UserFullDTO;
+import evolution.dto.model.*;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,5 +46,5 @@ public interface UserRestService extends AbstractRestService {
 
     ResponseEntity<HttpStatus> exist(String username);
 
-    ResponseEntity<UserFullDTO> setPassword(UserFullDTO userFullDTO);
+    ResponseEntity setPassword(UserSetPasswordDTO userSetPasswordDTO);
 }
