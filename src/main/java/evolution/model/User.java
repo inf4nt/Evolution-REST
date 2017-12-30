@@ -4,7 +4,9 @@ package evolution.model;
 import evolution.common.UserRoleEnum;
 import evolution.security.model.CustomSecurityUser;
 import lombok.*;
+
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * Created by Infant on 03.10.2017.
@@ -13,7 +15,7 @@ import javax.persistence.*;
 @Table(name = "user_data")
 @Data
 @NoArgsConstructor
-public class User {
+public class User implements Serializable {
 
     // default data
     // default data

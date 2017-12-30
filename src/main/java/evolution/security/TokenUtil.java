@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Component
 public class TokenUtil {
@@ -31,6 +32,18 @@ public class TokenUtil {
             username = null;
         }
         return username;
+    }
+
+    public String getAuthSession(String token) {
+        String session;
+        try {
+            final Claims claims = this.getClaimsFromToken(token);
+            session = claims.get("authSession").toString();
+        } catch (Exception e) {
+            session = null;
+        }
+
+        return session;
     }
 
     public Date getCreatedDateFromToken(String token) {
@@ -89,6 +102,15 @@ public class TokenUtil {
         Map<String, Object> claims = new HashMap<>();
         claims.put("sub", userDetails.getUsername());
         claims.put("created", this.generateCurrentDate());
+        claims.put("authSession", UUID.randomUUID().toString());
+        return this.generateToken(claims);
+    }
+
+    public String generateToken(UserDetails userDetails, String authSession) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("sub", userDetails.getUsername());
+        claims.put("created", this.generateCurrentDate());
+        claims.put("authSession", authSession);
         return this.generateToken(claims);
     }
 
@@ -122,7 +144,9 @@ public class TokenUtil {
         CustomSecurityUser user = (CustomSecurityUser) userDetails;
         final String username = this.getUsernameFromToken(token);
         final Date created = this.getCreatedDateFromToken(token);
+        final String authSession = this.getAuthSession(token);
         return (username.equals(user.getUsername())
+                && authSession != null
                 && !(this.isTokenExpired(token))
                 && !(this.isCreatedBeforeLastPasswordReset(created, user.getLastPasswordReset())));
     }

@@ -37,6 +37,9 @@ public class Message {
     @Column(name = "is_active", columnDefinition = "boolean default true")
     private boolean isActive;
 
+    @Column(name = "is_read", columnDefinition = "boolean default false")
+    private boolean isRead;
+
     @Version
     @Column(columnDefinition = "bigint")
     private Long version;
