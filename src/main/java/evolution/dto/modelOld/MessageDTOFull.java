@@ -1,4 +1,4 @@
-package evolution.dto.model;
+package evolution.dto.modelOld;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
@@ -12,11 +12,11 @@ public class MessageDTOFull {
 
     private Long id;
 
+    private String text;
+
     private UserDTO sender;
 
     private DialogDTO dialogDTO;
-
-    private String text;
 
     private Long createdDateTimestamp;
 

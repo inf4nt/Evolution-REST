@@ -1,26 +1,26 @@
 package evolution.dto.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-/**
- * Created by Infant on 06.11.2017.
- */
+import java.util.Date;
+
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @JsonInclude
 public class MessageDTO {
 
     private Long id;
 
-    private String content;
-
     private UserDTO sender;
 
     private DialogDTO dialog;
 
-    private String text;
+    private String message;
 
-    private Long createdDateTimestamp;
-
-    private String createdDateString;
+    private Date dateDispatch;
 }

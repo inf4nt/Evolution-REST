@@ -2,10 +2,10 @@ package evolution.business.api;
 
 import evolution.business.BusinessServiceExecuteResult;
 import evolution.dto.MessageDTOTransfer;
-import evolution.dto.model.MessageDTO;
-import evolution.dto.model.MessageDTOForSave;
-import evolution.dto.model.MessageDTOFull;
-import evolution.dto.model.MessageForUpdateDTO;
+import evolution.dto.modelOld.MessageDTO;
+import evolution.dto.modelOld.MessageDTOForSave;
+import evolution.dto.modelOld.MessageDTOFull;
+import evolution.dto.modelOld.MessageForUpdateDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 

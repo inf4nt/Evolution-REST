@@ -1,6 +1,6 @@
 package evolution.crud.api;
 
-import evolution.dto.model.MessageDTO;
+import evolution.dto.modelOld.MessageDTO;
 import evolution.model.Message;
 import org.springframework.data.domain.Page;
 
@@ -22,6 +22,12 @@ public interface MessageCrudManagerService extends AbstractCrudManagerService<Me
     Page<Message> findMessageByDialogId(Long dialogId, Integer page, Integer size, String sort, List<String> sortProperties);
 
     Page<Message> findMessageByDialogId(Long dialogId, Long iam, Integer page, Integer size, String sort, List<String> sortProperties);
+
+    List<Message> findMessageByDialogIdAndParticipant(Long dialogId, Long participantId);
+
+    List<Message> findMessageByDialogIdAndParticipant(Long dialogId, Long participantId, String sort, List<String> sortProperties);
+
+    Page<Message> findMessageByDialogIdAndParticipant(Long dialogId, Long participantId, Integer page, Integer size, String sort, List<String> sortProperties);
 
     List<Message> findMessageByDialogId(Long dialogId, Long iam, String sort, List<String> sortProperties);
 

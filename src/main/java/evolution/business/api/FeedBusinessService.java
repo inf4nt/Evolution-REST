@@ -1,9 +1,9 @@
 package evolution.business.api;
 
 import evolution.business.BusinessServiceExecuteResult;
-import evolution.dto.model.FeedDTO;
-import evolution.dto.model.FeedForSaveDTO;
-import evolution.dto.model.FeedForUpdateDTO;
+import evolution.dto.modelOld.FeedDTO;
+import evolution.dto.modelOld.FeedForSaveDTO;
+import evolution.dto.modelOld.FeedForUpdateDTO;
 import evolution.model.Feed;
 import org.springframework.data.domain.Page;
 

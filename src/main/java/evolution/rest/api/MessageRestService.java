@@ -1,8 +1,8 @@
 package evolution.rest.api;
 
-import evolution.dto.model.MessageDTO;
-import evolution.dto.model.MessageDTOForSave;
-import evolution.dto.model.MessageForUpdateDTO;
+import evolution.dto.modelOld.MessageDTO;
+import evolution.dto.modelOld.MessageDTOForSave;
+import evolution.dto.modelOld.MessageForUpdateDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

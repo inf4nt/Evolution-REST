@@ -21,6 +21,17 @@ public interface DialogRepository extends JpaRepository<Dialog, Long> {
             "where d.id =:dialogId")
     Optional<Dialog> findOneDialog(@Param("dialogId") Long dialogId);
 
+    @Query("select d from Dialog d join fetch d.messageList where d.id =:id")
+    Optional<Dialog> findOneLazy(@Param("id") Long id);
+
+    @Query(" select d " +
+            " from Dialog d " +
+            " join fetch d.messageList " +
+            " where d.id =:id " +
+            " and ( d.first.id =:participantId or d.second.id =:participantId )")
+    Optional<Dialog> findOneLazyAndParticipantId(@Param("id") Long id, @Param("participantId") Long participantId);
+
+    @Deprecated
     @Query("select d " +
             "from Dialog d " +
             "where d.id =:dialogId " +
@@ -47,4 +58,19 @@ public interface DialogRepository extends JpaRepository<Dialog, Long> {
             " from Dialog d " +
             " where d.first.id =:iam or d.second.id =:iam  ")
     List<Dialog> findMyDialog(@Param("iam") Long id);
+
+    @Query("select d " +
+            "from Dialog d " +
+            "join fetch d.messageList ")
+    List<Dialog> findAllLazy();
+
+    @Query("select d " +
+            "from Dialog d " +
+            "join fetch d.messageList ")
+    List<Dialog> findAllLazy(Sort sort);
+
+    @Query(value = "select d " +
+            "from Dialog d " +
+            "join fetch d.messageList ", countQuery = "select count(1) from Dialog ")
+    Page<Dialog> findAllLazy(Pageable pageable);
 }

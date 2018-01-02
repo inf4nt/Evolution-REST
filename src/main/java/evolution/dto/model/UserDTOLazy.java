@@ -2,30 +2,28 @@ package evolution.dto.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import evolution.common.GenderEnum;
-import lombok.Data;
+import lombok.*;
 
 import java.util.Date;
 
-/**
- * Created by Infant on 08.11.2017.
- */
+
+
 @Data
+@EqualsAndHashCode(callSuper = true)
 @JsonInclude
-public class UserAdditionalDataDTO {
-
-    private Long id;
-
-    private String username;
-
-    private String password;
-
-    private Date registrationDate;
+@NoArgsConstructor
+@AllArgsConstructor
+public class UserDTOLazy extends UserDTO {
 
     private String country;
 
     private String state;
 
     private GenderEnum gender;
+
+    private String username;
+
+    private Date registrationDate;
 
     private boolean isBlock;
 

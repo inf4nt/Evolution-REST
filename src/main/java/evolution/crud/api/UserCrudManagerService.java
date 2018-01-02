@@ -13,25 +13,27 @@ public interface UserCrudManagerService extends AbstractCrudManagerService<User,
 
     Optional<User> findByUsername(String username);
 
+    Optional<User> findByUsernameLazy(String username);
+
     Optional<User> findUserBySecretKey(String secretKey);
 
     Optional<UserAdditionalData> findUserAdditionalDataByUserId(Long userId);
 
-    Optional<User> findOneUserByIdAndIsActive(Long userId, boolean active);
+    Optional<User> findOneAndIsActive(Long userId, boolean active);
 
-    Optional<User> findOneUserByIdAndIsBlock(Long userId, boolean block);
+    Optional<User> findOneAndIsBlock(Long userId, boolean block);
 
-    Page<User> findUserAllByIsActive(boolean active, Integer page, Integer size, String sort, List<String> sortProperties);
+    Page<User> findAllAndIsActive(boolean active, Integer page, Integer size, String sort, List<String> sortProperties);
 
-    Page<User> findUserAllByIsBlock(boolean block, Integer page, Integer size, String sort, List<String> sortProperties);
+    Page<User> findAllAndIsBlock(boolean block, Integer page, Integer size, String sort, List<String> sortProperties);
 
-    List<User> findUserAllByIsActive(boolean active, String sort, List<String> sortProperties);
+    List<User> findAllAndIsActive(boolean active, String sort, List<String> sortProperties);
 
-    List<User> findUserAllByIsBlock(boolean block, String sort, List<String> sortProperties);
+    List<User> findAllAndIsBlock(boolean block, String sort, List<String> sortProperties);
 
-    List<User> findUserAllByIsActive(boolean active);
+    List<User> findAllAndIsActive(boolean active);
 
-    List<User> findUserAllByIsBlock(boolean block);
+    List<User> findAllAndIsBlock(boolean block);
 
     Page<User> findAllLazy(Integer page, Integer size, String sort, List<String> sortProperties);
 
@@ -49,23 +51,25 @@ public interface UserCrudManagerService extends AbstractCrudManagerService<User,
 
     Optional<UserAdditionalData> findUserAdditionalDataByUserIdLazy(Long userId);
 
-    Optional<User> findOneUserByIdAndIsActiveLazy(Long userId, boolean active);
+    Optional<User> findOneAndIsActiveLazy(Long userId, boolean active);
 
-    Optional<User> findOneUserByIdAndIsBlockLazy(Long userId, boolean block);
+    Optional<User> findOneAndIsBlockLazy(Long userId, boolean block);
 
     Optional<User> findOneLazy(Long userId);
 
-    Page<User> findUserAllByIsActiveLazy(boolean active, Integer page, Integer size, String sort, List<String> sortProperties);
+    Page<User> findAllAndIsActiveLazy(boolean active, Integer page, Integer size, String sort, List<String> sortProperties);
 
-    Page<User> findUserAllByIsBlockLazy(boolean block, Integer page, Integer size, String sort, List<String> sortProperties);
+    Page<User> findAllAndIsBlockLazy(boolean block, Integer page, Integer size, String sort, List<String> sortProperties);
 
-    List<User> findUserAllByIsActiveLazy(boolean active, String sort, List<String> sortProperties);
+    List<User> findAllAndIsActiveLazy(boolean active, String sort, List<String> sortProperties);
 
-    List<User> findUserAllByIsBlockLazy(boolean block, String sort, List<String> sortProperties);
+    List<User> findAllAndIsBlockLazy(boolean block, String sort, List<String> sortProperties);
 
-    List<User> findUserAllByIsActiveLazy(boolean active);
+    List<User> findAllAndIsActiveLazy(boolean active);
 
-    List<User> findUserAllByIsBlockLazy(boolean block);
+    List<User> findAllAndIsBlockLazy(boolean block);
 
     boolean deleteById(Long id);
+
+    void deleteAll();
 }

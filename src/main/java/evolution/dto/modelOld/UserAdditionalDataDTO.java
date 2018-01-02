@@ -1,29 +1,35 @@
-package evolution.dto.model;
+package evolution.dto.modelOld;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import evolution.common.GenderEnum;
 import lombok.Data;
 
+import java.util.Date;
+
 /**
- * Created by Infant on 09.11.2017.
+ * Created by Infant on 08.11.2017.
  */
 @Data
 @JsonInclude
-public class UserForSaveDTO {
+public class UserAdditionalDataDTO {
 
-    private String firstName;
-
-    private String lastName;
-
-    private String nickname;
+    private Long id;
 
     private String username;
 
     private String password;
+
+    private Date registrationDate;
 
     private String country;
 
     private String state;
 
     private GenderEnum gender;
+
+    private boolean isBlock;
+
+    private boolean isActive;
+
+    private String secretKey;
 }

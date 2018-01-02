@@ -1,10 +1,10 @@
 package evolution.controller;
 
 
-import evolution.dto.model.FriendActionDTO;
-import evolution.dto.model.FriendDTO;
-import evolution.dto.model.FriendDTOFull;
-import evolution.dto.model.FriendResultActionDTO;
+import evolution.dto.modelOld.FriendActionDTO;
+import evolution.dto.modelOld.FriendDTO;
+import evolution.dto.modelOld.FriendDTOFull;
+import evolution.dto.modelOld.FriendResultActionDTO;
 import evolution.rest.api.FriendRestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

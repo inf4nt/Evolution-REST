@@ -1,5 +1,7 @@
 package evolution.rest.api;
 
+import evolution.business.BusinessServiceExecuteResult;
+import evolution.common.BusinessServiceExecuteStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 
@@ -27,5 +29,21 @@ public interface AbstractRestService {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(optional.get());
+    }
+
+
+    default <T> ResponseEntity<T> response(BusinessServiceExecuteResult<T> executeResult) {
+        if (executeResult.getExecuteStatus() == BusinessServiceExecuteStatus.OK && executeResult.getResultObjectOptional() != null && executeResult.getResultObjectOptional().isPresent()) {
+            return ResponseEntity.ok(executeResult.getResultObject());
+        } else if (executeResult.getExecuteStatus() == BusinessServiceExecuteStatus.OK && executeResult.getResultObjectOptional() == null) {
+            return ResponseEntity.ok().build();
+        } else if (executeResult.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {
+            return ResponseEntity.status(403).build();
+        } else if (executeResult.getExecuteStatus() == BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE) {
+            return ResponseEntity.noContent().build();
+        } else if (executeResult.getExecuteStatus() == BusinessServiceExecuteStatus.NOT_FOUND_PRINCIPAL_FOR_EXECUTE) {
+            return ResponseEntity.status(401).build();
+        }
+        return ResponseEntity.status(417).build();
     }
 }

@@ -4,7 +4,7 @@ import evolution.business.BusinessServiceExecuteResult;
 import evolution.business.api.DialogBusinessService;
 import evolution.common.BusinessServiceExecuteStatus;
 import evolution.dto.model.DialogDTO;
-import evolution.dto.model.DialogFullDTO;
+import evolution.dto.model.DialogDTOLazy;
 import evolution.dto.model.MessageDTO;
 import evolution.rest.api.DialogRestService;
 import org.slf4j.Logger;
@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,21 +34,41 @@ public class DialogRestServiceImpl implements DialogRestService {
     }
 
     @Override
-    public ResponseEntity<List<DialogFullDTO>> findAll() {
-        List<DialogFullDTO> list = dialogBusinessService.findAll();
+    public ResponseEntity<List<DialogDTO>> findDialogsByUserId(Long id) {
+        return response(dialogBusinessService.findDialogsByUserId(id));
+    }
+
+    @Override
+    public ResponseEntity<List<DialogDTO>> findAll() {
+        List<DialogDTO> list = dialogBusinessService.findAll();
         return response(list);
     }
 
     @Override
-    public ResponseEntity<Page<DialogFullDTO>> findAll(Integer page, Integer size, String sort, List<String> sortProperties) {
-        Page<DialogFullDTO> p = dialogBusinessService.findAll(page, size, sort, sortProperties);
+    public ResponseEntity<Page<DialogDTO>> findAll(Integer page, Integer size, String sort, List<String> sortProperties) {
+        Page<DialogDTO> p = dialogBusinessService.findAll(page, size, sort, sortProperties);
         return response(p);
     }
 
     @Override
-    public ResponseEntity<DialogFullDTO> findOne(Long dialogId) {
-        Optional<DialogFullDTO> o = dialogBusinessService.findOne(dialogId);
+    public ResponseEntity<List<DialogDTOLazy>> findAllLazy() {
+        return response(dialogBusinessService.findAllLazy());
+    }
+
+    @Override
+    public ResponseEntity<Page<DialogDTOLazy>> findAllLazy(Integer page, Integer size, String sort, List<String> sortProperties) {
+        return response(dialogBusinessService.findAllLazy(page, size, sort, sortProperties));
+    }
+
+    @Override
+    public ResponseEntity<DialogDTO> findOne(Long dialogId) {
+        Optional<DialogDTO> o = dialogBusinessService.findOne(dialogId);
         return response(o);
+    }
+
+    @Override
+    public ResponseEntity<DialogDTOLazy> findOneLazy(Long dialogId) {
+        return response(dialogBusinessService.findOneLazy(dialogId));
     }
 
     @Override
@@ -59,15 +78,13 @@ public class DialogRestServiceImpl implements DialogRestService {
     }
 
     @Override
-    public ResponseEntity<Page<MessageDTO>> findMessageByDialogAndUserId(Long dialogId, Integer page, Integer size, String sort, List<String> sortProperties) {
-        Page<MessageDTO> p = dialogBusinessService.findMessageByDialogAndUserId(dialogId, page, size, sort, sortProperties);
-        return response(p);
+    public ResponseEntity<List<MessageDTO>> findMessageByDialog(Long dialogId) {
+        return response(dialogBusinessService.findMessageByDialog(dialogId));
     }
 
     @Override
-    public ResponseEntity<List<MessageDTO>> findMessageByDialogAndUserId(Long dialogId) {
-        List<MessageDTO> list = dialogBusinessService.findMessageByDialogAndUserId(dialogId);
-        return response(list);
+    public ResponseEntity<List<MessageDTO>> findMessageByDialog(Long dialogId, String sort, List<String> sortProperties) {
+        return response(dialogBusinessService.findMessageByDialog(dialogId, sort, sortProperties));
     }
 
     @Override
@@ -77,8 +94,7 @@ public class DialogRestServiceImpl implements DialogRestService {
             return ResponseEntity.noContent().build();
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.EXPECTATION_FAILED){
             return ResponseEntity.status(417).build();
-        } else {
-            return ResponseEntity.status(500).build();
         }
+        return ResponseEntity.status(500).build();
     }
 }

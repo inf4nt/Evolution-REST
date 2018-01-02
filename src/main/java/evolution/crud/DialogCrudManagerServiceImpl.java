@@ -1,7 +1,7 @@
 package evolution.crud;
 
 import evolution.crud.api.DialogCrudManagerService;
-import evolution.dto.model.MessageDTO;
+import evolution.dto.modelOld.MessageDTO;
 import evolution.model.Dialog;
 import evolution.model.Message;
 import evolution.repository.DialogRepository;
@@ -46,6 +46,35 @@ public class DialogCrudManagerServiceImpl implements DialogCrudManagerService {
     }
 
     @Override
+    public Optional<Dialog> findOneLazy(Long id) {
+        return dialogRepository.findOneLazy(id);
+    }
+
+    @Override
+    public Optional<Dialog> findOneLazyAndParticipantId(Long id, Long participant) {
+        return dialogRepository.findOneLazyAndParticipantId(id, participant);
+    }
+
+    @Override
+    public List<Dialog> findAllLazy() {
+        return dialogRepository.findAllLazy();
+    }
+
+    @Override
+    public List<Dialog> findAllLazy(String sort, List<String> sortProperties) {
+        Sort s = getSortForRestService(sort, sortProperties,
+                this.defaultDialogSortType, this.defaultDialogSortProperties);
+        return dialogRepository.findAllLazy(s);
+    }
+
+    @Override
+    public Page<Dialog> findAllLazy(Integer page, Integer size, String sort, List<String> sortProperties) {
+        Pageable pageable = getPageableForRestService(page, size, sort, sortProperties,
+                this.dialogMaxFetch, this.defaultDialogSortType, this.defaultDialogSortProperties);
+        return dialogRepository.findAllLazy(pageable);
+    }
+
+    @Override
     public List<Dialog> findAll(String sort, List<String> sortProperties) {
         Sort s = getSortForRestService(sort, sortProperties,
                 this.defaultDialogSortType, this.defaultDialogSortProperties);
@@ -71,6 +100,11 @@ public class DialogCrudManagerServiceImpl implements DialogCrudManagerService {
         Sort s = getSortForRestService(sort, sortProperties,
                 this.defaultDialogSortType, this.defaultDialogSortProperties);
         return dialogRepository.findMyDialog(iam, s);
+    }
+
+    @Override
+    public List<Dialog> findDialogsByUserId(Long userId) {
+        return dialogRepository.findMyDialog(userId);
     }
 
     @Override

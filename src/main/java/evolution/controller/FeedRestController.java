@@ -1,8 +1,8 @@
 package evolution.controller;
 
-import evolution.dto.model.FeedDTO;
-import evolution.dto.model.FeedForSaveDTO;
-import evolution.dto.model.FeedForUpdateDTO;
+import evolution.dto.modelOld.FeedDTO;
+import evolution.dto.modelOld.FeedForSaveDTO;
+import evolution.dto.modelOld.FeedForUpdateDTO;
 import evolution.rest.api.FeedRestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

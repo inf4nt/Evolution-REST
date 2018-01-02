@@ -1,7 +1,7 @@
 package evolution.controller;
 
 import evolution.dto.model.DialogDTO;
-import evolution.dto.model.DialogFullDTO;
+import evolution.dto.model.DialogDTOLazy;
 import evolution.dto.model.MessageDTO;
 import evolution.rest.api.DialogRestService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.NamedEntityGraph;
 import java.util.List;
 
 /**
@@ -28,41 +27,61 @@ public class DialogRestController {
         this.dialogRestService = dialogRestService;
     }
 
-    @GetMapping(value = "/list")
-    public ResponseEntity<List<DialogFullDTO>> findAll2() {
+    @GetMapping
+    public ResponseEntity<List<DialogDTO>> findAll() {
         return dialogRestService.findAll();
     }
 
-    @GetMapping
-    public ResponseEntity<Page<DialogFullDTO>> findAll(@RequestParam(required = false) Integer page,
+    @GetMapping(value = "/lazy")
+    public ResponseEntity<List<DialogDTOLazy>> findAllList() {
+        return dialogRestService.findAllLazy();
+    }
+
+    @GetMapping(value = "/page")
+    public ResponseEntity<Page<DialogDTO>> findAllPage(@RequestParam(required = false) Integer page,
                                                        @RequestParam(required = false) Integer size,
                                                        @RequestParam(required = false) String sortType,
                                                        @RequestParam(required = false) List<String> sortProperties) {
         return dialogRestService.findAll(page, size, sortType, sortProperties);
     }
 
+    @GetMapping(value = "/page/lazy")
+    public ResponseEntity<Page<DialogDTOLazy>> findAllPageLazy(@RequestParam(required = false) Integer page,
+                                                               @RequestParam(required = false) Integer size,
+                                                               @RequestParam(required = false) String sortType,
+                                                               @RequestParam(required = false) List<String> sortProperties) {
+        return dialogRestService.findAllLazy(page, size, sortType, sortProperties);
+    }
+
+
     @GetMapping(value = "/{id}")
-    public ResponseEntity<DialogFullDTO> findOne(@PathVariable Long id) {
+    public ResponseEntity<DialogDTO> findOne(@PathVariable Long id) {
         return dialogRestService.findOne(id);
     }
 
-    @GetMapping(value = "/{id}/message")
-    public ResponseEntity<Page<MessageDTO>> findMessageByDialog(@PathVariable Long id,
-                                                                @RequestParam(required = false) Integer page,
-                                                                @RequestParam(required = false) Integer size,
-                                                                @RequestParam(required = false) String sortType,
-                                                                @RequestParam(required = false) List<String> sortProperties) {
-        return dialogRestService.findMessageByDialogAndUserId(id, page, size, sortType, sortProperties);
+    @GetMapping(value = "/{id}/lazy")
+    public ResponseEntity<DialogDTOLazy> findOneLazy(@PathVariable Long id) {
+        return dialogRestService.findOneLazy(id);
     }
 
-    @GetMapping(value = "/{id}/message/list")
-    public ResponseEntity<List<MessageDTO>> findMessageByDialog2(@PathVariable Long id) {
-        return dialogRestService.findMessageByDialogAndUserId(id);
+    @GetMapping(value = "/{id}/message")
+    public ResponseEntity<List<MessageDTO>> findMessageByDialogId(@PathVariable Long id,
+                                                                  @RequestParam(required = false) String sortType,
+                                                                  @RequestParam(required = false) List<String> sortProperties) {
+        return dialogRestService.findMessageByDialog(id, sortType, sortProperties);
+    }
+
+    @GetMapping(value = "/{id}/message/page")
+    public ResponseEntity<Page<MessageDTO>> findMessageByDialogIdPage(@PathVariable Long id,
+                                                                      @RequestParam(required = false) Integer page,
+                                                                      @RequestParam(required = false) Integer size,
+                                                                      @RequestParam(required = false) String sortType,
+                                                                      @RequestParam(required = false) List<String> sortProperties) {
+        return dialogRestService.findMessageByDialog(id, page, size, sortType, sortProperties);
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<HttpStatus> delete(@PathVariable Long id) {
+    public ResponseEntity<HttpStatus> deleteById(@PathVariable Long id) {
         return dialogRestService.delete(id);
     }
-
 }

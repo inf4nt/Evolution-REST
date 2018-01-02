@@ -1,13 +1,16 @@
 package evolution.dto.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-/**
- * Created by Infant on 07.11.2017.
- */
 @Data
+@Builder
 @JsonInclude
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserDTO {
 
     private Long id;
@@ -17,4 +20,6 @@ public class UserDTO {
     private String lastName;
 
     private String nickname;
+
+    private String role;
 }

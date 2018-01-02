@@ -72,12 +72,12 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
     }
 
     @Override
-    public Optional<User> findOneUserByIdAndIsActiveLazy(Long userId, boolean active) {
+    public Optional<User> findOneAndIsActiveLazy(Long userId, boolean active) {
         return userRepository.findOneUserByIdAndIsActiveLazy(userId, active);
     }
 
     @Override
-    public Optional<User> findOneUserByIdAndIsBlockLazy(Long userId, boolean block) {
+    public Optional<User> findOneAndIsBlockLazy(Long userId, boolean block) {
         return userRepository.findOneUserByIdAndIsBlock(userId, block);
     }
 
@@ -87,40 +87,40 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
     }
 
     @Override
-    public Page<User> findUserAllByIsActiveLazy(boolean active, Integer page, Integer size, String sort, List<String> sortProperties) {
+    public Page<User> findAllAndIsActiveLazy(boolean active, Integer page, Integer size, String sort, List<String> sortProperties) {
         Pageable p = getPageableForRestService(page, size, sort, sortProperties,
                 this.userMaxFetch, this.defaultUserSortType, this.defaultUserSortProperties);
         return userRepository.findUserAllByIsActiveLazy(active, p);
     }
 
     @Override
-    public Page<User> findUserAllByIsBlockLazy(boolean block, Integer page, Integer size, String sort, List<String> sortProperties) {
+    public Page<User> findAllAndIsBlockLazy(boolean block, Integer page, Integer size, String sort, List<String> sortProperties) {
         Pageable p = getPageableForRestService(page, size, sort, sortProperties,
                 this.userMaxFetch, this.defaultUserSortType, this.defaultUserSortProperties);
         return userRepository.findUserAllByIsBlock(block, p);
     }
 
     @Override
-    public List<User> findUserAllByIsActiveLazy(boolean active, String sort, List<String> sortProperties) {
+    public List<User> findAllAndIsActiveLazy(boolean active, String sort, List<String> sortProperties) {
         Sort s = getSortForRestService(sort, sortProperties,
                 this.defaultUserSortType, this.defaultUserSortProperties);
         return userRepository.findUserAllByIsActive(active, s);
     }
 
     @Override
-    public List<User> findUserAllByIsBlockLazy(boolean block, String sort, List<String> sortProperties) {
+    public List<User> findAllAndIsBlockLazy(boolean block, String sort, List<String> sortProperties) {
         Sort s = getSortForRestService(sort, sortProperties,
                 this.defaultUserSortType, this.defaultUserSortProperties);
         return userRepository.findUserAllByIsBlockLazy(block, s);
     }
 
     @Override
-    public List<User> findUserAllByIsActiveLazy(boolean active) {
+    public List<User> findAllAndIsActiveLazy(boolean active) {
         return userRepository.findUserAllByIsActiveLazy(active);
     }
 
     @Override
-    public List<User> findUserAllByIsBlockLazy(boolean block) {
+    public List<User> findAllAndIsBlockLazy(boolean block) {
         return userRepository.findUserAllByIsBlockLazy(block);
     }
 
@@ -161,6 +161,7 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
     }
 
     @Override
+    @Transactional
     public void delete(Long aLong) {
         Optional<User> o = userRepository.findOneUserById(aLong);
         if (o.isPresent()) {
@@ -168,11 +169,23 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
             friendCrudManagerService.deleteAllFriendRowByUser(o.get().getId());
             dialogCrudManagerService.deleteAllDialogRowByUser(o.get().getId());
             userRepository.delete(o.get());
+            //todo clear channel message
         }
     }
 
     @Override
+    public void deleteAll() {
+        List<User> list = userRepository.findAllFetchLazy();
+        userRepository.delete(list);
+    }
+
+    @Override
     public Optional<User> findByUsername(String username) {
+        return userRepository.findUserByUsernameLazy(username);
+    }
+
+    @Override
+    public Optional<User> findByUsernameLazy(String username) {
         return userRepository.findUserByUsernameLazy(username);
     }
 
@@ -193,50 +206,50 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
     }
 
     @Override
-    public Optional<User> findOneUserByIdAndIsActive(Long userId, boolean active) {
+    public Optional<User> findOneAndIsActive(Long userId, boolean active) {
         return userRepository.findOneUserByIdAndIsActiveLazy(userId, active);
     }
 
     @Override
-    public Optional<User> findOneUserByIdAndIsBlock(Long userId, boolean block) {
+    public Optional<User> findOneAndIsBlock(Long userId, boolean block) {
         return userRepository.findOneUserByIdAndIsBlock(userId, block);
     }
 
     @Override
-    public Page<User> findUserAllByIsActive(boolean active, Integer page, Integer size, String sort, List<String> sortProperties) {
+    public Page<User> findAllAndIsActive(boolean active, Integer page, Integer size, String sort, List<String> sortProperties) {
         Pageable p = getPageableForRestService(page, size, sort, sortProperties,
                 this.userMaxFetch, this.defaultUserSortType, this.defaultUserSortProperties);
         return userRepository.findUserAllByIsActive(active, p);
     }
 
     @Override
-    public Page<User> findUserAllByIsBlock(boolean block, Integer page, Integer size, String sort, List<String> sortProperties) {
+    public Page<User> findAllAndIsBlock(boolean block, Integer page, Integer size, String sort, List<String> sortProperties) {
         Pageable p = getPageableForRestService(page, size, sort, sortProperties,
                 this.userMaxFetch, this.defaultUserSortType, this.defaultUserSortProperties);
         return userRepository.findUserAllByIsBlock(block, p);
     }
 
     @Override
-    public List<User> findUserAllByIsActive(boolean active, String sort, List<String> sortProperties) {
+    public List<User> findAllAndIsActive(boolean active, String sort, List<String> sortProperties) {
         Sort s = getSortForRestService(sort, sortProperties,
                 this.defaultUserSortType, this.defaultUserSortProperties);
         return userRepository.findUserAllByIsActive(active, s);
     }
 
     @Override
-    public List<User> findUserAllByIsBlock(boolean block, String sort, List<String> sortProperties) {
+    public List<User> findAllAndIsBlock(boolean block, String sort, List<String> sortProperties) {
         Sort s = getSortForRestService(sort, sortProperties,
                 this.defaultUserSortType, this.defaultUserSortProperties);
         return userRepository.findUserAllByIsBlock(block, s);
     }
 
     @Override
-    public List<User> findUserAllByIsActive(boolean active) {
+    public List<User> findAllAndIsActive(boolean active) {
         return userRepository.findUserAllByIsActive(active);
     }
 
     @Override
-    public List<User> findUserAllByIsBlock(boolean block) {
+    public List<User> findAllAndIsBlock(boolean block) {
         return userRepository.findUserAllByIsBlock(block);
     }
 

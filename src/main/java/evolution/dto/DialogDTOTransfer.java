@@ -1,8 +1,8 @@
 package evolution.dto;
 
-import evolution.dto.model.DialogDTO;
-import evolution.dto.model.DialogFullDTO;
-import evolution.dto.model.UserDTO;
+import evolution.dto.modelOld.DialogDTO;
+import evolution.dto.modelOld.DialogFullDTO;
+import evolution.dto.modelOld.UserDTO;
 import evolution.model.Dialog;
 import evolution.model.User;
 import evolution.security.model.CustomSecurityUser;

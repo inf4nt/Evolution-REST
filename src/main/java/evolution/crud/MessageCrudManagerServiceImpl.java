@@ -194,7 +194,7 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
     public List<Message> findMessageByDialogId(Long dialogId, String sort, List<String> sortProperties) {
         Sort s = getSortForRestService(sort, sortProperties,
                 this.defaultMessageSortType, this.defaultMessageSortProperties);
-        return messageRepository.findMessageByRecipientId(dialogId, s);
+        return messageRepository.findMessageByDialog(dialogId, s);
     }
 
     @Override
@@ -208,19 +208,38 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
     public Page<Message> findMessageByDialogId(Long dialogId, Long iam, Integer page, Integer size, String sort, List<String> sortProperties) {
         Pageable p = getPageableForRestService(page, size, sort, sortProperties,
                 this.messageMaxFetch, this.defaultMessageSortType, this.defaultMessageSortProperties);
-        return messageRepository.findMessageByDialogAndUserDialog(dialogId, iam, p);
+        return messageRepository.findMessageByDialogIdAndParticipant(dialogId, iam, p);
+    }
+
+    @Override
+    public List<Message> findMessageByDialogIdAndParticipant(Long dialogId, Long participantId) {
+        return messageRepository.findMessageByDialogIdAndParticipant(dialogId, participantId);
+    }
+
+    @Override
+    public List<Message> findMessageByDialogIdAndParticipant(Long dialogId, Long participantId, String sort, List<String> sortProperties) {
+        Sort s = getSortForRestService(sort, sortProperties,
+                this.defaultMessageSortType, this.defaultMessageSortProperties);
+        return messageRepository.findMessageByDialogIdAndParticipant(dialogId, participantId, s);
+    }
+
+    @Override
+    public Page<Message> findMessageByDialogIdAndParticipant(Long dialogId, Long participantId, Integer page, Integer size, String sort, List<String> sortProperties) {
+        Pageable p = getPageableForRestService(page, size, sort, sortProperties,
+                this.messageMaxFetch, this.defaultMessageSortType, this.defaultMessageSortProperties);
+        return messageRepository.findMessageByDialogIdAndParticipant(dialogId, participantId, p);
     }
 
     @Override
     public List<Message> findMessageByDialogId(Long dialogId, Long iam, String sort, List<String> sortProperties) {
         Sort s = getSortForRestService(sort, sortProperties,
                 this.defaultMessageSortType, this.defaultMessageSortProperties);
-        return messageRepository.findMessageByDialogAndUserDialog(dialogId, iam, s);
+        return messageRepository.findMessageByDialogIdAndParticipant(dialogId, iam, s);
     }
 
     @Override
     public List<Message> findMessageByDialogId(Long dialogId, Long iam) {
-        return messageRepository.findMessageByDialogAndUserDialog(dialogId, iam);
+        return messageRepository.findMessageByDialogIdAndParticipant(dialogId, iam);
     }
 
     @Override

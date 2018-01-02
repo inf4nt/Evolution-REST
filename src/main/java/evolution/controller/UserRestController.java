@@ -1,6 +1,10 @@
 package evolution.controller;
 
-import evolution.dto.model.*;
+import evolution.dto.model.UserDTO;
+import evolution.dto.model.UserDTOLazy;
+import evolution.dto.modelOld.UserForSaveDTO;
+import evolution.dto.modelOld.UserForUpdateDTO;
+import evolution.dto.model.UserSetPasswordDTO;
 import evolution.rest.api.UserRestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,23 +30,31 @@ public class UserRestController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<UserDTO>> findAll(@RequestParam(required = false) Integer page,
-                                                 @RequestParam(required = false) Integer size,
-                                                 @RequestParam(required = false) String sort,
+    public ResponseEntity<List<UserDTO>> findAll(@RequestParam(required = false) String sort,
                                                  @RequestParam(required = false) List<String> sortProperties) {
+        return userRestService.findAll(sort, sortProperties);
+    }
+
+    @GetMapping(value = "/lazy")
+    public ResponseEntity<List<UserDTOLazy>> findAllLazy(@RequestParam(required = false) String sort,
+                                                         @RequestParam(required = false) List<String> sortProperties) {
+        return userRestService.findAllLazy(sort, sortProperties);
+    }
+
+    @GetMapping(value = "/page")
+    public ResponseEntity<Page<UserDTO>> findAllPage(@RequestParam(required = false) Integer page,
+                                                     @RequestParam(required = false) Integer size,
+                                                     @RequestParam(required = false) String sort,
+                                                     @RequestParam(required = false) List<String> sortProperties) {
         return userRestService.findAll(page, size, sort, sortProperties);
     }
 
-    @GetMapping(value = "/list/lazy")
-    public ResponseEntity<List<UserFullDTO>> findAllList(@RequestParam(required = false) String sort,
+    @GetMapping(value = "/page/lazy")
+    public ResponseEntity<Page<UserDTOLazy>> findAllPageLazy(@RequestParam(required = false) Integer page,
+                                                         @RequestParam(required = false) Integer size,
+                                                         @RequestParam(required = false) String sort,
                                                          @RequestParam(required = false) List<String> sortProperties) {
-        return userRestService.findAllFull(sort, sortProperties);
-    }
-
-    @GetMapping(value = "/list")
-    public ResponseEntity<List<UserDTO>> findAll2(@RequestParam(required = false) String sort,
-                                                      @RequestParam(required = false) List<String> sortProperties) {
-        return userRestService.findAll2(sort, sortProperties);
+        return userRestService.findAllLazy(page, size, sort, sortProperties);
     }
 
     @GetMapping(value = "/{id}")
@@ -51,22 +63,22 @@ public class UserRestController {
     }
 
     @GetMapping(value = "/{id}/lazy")
-    public ResponseEntity<evolution.dto.model2.UserDTO> findOneLazy(@PathVariable Long id) {
-       return userRestService.findOneFull(id);
+    public ResponseEntity<UserDTOLazy> findOneLazy(@PathVariable Long id) {
+        return userRestService.findOneLazy(id);
     }
 
     @PostMapping(value = "/post")
-    public ResponseEntity<UserFullDTO> save2(@RequestBody UserForSaveDTO user) {
+    public ResponseEntity<UserDTOLazy> save2(@RequestBody UserForSaveDTO user) {
         return save(user);
     }
 
     @PostMapping
-    public ResponseEntity<UserFullDTO> save(@RequestBody UserForSaveDTO user) {
+    public ResponseEntity<UserDTOLazy> save(@RequestBody UserForSaveDTO user) {
         return userRestService.createNewUser(user);
     }
 
     @PutMapping
-    public ResponseEntity<evolution.dto.model2.UserDTO> update(@RequestBody UserForUpdateDTO user) {
+    public ResponseEntity<UserDTOLazy> update(@RequestBody UserForUpdateDTO user) {
         return userRestService.update(user);
     }
 
@@ -85,13 +97,13 @@ public class UserRestController {
         return userRestService.block(id);
     }
 
-    @GetMapping(value = "/anBlock/{id}")
-    public ResponseEntity anBlockUser(@PathVariable Long id) {
-        return userRestService.anBlock(id);
+    @GetMapping(value = "/unBlock/{id}")
+    public ResponseEntity unBlock(@PathVariable Long id) {
+        return userRestService.unBlock(id);
     }
 
     @GetMapping(value = "/activated/{key}")
-    public ResponseEntity anBlockUser(@PathVariable String key) {
+    public ResponseEntity unBlock(@PathVariable String key) {
         return userRestService.activated(key);
     }
 

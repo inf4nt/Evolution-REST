@@ -4,21 +4,24 @@ import evolution.business.api.DialogBusinessService;
 import evolution.common.BusinessServiceExecuteStatus;
 import evolution.crud.api.DialogCrudManagerService;
 import evolution.crud.api.MessageCrudManagerService;
-import evolution.dto.DialogDTOTransfer;
-import evolution.dto.MessageDTOTransfer;
 import evolution.dto.model.DialogDTO;
-import evolution.dto.model.DialogFullDTO;
+import evolution.dto.model.DialogDTOLazy;
 import evolution.dto.model.MessageDTO;
+import evolution.dto.transfer.DialogDTOTransferNew;
+import evolution.dto.transfer.MessageDTOTransferNew;
+import evolution.model.Dialog;
+import evolution.model.Message;
 import evolution.model.User;
-import evolution.security.model.CustomSecurityUser;
 import evolution.service.SecuritySupportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,66 +33,112 @@ public class DialogBusinessServiceImpl implements DialogBusinessService {
 
     private final DialogCrudManagerService dialogCrudManagerService;
 
-    private final DialogDTOTransfer dialogDTOTransfer;
+    private final DialogDTOTransferNew dialogDTOTransferNew;
 
     private final SecuritySupportService securitySupportService;
 
     private final MessageCrudManagerService messageCrudManagerService;
 
-    private final MessageDTOTransfer messageDTOTransfer;
+    private final MessageDTOTransferNew messageDTOTransferNew;
 
     @Autowired
     public DialogBusinessServiceImpl(DialogCrudManagerService dialogCrudManagerService,
-                                     DialogDTOTransfer dialogDTOTransfer,
+                                     DialogDTOTransferNew dialogDTOTransferNew,
                                      SecuritySupportService securitySupportService,
                                      MessageCrudManagerService messageCrudManagerService,
-                                     MessageDTOTransfer messageDTOTransfer) {
+                                     MessageDTOTransferNew messageDTOTransferNew) {
         this.dialogCrudManagerService = dialogCrudManagerService;
-        this.dialogDTOTransfer = dialogDTOTransfer;
+        this.dialogDTOTransferNew = dialogDTOTransferNew;
         this.securitySupportService = securitySupportService;
         this.messageCrudManagerService = messageCrudManagerService;
-        this.messageDTOTransfer = messageDTOTransfer;
+        this.messageDTOTransferNew = messageDTOTransferNew;
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public Optional<DialogFullDTO> findOne(Long id) {
+    public BusinessServiceExecuteResult<List<DialogDTO>> findDialogsByUserId(Long userId) {
+        if (securitySupportService.isAllowed(userId)) {
+            User auth = securitySupportService.getAuthenticationPrincipal().getUser();
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK,
+                    dialogCrudManagerService
+                            .findDialogsByUserId(userId)
+                            .stream()
+                            .map(o -> dialogDTOTransferNew.modelToDTO(o, auth))
+                            .collect(Collectors.toList()));
+        } else {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
+        }
+    }
+
+    @Override
+    public Optional<DialogDTO> findOne(Long id) {
         return dialogCrudManagerService
                 .findOne(id)
-                .map(o -> dialogDTOTransfer.modelToDTOFull(o));
+                .map(o -> dialogDTOTransferNew.modelToDTO(o));
     }
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public List<DialogFullDTO> findAll() {
+    public Optional<DialogDTOLazy> findOneLazy(Long id) {
+        return dialogCrudManagerService
+                .findOneLazy(id)
+                .map(o -> dialogDTOTransferNew.modelToDTOLazy(o));
+    }
+
+    @Override
+    public List<DialogDTO> findAll() {
         return dialogCrudManagerService
                 .findAll()
                 .stream()
-                .map(o -> dialogDTOTransfer.modelToDTOFull(o))
+                .map(o -> dialogDTOTransferNew.modelToDTO(o))
                 .collect(Collectors.toList());
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public List<DialogFullDTO> findAll(String sortType, List<String> sortProperties) {
+    public List<DialogDTO> findAll(String sortType, List<String> sortProperties) {
         return dialogCrudManagerService
                 .findAll(sortType, sortProperties)
                 .stream()
-                .map(o -> dialogDTOTransfer.modelToDTOFull(o))
+                .map(o -> dialogDTOTransferNew.modelToDTO(o))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<DialogDTO> findAll(Integer page, Integer size, String sortType, List<String> sortProperties) {
+        return dialogCrudManagerService
+                .findAll(page, size, sortType, sortProperties)
+                .map(o -> dialogDTOTransferNew.modelToDTO(o));
+    }
+
+    @Override
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public List<DialogDTOLazy> findAllLazy() {
+        return dialogCrudManagerService
+                .findAllLazy()
+                .stream()
+                .map(o -> dialogDTOTransferNew.modelToDTOLazy(o))
                 .collect(Collectors.toList());
     }
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public Page<DialogFullDTO> findAll(Integer page, Integer size, String sortType, List<String> sortProperties) {
+    public List<DialogDTOLazy> findAllLazy(String sortType, List<String> sortProperties) {
         return dialogCrudManagerService
-                .findAll(page, size, sortType, sortProperties)
-                .map(o -> dialogDTOTransfer.modelToDTOFull(o));
+                .findAllLazy(sortType, sortProperties)
+                .stream()
+                .map(o -> dialogDTOTransferNew.modelToDTOLazy(o))
+                .collect(Collectors.toList());
     }
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public BusinessServiceExecuteResult delete(Long id) {
+    public Page<DialogDTOLazy> findAllLazy(Integer page, Integer size, String sortType, List<String> sortProperties) {
+        return dialogCrudManagerService
+                .findAllLazy(page, size, sortType, sortProperties)
+                .map(o -> dialogDTOTransferNew.modelToDTOLazy(o));
+    }
+
+    @Override
+    public BusinessServiceExecuteResult<HttpStatus> delete(Long id) {
         try {
             boolean a = dialogCrudManagerService.deleteById(id);
             if (a) {
@@ -105,58 +154,50 @@ public class DialogBusinessServiceImpl implements DialogBusinessService {
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<MessageDTO> findMessageByDialog(Long dialogId) {
-        return messageCrudManagerService
-                .findMessageByDialogId(dialogId)
-                .stream()
-                .map(o -> messageDTOTransfer.modelToDTO(o))
-                .collect(Collectors.toList());
+        List<MessageDTO> list = new ArrayList<>();
+        Optional<Dialog> op;
+        if (securitySupportService.isAdmin()) {
+            op = dialogCrudManagerService.findOneLazy(dialogId);
+        } else {
+            User auth = securitySupportService.getAuthenticationPrincipal().getUser();
+            op = dialogCrudManagerService
+                    .findOneLazyAndParticipantId(dialogId, auth.getId());
+        }
+        op.ifPresent(dialog -> dialog.getMessageList().forEach(o -> {
+            list.add(messageDTOTransferNew.modelToDTO(o));
+        }));
+        return list;
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<MessageDTO> findMessageByDialog(Long dialogId, String sortType, List<String> sortProperties) {
-        return messageCrudManagerService
-                .findMessageByDialogId(dialogId, sortType, sortProperties)
-                .stream()
-                .map(o -> messageDTOTransfer.modelToDTO(o))
+        List<Message> list;
+        User auth = securitySupportService.getAuthenticationPrincipal().getUser();
+        if (securitySupportService.isAdmin()) {
+            list = messageCrudManagerService
+                    .findMessageByDialogId(dialogId, sortType, sortProperties);
+        } else {
+            list = messageCrudManagerService
+                    .findMessageByDialogIdAndParticipant(dialogId, auth.getId(), sortType, sortProperties);
+        }
+
+        return list.stream()
+                .map(o -> messageDTOTransferNew.modelToDTO(o, auth))
                 .collect(Collectors.toList());
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Page<MessageDTO> findMessageByDialog(Long dialogId, Integer page, Integer size, String sortType, List<String> sortProperties) {
-        return messageCrudManagerService
-                .findMessageByDialogId(dialogId, page, size, sortType, sortProperties)
-                .map(o -> messageDTOTransfer.modelToDTO(o));
-    }
-
-    @Override
-    public List<MessageDTO> findMessageByDialogAndUserId(Long dialogId) {
+        Page<Message> p;
         User auth = securitySupportService.getAuthenticationPrincipal().getUser();
-        return messageCrudManagerService
-                .findMessageByDialogId(dialogId, auth.getId())
-                .stream()
-                .map(o -> messageDTOTransfer.modelToDTO(o, auth))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<MessageDTO> findMessageByDialogAndUserId(Long dialogId, String sortType, List<String> sortProperties) {
-        User auth = securitySupportService.getAuthenticationPrincipal().getUser();
-        return messageCrudManagerService
-                .findMessageByDialogId(dialogId, auth.getId(), sortType, sortProperties)
-                .stream()
-                .map(o -> messageDTOTransfer.modelToDTO(o, auth))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public Page<MessageDTO> findMessageByDialogAndUserId(Long dialogId, Integer page, Integer size, String sortType, List<String> sortProperties) {
-        User auth = securitySupportService.getAuthenticationPrincipal().getUser();
-        return messageCrudManagerService
-                .findMessageByDialogId(dialogId, auth.getId(), page, size, sortType, sortProperties)
-                .map(o -> messageDTOTransfer.modelToDTO(o, auth));
+        if (securitySupportService.isAdmin()) {
+            p = messageCrudManagerService
+                    .findMessageByDialogId(dialogId, page, size, sortType, sortProperties);
+        } else {
+            p = messageCrudManagerService
+                    .findMessageByDialogIdAndParticipant(dialogId, auth.getId(), page, size, sortType, sortProperties);
+        }
+        return messageDTOTransferNew.modelToDTO(p, auth);
     }
 }

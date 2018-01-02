@@ -21,27 +21,33 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
             " join m.dialog as d " +
             " where d.id =:dialogId " +
             " and (d.first.id =:userId or d.second.id =:userId) ")
-    Page<Message> findMessageByDialogAndUserDialog(@Param("dialogId") Long dialogId, @Param("userId") Long userId, Pageable pageable);
+    Page<Message> findMessageByDialogIdAndParticipant(@Param("dialogId") Long dialogId, @Param("userId") Long participantId, Pageable pageable);
 
     @Query(" select m " +
             " from Message m " +
             " join m.dialog as d " +
             " where d.id =:dialogId " +
             " and (d.first.id =:userId or d.second.id =:userId) ")
-    List<Message> findMessageByDialogAndUserDialog(@Param("dialogId") Long dialogId, @Param("userId") Long userId, Sort sort);
+    List<Message> findMessageByDialogIdAndParticipant(@Param("dialogId") Long dialogId, @Param("userId") Long participantId, Sort sort);
 
     @Query(" select m " +
             " from Message m " +
             " join m.dialog as d " +
             " where d.id =:dialogId " +
             " and (d.first.id =:userId or d.second.id =:userId) ")
-    List<Message> findMessageByDialogAndUserDialog(@Param("dialogId") Long dialogId, @Param("userId") Long userId);
+    List<Message> findMessageByDialogIdAndParticipant(@Param("dialogId") Long dialogId, @Param("userId") Long participantId);
 
     @Query(" select m " +
             " from Message m " +
             " join m.dialog as d " +
             " where d.id =:dialogId ")
     Page<Message> findMessageByDialog(@Param("dialogId") Long dialogId, Pageable pageable);
+
+    @Query(" select m " +
+            " from Message m " +
+            " join m.dialog as d " +
+            " where d.id =:dialogId ")
+    List<Message> findMessageByDialog(@Param("dialogId") Long dialogId, Sort s);
 
     @Query(" select m " +
             " from Message m " +

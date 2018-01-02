@@ -1,6 +1,6 @@
 //package evolution.service.notification;
 //
-//import evolution.model.userToken.UserToken;
+//import evolution.modelOld.userToken.UserToken;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.stereotype.Service;
 //

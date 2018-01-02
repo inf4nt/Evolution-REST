@@ -45,6 +45,11 @@ public class SecuritySupportService {
         return user.getRole().name().equals(UserRoleEnum.ADMIN.name()) || user.getId().equals(id);
     }
 
+    public boolean isAllowedFull(String username) {
+        User user = getAuthenticationPrincipal().getUser();
+        return user.getRole().name().equals(UserRoleEnum.ADMIN.name()) || user.getUserAdditionalData().getUsername().equals(username);
+    }
+
     public boolean isAdmin() {
         return getAuthenticationPrincipal().getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
     }
@@ -52,5 +57,10 @@ public class SecuritySupportService {
     public boolean isAllowed(Long id) {
         User user = getAuthenticationPrincipal().getUser();
         return user.getId().equals(id);
+    }
+
+    public boolean isAllowed(String username) {
+        User user = getAuthenticationPrincipal().getUser();
+        return user.getUserAdditionalData().getUsername().equals(username);
     }
 }

@@ -2,10 +2,10 @@ package evolution.business.api;
 
 import evolution.business.BusinessServiceExecuteResult;
 import evolution.common.FriendActionEnum;
-import evolution.dto.model.FriendActionDTO;
-import evolution.dto.model.FriendDTO;
-import evolution.dto.model.FriendDTOFull;
-import evolution.dto.model.FriendResultActionDTO;
+import evolution.dto.modelOld.FriendActionDTO;
+import evolution.dto.modelOld.FriendDTO;
+import evolution.dto.modelOld.FriendDTOFull;
+import evolution.dto.modelOld.FriendResultActionDTO;
 import evolution.model.Friend;
 import org.springframework.data.domain.Page;
 

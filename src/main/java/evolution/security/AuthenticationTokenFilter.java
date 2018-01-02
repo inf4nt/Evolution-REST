@@ -57,19 +57,32 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
             authToken = authToken.substring(7);
         }
 
-        String username = tokenUtil.getUsernameFromToken(authToken);
+        //todo: remove after testing
+        String username = "com.infant@gmail.com";
 
-        logger.info("checking authentication für user " + username);
-
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-            if (this.tokenUtil.validateToken(authToken, userDetails) && checkAuthSession(authToken)) {
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
+
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
         }
+
+//        String username = tokenUtil.getUsernameFromToken(authToken);
+//
+//        logger.info("checking authentication für user " + username);
+//
+//        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+//            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+//            if (this.tokenUtil.validateToken(authToken, userDetails) && checkAuthSession(authToken)) {
+//                UsernamePasswordAuthenticationToken authentication =
+//                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+//                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+//                SecurityContextHolder.getContext().setAuthentication(authentication);
+//            }
+//        }
 
         System.out.println("Auth filter ============================================================");
         chain.doFilter(request, response);
@@ -79,7 +92,7 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
         String session = tokenUtil.getAuthSession(authToken);
         Optional<AuthenticationSession> authenticationSession = authenticationSessionCrudManagerService.findByAuthSessionKey(session);
         logger.info("auth session " + session);
-        logger.info("jwt security model " + authenticationSession);
+        logger.info("jwt security modelOld " + authenticationSession);
         return authenticationSession.isPresent();
     }
 

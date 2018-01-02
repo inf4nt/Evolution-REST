@@ -1,8 +1,8 @@
 package evolution.controller;
 
-import evolution.dto.model.MessageDTO;
-import evolution.dto.model.MessageDTOForSave;
-import evolution.dto.model.MessageForUpdateDTO;
+import evolution.dto.modelOld.MessageDTO;
+import evolution.dto.modelOld.MessageDTOForSave;
+import evolution.dto.modelOld.MessageForUpdateDTO;
 import evolution.rest.api.MessageRestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,17 +27,17 @@ public class MessageRestController {
         this.messageRestService = messageRestService;
     }
 
-    @GetMapping(value = "/list")
-    public ResponseEntity<List<MessageDTO>> findAllMessage() {
-        return messageRestService.findAll();
-    }
-
     @GetMapping
     public ResponseEntity<Page<MessageDTO>> findAll(@RequestParam(required = false) Integer page,
                                                     @RequestParam(required = false) Integer size,
                                                     @RequestParam(required = false) String sortType,
                                                     @RequestParam(required = false) List<String> sortProperties) {
         return messageRestService.findAllMessage(page, size, sortType, sortProperties);
+    }
+
+    @GetMapping(value = "/list")
+    public ResponseEntity<List<MessageDTO>> findAllMessage() {
+        return messageRestService.findAll();
     }
 
     @PutMapping

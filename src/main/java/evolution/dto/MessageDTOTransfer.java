@@ -1,7 +1,7 @@
 package evolution.dto;
 
-import evolution.dto.model.MessageDTO;
-import evolution.dto.model.MessageDTOForSave;
+import evolution.dto.modelOld.MessageDTO;
+import evolution.dto.modelOld.MessageDTOForSave;
 import evolution.model.Message;
 import evolution.model.User;
 import evolution.security.model.CustomSecurityUser;

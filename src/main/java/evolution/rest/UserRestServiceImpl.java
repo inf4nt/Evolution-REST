@@ -1,28 +1,28 @@
 package evolution.rest;
 
+
+
 import evolution.business.BusinessServiceExecuteResult;
 import evolution.business.api.UserBusinessService;
 import evolution.common.BusinessServiceExecuteStatus;
-import evolution.dto.model.*;
+import evolution.dto.model.UserDTO;
+import evolution.dto.model.UserDTOLazy;
+import evolution.dto.modelOld.UserForSaveDTO;
+import evolution.dto.modelOld.UserForUpdateDTO;
+import evolution.dto.model.UserSetPasswordDTO;
 import evolution.rest.api.UserRestService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Created by Infant on 29.10.2017.
  */
 @Service
 public class UserRestServiceImpl implements UserRestService {
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final UserBusinessService userBusinessService;
 
@@ -32,27 +32,123 @@ public class UserRestServiceImpl implements UserRestService {
     }
 
     @Override
+    public ResponseEntity<List<UserDTO>> findAll() {
+        return response(userBusinessService.findAll());
+    }
+
+    @Override
+    public ResponseEntity<List<UserDTO>> findAll(String sortType, List<String> sortProperties) {
+        return response(userBusinessService.findAll(sortType, sortProperties));
+    }
+
+    @Override
     public ResponseEntity<Page<UserDTO>> findAll(Integer page, Integer size, String sortType, List<String> sortProperties) {
-        Page<UserDTO> p = userBusinessService.findAll(page, size, sortType, sortProperties);
-        return response(p);
+        return response(userBusinessService.findAll(page, size, sortType, sortProperties));
     }
 
     @Override
-    public ResponseEntity<UserDTO> findOne(Long userId) {
-        return response(userBusinessService.findOne(userId));
+    public ResponseEntity<List<UserDTOLazy>> findAllLazy() {
+        return response(userBusinessService.findAllLazy());
     }
 
     @Override
-    public ResponseEntity<evolution.dto.model2.UserDTO> findOneFull(Long userId) {
-        BusinessServiceExecuteResult<evolution.dto.model2.UserDTO> b = userBusinessService.findOneUserFull(userId);
-        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {
-            return ResponseEntity.status(403).build();
-        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.NO_CONTENT) {
-            return ResponseEntity.status(204).build();
-        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
-            return ResponseEntity.ok(b.getResultObject());
-        }
-        return ResponseEntity.status(417).build();
+    public ResponseEntity<List<UserDTOLazy>> findAllLazy(String sortType, List<String> sortProperties) {
+        return response(userBusinessService.findAllLazy(sortType, sortProperties));
+    }
+
+    @Override
+    public ResponseEntity<Page<UserDTOLazy>> findAllLazy(Integer page, Integer size, String sortType, List<String> sortProperties) {
+        return response(userBusinessService.findAllLazy(page, size, sortType, sortProperties));
+    }
+
+    @Override
+    public ResponseEntity<List<UserDTO>> findAllAndIsBlock(boolean isBlock) {
+        return response(userBusinessService.findAllAndIsBlock(isBlock));
+    }
+
+    @Override
+    public ResponseEntity<List<UserDTO>> findAllAndIsBlock(boolean isBlock, String sortType, List<String> sortProperties) {
+        return response(userBusinessService.findAllAndIsBlock(isBlock, sortType, sortProperties));
+    }
+
+    @Override
+    public ResponseEntity<Page<UserDTO>> findAllAndIsBlock(boolean isBlock, Integer page, Integer size, String sortType, List<String> sortProperties) {
+        return response(userBusinessService.findAllAndIsBlock(isBlock, page, size, sortType, sortProperties));
+    }
+
+    @Override
+    public ResponseEntity<List<UserDTOLazy>> findAllAndIsBlockLazy(boolean isBlock) {
+        return response(userBusinessService.findAllAndIsBlockLazy(isBlock));
+    }
+
+    @Override
+    public ResponseEntity<List<UserDTOLazy>> findAllAndIsBlockLazy(boolean isBlock, String sortType, List<String> sortProperties) {
+        return response(userBusinessService.findAllAndIsBlockLazy(isBlock, sortType, sortProperties));
+    }
+
+    @Override
+    public ResponseEntity<Page<UserDTOLazy>> findAllAndIsBlockLazy(boolean isBlock, Integer page, Integer size, String sortType, List<String> sortProperties) {
+        return response(userBusinessService.findAllAndIsBlockLazy(isBlock, page, size, sortType, sortProperties));
+    }
+
+    @Override
+    public ResponseEntity<List<UserDTO>> findAllAndIsActive(boolean isActive) {
+        return response(userBusinessService.findAllAndIsActive(isActive));
+    }
+
+    @Override
+    public ResponseEntity<List<UserDTO>> findAllAndIsActive(boolean isActive, String sortType, List<String> sortProperties) {
+        return response(userBusinessService.findAllAndIsActive(isActive, sortType, sortProperties));
+    }
+
+    @Override
+    public ResponseEntity<Page<UserDTO>> findAllAndIsActive(boolean isActive, Integer page, Integer size, String sortType, List<String> sortProperties) {
+        return response(userBusinessService.findAllAndIsActive(isActive, page, size, sortType, sortProperties));
+    }
+
+    @Override
+    public ResponseEntity<List<UserDTOLazy>> findAllAndIsActiveLazy(boolean isActive) {
+        return response(userBusinessService.findAllAndIsActiveLazy(isActive));
+    }
+
+    @Override
+    public ResponseEntity<List<UserDTOLazy>> findAllAndIsActiveLazy(boolean isActive, String sortType, List<String> sortProperties) {
+        return response(userBusinessService.findAllAndIsActiveLazy(isActive, sortType, sortProperties));
+    }
+
+    @Override
+    public ResponseEntity<Page<UserDTOLazy>> findAllAndIsActiveLazy(boolean isActive, Integer page, Integer size, String sortType, List<String> sortProperties) {
+        return response(userBusinessService.findAllAndIsActiveLazy(isActive, page, size, sortType, sortProperties));
+    }
+
+    @Override
+    public ResponseEntity<UserDTO> findOneAndIsBlock(Long id, boolean isBlock) {
+        return response(userBusinessService.findOneAndIsBlock(id, isBlock));
+    }
+
+    @Override
+    public ResponseEntity<UserDTOLazy> findOneAndIsBlockLazy(Long id, boolean isBlock) {
+        return response(userBusinessService.findOneAndIsBlockLazy(id, isBlock));
+    }
+
+    @Override
+    public ResponseEntity<UserDTO> findOneAndIsActive(Long id, boolean isActive) {
+        return response(userBusinessService.findOneAndIsActive(id, isActive));
+    }
+
+    @Override
+    public ResponseEntity<UserDTOLazy> findOneAndIsActiveLazy(Long id, boolean isActive) {
+        return response(userBusinessService.findOneAndIsActiveLazy(id, isActive));
+    }
+
+    @Override
+    public ResponseEntity<UserDTO> findOne(Long id) {
+        return response(userBusinessService.findOne(id));
+    }
+
+    @Override
+    public ResponseEntity<UserDTOLazy> findOneLazy(Long id) {
+        return response(userBusinessService.findOneLazy(id));
     }
 
     @Override
@@ -61,36 +157,13 @@ public class UserRestServiceImpl implements UserRestService {
     }
 
     @Override
-    public ResponseEntity<UserFullDTO> findByUsernameFull(String username) {
-        return response(userBusinessService.findByUsernameFull(username));
+    public ResponseEntity<UserDTOLazy> findByUsernameLazy(String username) {
+        return response(userBusinessService.findByUsernameLazy(username));
     }
 
     @Override
-    public ResponseEntity<List<UserDTO>> findAll(String sortType, List<String> sortProperties) {
-        List<UserDTO> list = userBusinessService.findAll(sortType, sortProperties);
-        return response(list);
-    }
-
-    @Override
-    public ResponseEntity<List<UserFullDTO>> findAllFull(String sortType, List<String> sortProperties) {
-        List<UserFullDTO> list = userBusinessService.findAllFull(sortType, sortProperties);
-        return response(list);
-    }
-
-    @Override
-    public ResponseEntity<List<UserDTO>> findAll2(String sortType, List<String> sortProperties) {
-        List<UserDTO> list = userBusinessService.findAll2(sortType, sortProperties);
-        return response(list);
-    }
-
-    @Override
-    public ResponseEntity<Page<UserFullDTO>> findAllFullPage(Integer page, Integer size, String sortType, List<String> sortProperties) {
-        return null;
-    }
-
-    @Override
-    public ResponseEntity<UserFullDTO> createNewUser(UserForSaveDTO user) {
-        BusinessServiceExecuteResult<UserFullDTO> b = userBusinessService.createNewUser(user);
+    public ResponseEntity<UserDTOLazy> createNewUser(UserForSaveDTO user) {
+        BusinessServiceExecuteResult<UserDTOLazy> b = userBusinessService.createNewUser2(user);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent()) {
             return ResponseEntity.status(201).body(b.getResultObjectOptional().get());
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.USER_IS_ALREADY_EXIST_REGISTRATION_FAILED) {
@@ -101,8 +174,8 @@ public class UserRestServiceImpl implements UserRestService {
     }
 
     @Override
-    public ResponseEntity<evolution.dto.model2.UserDTO> update(UserForUpdateDTO user) {
-        BusinessServiceExecuteResult<evolution.dto.model2.UserDTO> b = userBusinessService.update(user);
+    public ResponseEntity<UserDTOLazy> update(UserForUpdateDTO user) {
+        BusinessServiceExecuteResult<UserDTOLazy> b = userBusinessService.update2(user);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent()) {
             return ResponseEntity.ok(b.getResultObjectOptional().get());
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE) {
@@ -114,61 +187,87 @@ public class UserRestServiceImpl implements UserRestService {
     }
 
     @Override
-    public ResponseEntity delete(Long id) {
-        BusinessServiceExecuteResult b = userBusinessService.delete(id);
+    public ResponseEntity<HttpStatus> createNewUser2(UserForSaveDTO user) {
+        return ResponseEntity.status(createNewUser(user).getStatusCode()).build();
+    }
+
+    @Override
+    public ResponseEntity<HttpStatus> update2(UserForUpdateDTO user) {
+        return ResponseEntity.status(update2(user).getStatusCode()).build();
+    }
+
+    @Override
+    public ResponseEntity<HttpStatus> delete(Long id) {
+        BusinessServiceExecuteResult<BusinessServiceExecuteStatus> b = userBusinessService.delete(id);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
-            return ResponseEntity.ok().build();
-        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {
-            return ResponseEntity.status(403).build();
+            return ResponseEntity.status(204).build();
         }
         return ResponseEntity.status(417).build();
     }
 
     @Override
-    public ResponseEntity delete(List<Long> id) {
-        BusinessServiceExecuteResult b = userBusinessService.delete(id);
+    public ResponseEntity<HttpStatus> delete(List<Long> id) {
+        BusinessServiceExecuteResult<BusinessServiceExecuteStatus> b = userBusinessService.delete(id);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.status(204).build();
         }
         return ResponseEntity.status(417).build();
     }
 
     @Override
-    public ResponseEntity block(Long id) {
-        return null;
+    public ResponseEntity<HttpStatus> deleteAll() {
+        BusinessServiceExecuteResult<BusinessServiceExecuteStatus> b = userBusinessService.deleteAll();
+        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
+            return ResponseEntity.status(204).build();
+        }
+        return ResponseEntity.status(417).build();
     }
 
     @Override
-    public ResponseEntity anBlock(Long id) {
-        return null;
+    public ResponseEntity<HttpStatus> block(Long id) {
+        ResponseEntity<UserDTOLazy> responseEntity = response(userBusinessService.sendBlockToUser(id));
+        return ResponseEntity.status(responseEntity.getStatusCode()).build();
     }
 
     @Override
-    public ResponseEntity activated(String key) {
-        return null;
+    public ResponseEntity<HttpStatus> unBlock(Long id) {
+        ResponseEntity<UserDTOLazy> responseEntity = response(userBusinessService.sendUnBlockToUser(id));
+        return ResponseEntity.status(responseEntity.getStatusCode()).build();
+    }
+
+    @Override
+    public ResponseEntity<HttpStatus> activated(String key) {
+        ResponseEntity<UserDTOLazy> responseEntity = response(userBusinessService.activatedUser(key));
+        return ResponseEntity.status(responseEntity.getStatusCode()).build();
     }
 
     @Override
     public ResponseEntity<HttpStatus> exist(String username) {
-        Optional<UserDTO> optional = userBusinessService.findByUsername(username);
-        if (optional.isPresent()) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.noContent().build();
-        }
+        return userBusinessService.findByUsername(username).isPresent() ? ResponseEntity.ok().build() : ResponseEntity.noContent().build();
     }
 
     @Override
-    public ResponseEntity setPassword(UserSetPasswordDTO userSetPasswordDTO) {
-        BusinessServiceExecuteResult b = userBusinessService.setPasswordByOldPassword(userSetPasswordDTO);
-        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
-            return ResponseEntity.ok().build();
-        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE) {
-            return ResponseEntity.noContent().build();
-        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {
-            return ResponseEntity.status(403).build();
-        }
+    public ResponseEntity<UserDTOLazy> block2(Long id) {
+        return response(userBusinessService.sendBlockToUser(id));
+    }
 
-        return ResponseEntity.status(204).build();
+    @Override
+    public ResponseEntity<UserDTOLazy> unBlock2(Long id) {
+        return response(userBusinessService.sendUnBlockToUser(id));
+    }
+
+    @Override
+    public ResponseEntity<UserDTOLazy> activated2(String key) {
+        return response(userBusinessService.activatedUser(key));
+    }
+
+    @Override
+    public ResponseEntity<UserDTOLazy> setPassword2(UserSetPasswordDTO userSetPasswordDTO) {
+        return response(userBusinessService.setPasswordByOldPassword(userSetPasswordDTO));
+    }
+
+    @Override
+    public ResponseEntity<HttpStatus> setPassword(UserSetPasswordDTO userSetPasswordDTO) {
+        return ResponseEntity.status(response(userBusinessService.setPasswordByOldPassword(userSetPasswordDTO)).getStatusCode()).build();
     }
 }

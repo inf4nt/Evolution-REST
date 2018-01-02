@@ -1,7 +1,7 @@
 package evolution.service;
 
 
-//import evolution.model.user.UserLight;
+//import evolution.modelOld.user.UserLight;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.data.domain.PageRequest;
 //import org.springframework.stereotype.Service;

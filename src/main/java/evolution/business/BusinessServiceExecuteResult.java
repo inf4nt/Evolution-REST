@@ -63,6 +63,6 @@ public class BusinessServiceExecuteResult<T> {
     }
 
     public Optional<T> getResultObjectOptional() {
-        return resultObject;
+        return resultObject == null ? Optional.empty() : resultObject;
     }
 }

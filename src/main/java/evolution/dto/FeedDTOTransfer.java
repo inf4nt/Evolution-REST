@@ -1,6 +1,6 @@
 package evolution.dto;
 
-import evolution.dto.model.FeedDTO;
+import evolution.dto.modelOld.FeedDTO;
 import evolution.model.Feed;
 import evolution.service.DateService;
 import org.modelmapper.ModelMapper;

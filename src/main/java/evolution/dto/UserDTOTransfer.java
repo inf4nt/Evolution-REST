@@ -1,10 +1,11 @@
 package evolution.dto;
 
 
-import evolution.dto.model.UserDTO;
-import evolution.dto.model.UserForSaveDTO;
-import evolution.dto.model.UserForUpdateDTO;
-import evolution.dto.model.UserFullDTO;
+import evolution.dto.modelOld.UserDTO;
+import evolution.dto.modelOld.UserForSaveDTO;
+import evolution.dto.modelOld.UserForUpdateDTO;
+import evolution.dto.modelOld.UserFullDTO;
+import evolution.dto.model.UserDTOLazy;
 import evolution.model.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
  * Created by Infant on 11.11.2017.
  */
 @Service
+@Deprecated
 public class UserDTOTransfer {
 
     private final ModelMapper modelMapper;
@@ -43,34 +45,16 @@ public class UserDTOTransfer {
         return modelMapper.map(user, UserForUpdateDTO.class);
     }
 
+    @Deprecated
     public UserFullDTO modelToDTOFull(User user) {
         return modelMapper.map(user, UserFullDTO.class);
-    }
-
-    public evolution.dto.model2.UserDTO modelToDTO2(User user) {
-        return evolution.dto.model2.UserDTO
-                .builder()
-                .id(user.getId())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .nickname(user.getNickname())
-                .role(user.getRole().name())
-                .idAdditionalData(user.getUserAdditionalData().getId())
-                .username(user.getUserAdditionalData().getUsername())
-                .registrationDate(user.getUserAdditionalData().getRegistrationDate())
-                .country(user.getUserAdditionalData().getCountry())
-                .state(user.getUserAdditionalData().getState())
-                .gender(user.getUserAdditionalData().getGender())
-                .isBlock(user.getUserAdditionalData().isBlock())
-                .isActive(user.getUserAdditionalData().isActive())
-                .secretKey(user.getUserAdditionalData().getSecretKey())
-                .build();
     }
 
     public UserForSaveDTO modelToDTOForSave(User user) {
         return modelMapper.map(user, UserForSaveDTO.class);
     }
 
+    @Deprecated
     public UserDTO modelToDTO(User user) {
         return modelMapper.map(user, UserDTO.class);
     }

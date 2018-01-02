@@ -1,9 +1,9 @@
 package evolution.dto;
 
-import evolution.dto.model.FriendDTO;
-import evolution.dto.model.FriendDTOFull;
-import evolution.dto.model.FriendResultActionDTO;
-import evolution.dto.model.UserDTO;
+import evolution.dto.modelOld.FriendDTO;
+import evolution.dto.modelOld.FriendDTOFull;
+import evolution.dto.modelOld.FriendResultActionDTO;
+import evolution.dto.modelOld.UserDTO;
 import evolution.model.Friend;
 import evolution.model.User;
 import org.modelmapper.ModelMapper;

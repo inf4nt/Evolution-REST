@@ -1,7 +1,13 @@
 package evolution.business.api;
 
-import evolution.dto.model.*;
+
 import evolution.business.BusinessServiceExecuteResult;
+import evolution.common.BusinessServiceExecuteStatus;
+import evolution.dto.model.UserDTO;
+import evolution.dto.model.UserDTOLazy;
+import evolution.dto.modelOld.UserForSaveDTO;
+import evolution.dto.modelOld.UserForUpdateDTO;
+import evolution.dto.model.UserSetPasswordDTO;
 import evolution.model.User;
 import org.springframework.data.domain.Page;
 
@@ -14,75 +20,93 @@ import java.util.Optional;
 
 public interface UserBusinessService {
 
-    BusinessServiceExecuteResult<UserFullDTO> createNewUserFull(UserForSaveDTO userForSaveDTO);
+    List<UserDTO> findAllAndIsBlock(boolean isBlock);
 
-    BusinessServiceExecuteResult<UserFullDTO> createNewUser(UserForSaveDTO userForSaveDTO);
+    List<UserDTO> findAllAndIsBlock(boolean isBlock, String sortType, List<String> sortProperties);
 
-    BusinessServiceExecuteResult<User> createNewUserGlobal(UserForSaveDTO userForSaveDTO);
+    Page<UserDTO> findAllAndIsBlock(boolean isBlock, Integer page, Integer size, String sortType, List<String> sortProperties);
 
-    BusinessServiceExecuteResult<UserFullDTO> updateFull(UserForUpdateDTO userForUpdateDTO);
+    List<UserDTOLazy> findAllAndIsBlockLazy(boolean isBlock);
 
-    BusinessServiceExecuteResult<evolution.dto.model2.UserDTO> update(UserForUpdateDTO userForUpdateDTO);
+    Page<UserDTOLazy> findAllAndIsBlockLazy(boolean isBlock, Integer page, Integer size, String sortType, List<String> sortProperties);
 
-    BusinessServiceExecuteResult<User> updateGlobal(UserForUpdateDTO userForUpdateDTO);
+    List<UserDTOLazy> findAllAndIsBlockLazy(boolean isBlock, String sortType, List<String> sortProperties);
 
-    Page<UserDTO> findAll(Integer page, Integer size, String sortType, List<String> sortProperties);
+    List<UserDTO> findAllAndIsActive(boolean isActive);
 
-    Page<UserFullDTO> findAllFull(Integer page, Integer size, String sortType, List<String> sortProperties);
+    List<UserDTO> findAllAndIsActive(boolean isActive, String sortType, List<String> sortProperties);
+
+    Page<UserDTO> findAllAndIsActive(boolean isActive, Integer page, Integer size, String sortType, List<String> sortProperties);
+
+    List<UserDTOLazy> findAllAndIsActiveLazy(boolean isActive);
+
+    Page<UserDTOLazy> findAllAndIsActiveLazy(boolean isActive, Integer page, Integer size, String sortType, List<String> sortProperties);
+
+    List<UserDTOLazy> findAllAndIsActiveLazy(boolean isActive, String sortType, List<String> sortProperties);
+
+    List<UserDTO> findAll();
 
     List<UserDTO> findAll(String sortType, List<String> sortProperties);
 
-    List<UserFullDTO> findAllFull();
+    Page<UserDTO> findAll(Integer page, Integer size, String sortType, List<String> sortProperties);
 
-    List<UserFullDTO> findAllFull(String sortType, List<String> sortProperties);
+    List<UserDTOLazy> findAllLazy();
 
-    List<UserDTO> findAll2(String sortType, List<String> sortProperties);
+    List<UserDTOLazy> findAllLazy(String sortType, List<String> sortProperties);
 
-    Optional<UserFullDTO> findByUsernameFull(String username);
-
-    Optional<UserDTO> findByUsername(String username);
-
-    Page<UserDTO> findAllIsBlock(boolean isBlock, Integer page, Integer size, String sortType, List<String> sortProperties);
-
-    List<UserDTO> findAllIsBlock(boolean isBlock, String sortType, List<String> sortProperties);
-
-    List<UserDTO> findAllIsBlock(boolean isBlock);
+    Page<UserDTOLazy> findAllLazy(Integer page, Integer size, String sortType, List<String> sortProperties);
 
     Optional<UserDTO> findOne(Long id);
 
-    Page<UserFullDTO> findAllIsBlockFull(boolean isBlock, Integer page, Integer size, String sortType, List<String> sortProperties);
+    BusinessServiceExecuteResult<UserDTOLazy> findOneLazy(Long id);
 
-    List<UserFullDTO> findAllIsBlockFull(boolean isBlock, String sortType, List<String> sortProperties);
+    BusinessServiceExecuteResult<User> createNewUser(UserForSaveDTO userForSaveDTO);
 
-    List<UserFullDTO> findAllIsBlockFull(boolean isBlock);
+    BusinessServiceExecuteResult<UserDTOLazy> createNewUser2(UserForSaveDTO userForSaveDTO);
 
-    BusinessServiceExecuteResult<evolution.dto.model2.UserDTO> findOneUserFull(Long id);
+    BusinessServiceExecuteResult<BusinessServiceExecuteStatus> createNewUser3(UserForSaveDTO userForSaveDTO);
 
-    Optional<UserDTO> findOneIsBlock(Long id, boolean isBlock);
+    BusinessServiceExecuteResult<User> update(UserForUpdateDTO user);
 
-    BusinessServiceExecuteResult setRole(Long userId, String role);
+    BusinessServiceExecuteResult<UserDTOLazy> update2(UserForUpdateDTO user);
 
-    BusinessServiceExecuteResult setPasswordBySecretKey(String newPassword, String secretKey);
+    BusinessServiceExecuteResult<BusinessServiceExecuteStatus> update3(UserForUpdateDTO user);
 
-    BusinessServiceExecuteResult setPasswordByUserId(String newPassword, Long id);
+    Optional<UserDTO> findByUsername(String username);
 
-    BusinessServiceExecuteResult setPasswordByOldPassword(UserSetPasswordDTO userSetPasswordDTO);
+    BusinessServiceExecuteResult<UserDTOLazy> findByUsernameLazy(String username);
 
-    BusinessServiceExecuteResult setNewSecretKey(Long id);
+    Optional<UserDTO> findOneAndIsBlock(Long id, boolean isBlock);
 
-    BusinessServiceExecuteResult delete(Long id);
+    Optional<UserDTOLazy> findOneAndIsBlockLazy(Long id, boolean isBlock);
 
-    BusinessServiceExecuteResult delete(List<Long> ids);
+    Optional<UserDTO> findOneAndIsActive(Long id, boolean isActive);
 
-    BusinessServiceExecuteResult deleteAll();
+    Optional<UserDTOLazy> findOneAndIsActiveLazy(Long id, boolean isActive);
 
-    BusinessServiceExecuteResult activatedUser(String secretKey);
+    BusinessServiceExecuteResult<BusinessServiceExecuteStatus> delete(Long id);
 
-    BusinessServiceExecuteResult deactivatedUser(Long id);
+    BusinessServiceExecuteResult<BusinessServiceExecuteStatus> delete(List<Long> ids);
 
-    BusinessServiceExecuteResult deactivatedUser(String secretKey);
+    BusinessServiceExecuteResult<BusinessServiceExecuteStatus> deleteAll();
 
-    BusinessServiceExecuteResult sendBlockToUser(Long id);
+    BusinessServiceExecuteResult<UserDTOLazy> setRole(Long userId, String role);
 
-    BusinessServiceExecuteResult sendUnBlockToUser(Long id);
+    BusinessServiceExecuteResult<UserDTOLazy> setPasswordBySecretKey(String newPassword, String secretKey);
+
+    BusinessServiceExecuteResult<UserDTOLazy> setPasswordByUserId(String newPassword, Long id);
+
+    BusinessServiceExecuteResult<UserDTOLazy> setPasswordByOldPassword(UserSetPasswordDTO userSetPasswordDTO);
+
+    BusinessServiceExecuteResult<UserDTOLazy> generateNewSecretKey(Long id);
+
+    BusinessServiceExecuteResult<UserDTOLazy> activatedUser(String secretKey);
+
+    BusinessServiceExecuteResult<UserDTOLazy> deactivatedUser(Long id);
+
+    BusinessServiceExecuteResult<UserDTOLazy> deactivatedUser(String username);
+
+    BusinessServiceExecuteResult<UserDTOLazy> sendBlockToUser(Long id);
+
+    BusinessServiceExecuteResult<UserDTOLazy> sendUnBlockToUser(Long id);
 }
