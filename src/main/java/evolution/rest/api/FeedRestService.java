@@ -1,10 +1,9 @@
 package evolution.rest.api;
 
 import evolution.dto.modelOld.FeedDTO;
-import evolution.dto.modelOld.FeedForSaveDTO;
-import evolution.dto.modelOld.FeedForUpdateDTO;
+import evolution.dto.modelOld.FeedSaveDTO;
+import evolution.dto.modelOld.FeedUpdateDTO;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -17,9 +16,9 @@ public interface FeedRestService extends AbstractRestService {
 
     ResponseEntity<Page<FeedDTO>> findAll(Integer page, Integer size, String sortType, List<String> sortProperties);
 
-    ResponseEntity<FeedDTO> create(FeedForSaveDTO feed);
+    ResponseEntity<FeedDTO> create(FeedSaveDTO feed);
 
-    ResponseEntity<FeedDTO> update(FeedForUpdateDTO feed);
+    ResponseEntity<FeedDTO> update(FeedUpdateDTO feed);
 
     ResponseEntity<List<FeedDTO>> findMyFriendsFeed();
 

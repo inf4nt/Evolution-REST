@@ -8,6 +8,7 @@ import lombok.Data;
  */
 @Data
 @JsonInclude
+@Deprecated
 public class MessageDTOFull {
 
     private Long id;

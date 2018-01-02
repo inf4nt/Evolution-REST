@@ -6,7 +6,7 @@ import java.util.List;
 
 @Data
 @JsonInclude
-public class FeedForSaveDTO {
+public class FeedSaveDTO {
 
     private String content;
 

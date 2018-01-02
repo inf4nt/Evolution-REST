@@ -4,12 +4,11 @@ import evolution.business.BusinessServiceExecuteResult;
 import evolution.business.api.FeedBusinessService;
 import evolution.common.BusinessServiceExecuteStatus;
 import evolution.dto.modelOld.FeedDTO;
-import evolution.dto.modelOld.FeedForSaveDTO;
-import evolution.dto.modelOld.FeedForUpdateDTO;
+import evolution.dto.modelOld.FeedSaveDTO;
+import evolution.dto.modelOld.FeedUpdateDTO;
 import evolution.rest.api.FeedRestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +44,7 @@ public class FeedRestServiceImpl implements FeedRestService {
     }
 
     @Override
-    public ResponseEntity<FeedDTO> create(FeedForSaveDTO feed) {
+    public ResponseEntity<FeedDTO> create(FeedSaveDTO feed) {
         BusinessServiceExecuteResult<FeedDTO> b = feedBusinessService.create(feed);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {
             return ResponseEntity.status(403).build();
@@ -61,7 +60,7 @@ public class FeedRestServiceImpl implements FeedRestService {
     }
 
     @Override
-    public ResponseEntity<FeedDTO> update(FeedForUpdateDTO feed) {
+    public ResponseEntity<FeedDTO> update(FeedUpdateDTO feed) {
         BusinessServiceExecuteResult<FeedDTO> b = feedBusinessService.update(feed);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {
             return ResponseEntity.status(403).build();

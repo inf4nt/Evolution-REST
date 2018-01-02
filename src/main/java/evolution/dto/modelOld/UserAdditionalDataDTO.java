@@ -11,6 +11,7 @@ import java.util.Date;
  */
 @Data
 @JsonInclude
+@Deprecated
 public class UserAdditionalDataDTO {
 
     private Long id;

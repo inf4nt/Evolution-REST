@@ -1,12 +1,11 @@
 package evolution.controller;
 
 import evolution.dto.modelOld.FeedDTO;
-import evolution.dto.modelOld.FeedForSaveDTO;
-import evolution.dto.modelOld.FeedForUpdateDTO;
+import evolution.dto.modelOld.FeedSaveDTO;
+import evolution.dto.modelOld.FeedUpdateDTO;
 import evolution.rest.api.FeedRestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -74,12 +73,12 @@ public class FeedRestController {
     }
 
     @PostMapping
-    public ResponseEntity<FeedDTO> post(@RequestBody FeedForSaveDTO feed) {
+    public ResponseEntity<FeedDTO> post(@RequestBody FeedSaveDTO feed) {
         return feedRestService.create(feed);
     }
 
     @PutMapping
-    public ResponseEntity<FeedDTO> put(@RequestBody FeedForUpdateDTO feed) {
+    public ResponseEntity<FeedDTO> put(@RequestBody FeedUpdateDTO feed) {
         return feedRestService.update(feed);
     }
 

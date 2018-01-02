@@ -2,9 +2,8 @@ package evolution.business.api;
 
 import evolution.business.BusinessServiceExecuteResult;
 import evolution.dto.modelOld.FeedDTO;
-import evolution.dto.modelOld.FeedForSaveDTO;
-import evolution.dto.modelOld.FeedForUpdateDTO;
-import evolution.model.Feed;
+import evolution.dto.modelOld.FeedSaveDTO;
+import evolution.dto.modelOld.FeedUpdateDTO;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -21,9 +20,9 @@ public interface FeedBusinessService {
 
     BusinessServiceExecuteResult deleteWithToUser(Long id, Long toUserId);
 
-    BusinessServiceExecuteResult<FeedDTO> update(FeedForUpdateDTO feed);
+    BusinessServiceExecuteResult<FeedDTO> update(FeedUpdateDTO feed);
 
-    BusinessServiceExecuteResult<FeedDTO> create(FeedForSaveDTO feed);
+    BusinessServiceExecuteResult<FeedDTO> create(FeedSaveDTO feed);
 
     List<FeedDTO> findAll();
 

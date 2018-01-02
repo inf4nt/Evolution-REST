@@ -6,8 +6,8 @@ import evolution.crud.api.FeedCrudManagerService;
 import evolution.crud.api.UserCrudManagerService;
 import evolution.dto.FeedDTOTransfer;
 import evolution.dto.modelOld.FeedDTO;
-import evolution.dto.modelOld.FeedForSaveDTO;
-import evolution.dto.modelOld.FeedForUpdateDTO;
+import evolution.dto.modelOld.FeedSaveDTO;
+import evolution.dto.modelOld.FeedUpdateDTO;
 import evolution.model.Feed;
 import evolution.model.User;
 import evolution.service.DateService;
@@ -93,7 +93,7 @@ public class FeedBusinessServiceImpl implements FeedBusinessService {
     }
 
     @Override
-    public BusinessServiceExecuteResult<FeedDTO> update(FeedForUpdateDTO feed) {
+    public BusinessServiceExecuteResult<FeedDTO> update(FeedUpdateDTO feed) {
         if (!securitySupportService.isAllowedFull(feed.getSenderId())) {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
         }
@@ -119,7 +119,7 @@ public class FeedBusinessServiceImpl implements FeedBusinessService {
     }
 
     @Override
-    public BusinessServiceExecuteResult<FeedDTO> create(FeedForSaveDTO feed) {
+    public BusinessServiceExecuteResult<FeedDTO> create(FeedSaveDTO feed) {
         if (!securitySupportService.isAllowed(feed.getSenderId())) {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
         }

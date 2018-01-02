@@ -15,8 +15,4 @@ public interface FileService {
     File getFileByKey(String fileKey) throws IOException;
 
     String generateFileKey();
-
-    default Drive driveService() throws IOException {
-        return GoogleDrive.getDriveService();
-    }
 }

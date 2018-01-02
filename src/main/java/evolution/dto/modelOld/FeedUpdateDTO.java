@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @JsonInclude
-public class FeedForUpdateDTO {
+public class FeedUpdateDTO {
 
     private Long id;
 

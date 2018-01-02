@@ -1,6 +1,6 @@
 package evolution.controller;
 
-import evolution.dto.modelOld.MessageDTO;
+import evolution.dto.model.MessageDTO;
 import evolution.dto.model.MessageSaveDTO;
 import evolution.dto.model.MessageUpdateDTO;
 import evolution.rest.api.MessageRestService;
