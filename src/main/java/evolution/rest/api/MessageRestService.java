@@ -1,8 +1,9 @@
 package evolution.rest.api;
 
-import evolution.dto.modelOld.MessageDTO;
-import evolution.dto.modelOld.MessageDTOForSave;
-import evolution.dto.modelOld.MessageForUpdateDTO;
+
+import evolution.dto.model.MessageDTO;
+import evolution.dto.model.MessageSaveDTO;
+import evolution.dto.model.MessageUpdateDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,37 +17,47 @@ public interface MessageRestService extends AbstractRestService {
 
     ResponseEntity<List<MessageDTO>> findAll();
 
+    ResponseEntity<List<MessageDTO>> findAll(String sort, List<String> sortProperties);
+
     ResponseEntity<Page<MessageDTO>> findAllMessage(Integer page, Integer size, String sort, List<String> sortProperties);
+
+    ResponseEntity<List<MessageDTO>> findMessageRecipientId();
+
+    ResponseEntity<List<MessageDTO>> findMessageRecipientId(Long recipient, String sort, List<String> sortProperties);
 
     ResponseEntity<Page<MessageDTO>> findMessageRecipientId(Long recipient, Integer page, Integer size, String sort, List<String> sortProperties);
 
-    ResponseEntity<Page<MessageDTO>> findMessageSenderId(Long sender, Integer page, Integer size, String sort, List<String> sortProperties);
+    ResponseEntity<List<MessageDTO>> findMessageSenderId();
 
-    ResponseEntity<Page<MessageDTO>> findLastMessageInMyDialog(Long userId, Integer page, Integer size, String sort, List<String> sortProperties);
+    ResponseEntity<List<MessageDTO>> findMessageSenderId(Long sender, String sort, List<String> sortProperties);
+
+    ResponseEntity<Page<MessageDTO>> findMessageSenderId(Long sender, Integer page, Integer size, String sort, List<String> sortProperties);
 
     ResponseEntity<List<MessageDTO>> findLastMessageInMyDialog(Long userId);
 
-    ResponseEntity<MessageDTO> findOneMessage(Long id);
+    ResponseEntity<List<MessageDTO>> findLastMessageInMyDialog(Long userId, String sort, List<String> sortProperties);
 
-    ResponseEntity<MessageDTO> save(MessageDTOForSave message);
+    ResponseEntity<Page<MessageDTO>> findLastMessageInMyDialog(Long userId, Integer page, Integer size, String sort, List<String> sortProperties);
 
-    ResponseEntity<HttpStatus> update(MessageForUpdateDTO message);
+    ResponseEntity<MessageDTO> findOne(Long id);
 
-    ResponseEntity<MessageDTO> updateAfterReturn(MessageForUpdateDTO message);
+    ResponseEntity<MessageDTO> save(MessageSaveDTO message);
 
-    ResponseEntity<HttpStatus> updateMessage(MessageForUpdateDTO message);
+    ResponseEntity<HttpStatus> update(MessageUpdateDTO message);
+
+    ResponseEntity<MessageDTO> updateAfterReturn(MessageUpdateDTO message);
+
+    ResponseEntity<HttpStatus> updateMessage(MessageUpdateDTO message);
 
     ResponseEntity<HttpStatus> delete(Long messageId);
 
+    ResponseEntity<HttpStatus> delete(List<Long> list);
+
     ResponseEntity<Long> deleteAfterReturnId(Long messageId);
 
-    ResponseEntity<Page<MessageDTO>> findMessageByDialog(Long dialogId, Integer page, Integer size, String sort, List<String> sortProperties);
-
-    ResponseEntity<List<MessageDTO>> findMessageByDialog(Long dialogId, String sort, List<String> sortProperties);
-
-    ResponseEntity<List<MessageDTO>> findMessageByDialog(Long dialogId);
-
     ResponseEntity<List<MessageDTO>> findMessageByInterlocutor(Long interlocutor);
+
+    ResponseEntity<List<MessageDTO>> findMessageByInterlocutor(Long interlocutor, String sort, List<String> sortProperties);
 
     ResponseEntity<Page<MessageDTO>> findMessageByInterlocutor(Long interlocutor, Integer page, Integer size, String sort, List<String> sortProperties);
 }

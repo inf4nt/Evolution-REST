@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude
+@Deprecated
 public class DialogFullDTO {
 
     private Long id;

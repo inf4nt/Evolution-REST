@@ -1,15 +1,17 @@
-package evolution.dto.modelOld;
+package evolution.dto.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import evolution.common.GenderEnum;
 import lombok.Data;
 
 /**
- * Created by Infant on 09.11.2017.
+ * Created by Infant on 11.11.2017.
  */
 @Data
 @JsonInclude
-public class UserForSaveDTO {
+public class UserUpdateDTO {
+
+    private Long id;
 
     private String firstName;
 
@@ -17,13 +19,10 @@ public class UserForSaveDTO {
 
     private String nickname;
 
-    private String username;
-
-    private String password;
-
     private String country;
 
     private String state;
 
     private GenderEnum gender;
+
 }

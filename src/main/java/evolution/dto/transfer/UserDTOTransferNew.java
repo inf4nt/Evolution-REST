@@ -2,7 +2,7 @@ package evolution.dto.transfer;
 
 import evolution.dto.model.UserDTO;
 import evolution.dto.model.UserDTOLazy;
-import evolution.dto.modelOld.UserForSaveDTO;
+import evolution.dto.model.UserSaveDTO;
 import evolution.model.User;
 import evolution.model.UserAdditionalData;
 import org.modelmapper.ModelMapper;
@@ -43,7 +43,7 @@ public class UserDTOTransferNew {
         return userDTOLazy;
     }
 
-    public User dtoToModel(UserForSaveDTO saveDTO) {
+    public User dtoToModel(UserSaveDTO saveDTO) {
         User res = new User();
 
         res.setFirstName(saveDTO.getFirstName());

@@ -8,6 +8,7 @@ import lombok.Data;
  */
 @Data
 @JsonInclude
+@Deprecated
 public class DialogDTO {
 
     private Long id;

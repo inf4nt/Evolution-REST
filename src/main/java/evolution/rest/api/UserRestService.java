@@ -3,8 +3,8 @@ package evolution.rest.api;
 
 import evolution.dto.model.UserDTO;
 import evolution.dto.model.UserDTOLazy;
-import evolution.dto.modelOld.UserForSaveDTO;
-import evolution.dto.modelOld.UserForUpdateDTO;
+import evolution.dto.model.UserSaveDTO;
+import evolution.dto.model.UserUpdateDTO;
 import evolution.dto.model.UserSetPasswordDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -83,13 +83,13 @@ public interface UserRestService extends AbstractRestService {
 
     ResponseEntity<UserDTOLazy> findByUsernameLazy(String username);
 
-    ResponseEntity<UserDTOLazy> createNewUser(UserForSaveDTO user);
+    ResponseEntity<UserDTOLazy> createNewUser(UserSaveDTO user);
 
-    ResponseEntity<UserDTOLazy> update(UserForUpdateDTO user);
+    ResponseEntity<UserDTOLazy> update(UserUpdateDTO user);
 
-    ResponseEntity<HttpStatus> createNewUser2(UserForSaveDTO user);
+    ResponseEntity<HttpStatus> createNewUser2(UserSaveDTO user);
 
-    ResponseEntity<HttpStatus> update2(UserForUpdateDTO user);
+    ResponseEntity<HttpStatus> update2(UserUpdateDTO user);
 
     ResponseEntity<HttpStatus> delete(Long id);
 

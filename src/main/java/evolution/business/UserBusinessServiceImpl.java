@@ -7,8 +7,8 @@ import evolution.crud.api.UserCrudManagerService;
 
 import evolution.dto.model.UserDTO;
 import evolution.dto.model.UserDTOLazy;
-import evolution.dto.modelOld.UserForSaveDTO;
-import evolution.dto.modelOld.UserForUpdateDTO;
+import evolution.dto.model.UserSaveDTO;
+import evolution.dto.model.UserUpdateDTO;
 import evolution.dto.model.UserSetPasswordDTO;
 import evolution.dto.transfer.UserDTOTransferNew;
 import evolution.model.User;
@@ -57,16 +57,16 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
-    public BusinessServiceExecuteResult<User> createNewUser(UserForSaveDTO userForSaveDTO) {
-        Optional<User> ou = userCrudManagerService.findByUsername(userForSaveDTO.getUsername());
+    public BusinessServiceExecuteResult<User> createNewUser(UserSaveDTO userSaveDTO) {
+        Optional<User> ou = userCrudManagerService.findByUsername(userSaveDTO.getUsername());
         if (ou.isPresent()) {
-            logger.info("user by username " + userForSaveDTO.getUsername() + ", is already exist !");
+            logger.info("user by username " + userSaveDTO.getUsername() + ", is already exist !");
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.USER_IS_ALREADY_EXIST_REGISTRATION_FAILED);
         }
 
-        User user = userDTOTransferNew.dtoToModel(userForSaveDTO);
+        User user = userDTOTransferNew.dtoToModel(userSaveDTO);
 
-        String encodePassword = userTechnicalService.encodePassword(userForSaveDTO.getPassword());
+        String encodePassword = userTechnicalService.encodePassword(userSaveDTO.getPassword());
         user.getUserAdditionalData().setPassword(encodePassword);
         user.getUserAdditionalData().setBlock(false);
         user.getUserAdditionalData().setActive(false);
@@ -81,8 +81,8 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
-    public BusinessServiceExecuteResult<UserDTOLazy> createNewUser2(UserForSaveDTO userForSaveDTO) {
-        BusinessServiceExecuteResult<User> b = createNewUser(userForSaveDTO);
+    public BusinessServiceExecuteResult<UserDTOLazy> createNewUser2(UserSaveDTO userSaveDTO) {
+        BusinessServiceExecuteResult<User> b = createNewUser(userSaveDTO);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
             return BusinessServiceExecuteResult
                     .build(BusinessServiceExecuteStatus.OK, b.getResultObjectOptional().map(o -> userDTOTransferNew.modelToDTOLazy(o)));
@@ -91,13 +91,13 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
-    public BusinessServiceExecuteResult<BusinessServiceExecuteStatus> createNewUser3(UserForSaveDTO userForSaveDTO) {
-        BusinessServiceExecuteResult<User> b = createNewUser(userForSaveDTO);
+    public BusinessServiceExecuteResult<BusinessServiceExecuteStatus> createNewUser3(UserSaveDTO userSaveDTO) {
+        BusinessServiceExecuteResult<User> b = createNewUser(userSaveDTO);
         return BusinessServiceExecuteResult.build(b.getExecuteStatus());
     }
 
     @Override
-    public BusinessServiceExecuteResult<User> update(UserForUpdateDTO user) {
+    public BusinessServiceExecuteResult<User> update(UserUpdateDTO user) {
         if (!securitySupportService.isAllowedFull(user.getId())) {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
         }
@@ -121,7 +121,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
-    public BusinessServiceExecuteResult<UserDTOLazy> update2(UserForUpdateDTO user) {
+    public BusinessServiceExecuteResult<UserDTOLazy> update2(UserUpdateDTO user) {
         BusinessServiceExecuteResult<User> b = update(user);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent()) {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, b.getResultObjectOptional().map(o -> userDTOTransferNew.modelToDTOLazy(o)));
@@ -130,7 +130,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
-    public BusinessServiceExecuteResult<BusinessServiceExecuteStatus> update3(UserForUpdateDTO user) {
+    public BusinessServiceExecuteResult<BusinessServiceExecuteStatus> update3(UserUpdateDTO user) {
         BusinessServiceExecuteResult<User> b = update(user);
         return BusinessServiceExecuteResult.build(b.getExecuteStatus());
     }

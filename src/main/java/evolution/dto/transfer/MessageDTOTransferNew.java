@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +31,12 @@ public class MessageDTOTransferNew {
         return messageDTO;
     }
 
+    public MessageDTO modelToDTO(Message message, Long auth) {
+        MessageDTO messageDTO = modelMapper.map(message, MessageDTO.class);
+        messageDTO.setDialog(dialogDTOTransferNew.modelToDTO(message.getDialog(), new User(auth)));
+        return messageDTO;
+    }
+
     public List<MessageDTO> modelToDTO(List<Message> list) {
         return list
                 .stream()
@@ -44,6 +51,13 @@ public class MessageDTOTransferNew {
                 .collect(Collectors.toList());
     }
 
+    public List<MessageDTO> modelToDTO(List<Message> list, Long auth) {
+        return list
+                .stream()
+                .map(o -> modelToDTO(o, auth))
+                .collect(Collectors.toList());
+    }
+
     public Page<MessageDTO> modelToDTO(Page<Message> page) {
         return page
                 .map(o -> modelToDTO(o));
@@ -51,6 +65,26 @@ public class MessageDTOTransferNew {
 
     public Page<MessageDTO> modelToDTO(Page<Message> page, User auth) {
         return page
+                .map(o -> modelToDTO(o, auth));
+    }
+
+    public Page<MessageDTO> modelToDTO(Page<Message> page, Long auth) {
+        return page
+                .map(o -> modelToDTO(o, auth));
+    }
+
+    public Optional<MessageDTO> modelToDTO(Optional<Message> optional) {
+        return optional
+                .map(o -> modelToDTO(o));
+    }
+
+    public Optional<MessageDTO> modelToDTO(Optional<Message> optional, User auth) {
+        return optional
+                .map(o -> modelToDTO(o, auth));
+    }
+
+    public Optional<MessageDTO> modelToDTO(Optional<Message> optional, Long auth) {
+        return optional
                 .map(o -> modelToDTO(o, auth));
     }
 

@@ -2,8 +2,8 @@ package evolution.controller;
 
 import evolution.dto.model.UserDTO;
 import evolution.dto.model.UserDTOLazy;
-import evolution.dto.modelOld.UserForSaveDTO;
-import evolution.dto.modelOld.UserForUpdateDTO;
+import evolution.dto.model.UserSaveDTO;
+import evolution.dto.model.UserUpdateDTO;
 import evolution.dto.model.UserSetPasswordDTO;
 import evolution.rest.api.UserRestService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,17 +68,17 @@ public class UserRestController {
     }
 
     @PostMapping(value = "/post")
-    public ResponseEntity<UserDTOLazy> save2(@RequestBody UserForSaveDTO user) {
+    public ResponseEntity<UserDTOLazy> save2(@RequestBody UserSaveDTO user) {
         return save(user);
     }
 
     @PostMapping
-    public ResponseEntity<UserDTOLazy> save(@RequestBody UserForSaveDTO user) {
+    public ResponseEntity<UserDTOLazy> save(@RequestBody UserSaveDTO user) {
         return userRestService.createNewUser(user);
     }
 
     @PutMapping
-    public ResponseEntity<UserDTOLazy> update(@RequestBody UserForUpdateDTO user) {
+    public ResponseEntity<UserDTOLazy> update(@RequestBody UserUpdateDTO user) {
         return userRestService.update(user);
     }
 
@@ -87,7 +87,7 @@ public class UserRestController {
         return userRestService.delete(id);
     }
 
-    @DeleteMapping(value = "/delete")
+    @DeleteMapping(value = "/list")
     public ResponseEntity deleteById(@RequestParam List<Long> ids) {
         return userRestService.delete(ids);
     }

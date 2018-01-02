@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
  * Created by Infant on 13.11.2017.
  */
 @Service
+@Deprecated
 public class DialogDTOTransfer {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());

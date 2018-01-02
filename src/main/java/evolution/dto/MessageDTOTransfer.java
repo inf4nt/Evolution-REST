@@ -1,7 +1,6 @@
 package evolution.dto;
 
 import evolution.dto.modelOld.MessageDTO;
-import evolution.dto.modelOld.MessageDTOForSave;
 import evolution.model.Message;
 import evolution.model.User;
 import evolution.security.model.CustomSecurityUser;
@@ -15,6 +14,7 @@ import java.util.Optional;
  * Created by Infant on 13.11.2017.
  */
 @Service
+@Deprecated
 public class MessageDTOTransfer {
 
     private final DateService dateService;

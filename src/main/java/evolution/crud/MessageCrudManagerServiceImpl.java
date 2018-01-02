@@ -1,12 +1,14 @@
 package evolution.crud;
 
 import evolution.crud.api.MessageCrudManagerService;
+import evolution.dto.model.MessageSaveDTO;
 import evolution.model.Dialog;
 import evolution.model.Message;
 import evolution.model.User;
 import evolution.repository.DialogRepository;
 import evolution.repository.MessageRepository;
 import evolution.repository.UserRepository;
+import evolution.service.DateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -31,6 +33,8 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
 
     private final UserRepository userRepository;
 
+    private final DateService dateService;
+
     @Value("${model.message.maxfetch}")
     private Integer messageMaxFetch;
 
@@ -42,11 +46,13 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
 
     @Autowired
     public MessageCrudManagerServiceImpl(MessageRepository messageRepository,
+                                         DateService dateService,
                                          DialogRepository dialogRepository,
                                          UserRepository userRepository) {
         this.messageRepository = messageRepository;
         this.dialogRepository = dialogRepository;
         this.userRepository = userRepository;
+        this.dateService = dateService;
     }
 
 
@@ -115,6 +121,11 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
     }
 
     @Override
+    public Message saveMessageAndMaybeCreateNewDialog(MessageSaveDTO messageSaveDTO, Date createUTC) {
+        return saveMessageAndMaybeCreateNewDialog(messageSaveDTO.getText(), messageSaveDTO.getSenderId(), messageSaveDTO.getRecipientId(), createUTC);
+    }
+
+    @Override
     public List<Message> findMessageByInterlocutor(Long interlocutor, Long second) {
         return messageRepository.findMessageByInterlocutor(interlocutor, second);
     }
@@ -134,54 +145,42 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
 
     @Override
     @Transactional
-    public boolean deleteMessageAndMaybeDialog(Long messageId) {
+    public void deleteMessageAndMaybeDialog(Long messageId) {
         Optional<Message> message = messageRepository.findOneMessageById(messageId);
-        if (!message.isPresent()) {
-            return false;
-        }
-
-        Dialog dialog = message.get().getDialog();
-        List<Message> messageList = dialog.getMessageList();
-        if (!messageList.isEmpty()) {
-            if (messageList.size() == 1) {
-                dialogRepository.delete(dialog);
-            } else {
-                messageList.remove(message.get());
-                dialogRepository.save(dialog);
+        message.ifPresent(o -> {
+            Dialog dialog = message.get().getDialog();
+            List<Message> messageList = dialog.getMessageList();
+            if (!messageList.isEmpty()) {
+                if (messageList.size() == 1) {
+                    dialogRepository.delete(dialog);
+                } else {
+                    messageList.remove(message.get());
+                    dialogRepository.save(dialog);
+                }
             }
-        } else {
-            return false;
-        }
-
-        return true;
+        });
     }
 
     @Override
     @Transactional
-    public boolean deleteMessageAndMaybeDialog(Long messageId, Long senderId) {
+    public void deleteMessageAndMaybeDialog(Long messageId, Long senderId) {
         Optional<Message> message = messageRepository.findOneByMessageIdAndSender(messageId, senderId);
-        if (!message.isPresent()) {
-            return false;
-        }
-
-        Dialog dialog = message.get().getDialog();
-        List<Message> messageList = dialog.getMessageList();
-        if (!messageList.isEmpty()) {
-            if (messageList.size() == 1) {
-                dialogRepository.delete(dialog);
-            } else {
-                messageList.remove(message.get());
-                dialogRepository.save(dialog);
+        message.ifPresent(o -> {
+            Dialog dialog = message.get().getDialog();
+            List<Message> messageList = dialog.getMessageList();
+            if (!messageList.isEmpty()) {
+                if (messageList.size() == 1) {
+                    dialogRepository.delete(dialog);
+                } else {
+                    messageList.remove(message.get());
+                    dialogRepository.save(dialog);
+                }
             }
-        } else {
-            return false;
-        }
-
-        return true;
+        });
     }
 
     @Override
-    public Optional<Message> findOneByMessageIdAndSenderId(Long messageId, Long senderId) {
+    public Optional<Message> findOne(Long messageId, Long senderId) {
         return messageRepository.findOneByMessageIdAndSender(messageId, senderId);
     }
 

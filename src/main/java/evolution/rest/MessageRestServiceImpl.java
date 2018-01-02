@@ -5,9 +5,9 @@ package evolution.rest;
 import evolution.business.BusinessServiceExecuteResult;
 import evolution.business.api.MessageBusinessService;
 import evolution.common.BusinessServiceExecuteStatus;
-import evolution.dto.modelOld.MessageDTO;
-import evolution.dto.modelOld.MessageDTOForSave;
-import evolution.dto.modelOld.MessageForUpdateDTO;
+import evolution.dto.model.MessageDTO;
+import evolution.dto.model.MessageSaveDTO;
+import evolution.dto.model.MessageUpdateDTO;
 import evolution.rest.api.MessageRestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,9 +41,24 @@ public class MessageRestServiceImpl implements MessageRestService {
     }
 
     @Override
+    public ResponseEntity<List<MessageDTO>> findAll(String sort, List<String> sortProperties) {
+        return null;
+    }
+
+    @Override
     public ResponseEntity<Page<MessageDTO>> findAllMessage(Integer page, Integer size, String sort, List<String> sortProperties) {
         Page<MessageDTO> p = messageBusinessService.findAll(page, size, sort, sortProperties);
         return response(p);
+    }
+
+    @Override
+    public ResponseEntity<List<MessageDTO>> findMessageRecipientId() {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<List<MessageDTO>> findMessageRecipientId(Long recipient, String sort, List<String> sortProperties) {
+        return null;
     }
 
     @Override
@@ -53,9 +68,24 @@ public class MessageRestServiceImpl implements MessageRestService {
     }
 
     @Override
+    public ResponseEntity<List<MessageDTO>> findMessageSenderId() {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<List<MessageDTO>> findMessageSenderId(Long sender, String sort, List<String> sortProperties) {
+        return null;
+    }
+
+    @Override
     public ResponseEntity<Page<MessageDTO>> findMessageSenderId(Long sender, Integer page, Integer size, String sort, List<String> sortProperties) {
         Page<MessageDTO> p = messageBusinessService.findMessageBySenderId(sender, page, size, sort, sortProperties);
         return response(p);
+    }
+
+    @Override
+    public ResponseEntity<List<MessageDTO>> findLastMessageInMyDialog(Long userId, String sort, List<String> sortProperties) {
+        return null;
     }
 
     @Override
@@ -71,13 +101,13 @@ public class MessageRestServiceImpl implements MessageRestService {
     }
 
     @Override
-    public ResponseEntity<MessageDTO> findOneMessage(Long id) {
+    public ResponseEntity<MessageDTO> findOne(Long id) {
         Optional<MessageDTO> m = messageBusinessService.findOne(id);
         return response(m);
     }
 
     @Override
-    public ResponseEntity<MessageDTO> save(MessageDTOForSave message) {
+    public ResponseEntity<MessageDTO> save(MessageSaveDTO message) {
         BusinessServiceExecuteResult<MessageDTO> b = messageBusinessService.createMessage(message.getSenderId(), message.getRecipientId(), message.getText());
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent()) {
             return ResponseEntity.status(201).body(b.getResultObjectOptional().get());
@@ -88,12 +118,12 @@ public class MessageRestServiceImpl implements MessageRestService {
     }
 
     @Override
-    public ResponseEntity<HttpStatus> update(MessageForUpdateDTO message) {
+    public ResponseEntity<HttpStatus> update(MessageUpdateDTO message) {
         return null;
     }
 
     @Override
-    public ResponseEntity<MessageDTO> updateAfterReturn(MessageForUpdateDTO message) {
+    public ResponseEntity<MessageDTO> updateAfterReturn(MessageUpdateDTO message) {
         BusinessServiceExecuteResult<MessageDTO> b = messageBusinessService.update(message);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK  && b.getResultObjectOptional().isPresent()) {
             return ResponseEntity.ok(b.getResultObjectOptional().get());
@@ -106,7 +136,7 @@ public class MessageRestServiceImpl implements MessageRestService {
     }
 
     @Override
-    public ResponseEntity<HttpStatus> updateMessage(MessageForUpdateDTO message) {
+    public ResponseEntity<HttpStatus> updateMessage(MessageUpdateDTO message) {
         return null;
     }
 
@@ -122,31 +152,24 @@ public class MessageRestServiceImpl implements MessageRestService {
     }
 
     @Override
+    public ResponseEntity<HttpStatus> delete(List<Long> list) {
+        return null;
+    }
+
+    @Override
     public ResponseEntity<Long> deleteAfterReturnId(Long messageId) {
         return null;
-    }
-
-    @Override
-    public ResponseEntity<Page<MessageDTO>> findMessageByDialog(Long dialogId, Integer page, Integer size, String sort, List<String> sortProperties) {
-        Page<MessageDTO> p = messageBusinessService.findMessageByDialogId(dialogId, page, size, sort, sortProperties);
-        return response(p);
-    }
-
-    @Override
-    public ResponseEntity<List<MessageDTO>> findMessageByDialog(Long dialogId, String sort, List<String> sortProperties) {
-        return null;
-    }
-
-    @Override
-    public ResponseEntity<List<MessageDTO>> findMessageByDialog(Long dialogId) {
-        List<MessageDTO> list = messageBusinessService.findMessageByDialogId(dialogId);
-        return response(list);
     }
 
     @Override
     public ResponseEntity<List<MessageDTO>> findMessageByInterlocutor(Long interlocutor) {
         List<MessageDTO> list = messageBusinessService.findMessageByInterlocutor(interlocutor);
         return response(list);
+    }
+
+    @Override
+    public ResponseEntity<List<MessageDTO>> findMessageByInterlocutor(Long interlocutor, String sort, List<String> sortProperties) {
+        return null;
     }
 
     @Override

@@ -2,10 +2,9 @@ package evolution.dto;
 
 
 import evolution.dto.modelOld.UserDTO;
-import evolution.dto.modelOld.UserForSaveDTO;
-import evolution.dto.modelOld.UserForUpdateDTO;
+import evolution.dto.model.UserSaveDTO;
+import evolution.dto.model.UserUpdateDTO;
 import evolution.dto.modelOld.UserFullDTO;
-import evolution.dto.model.UserDTOLazy;
 import evolution.model.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,20 +28,20 @@ public class UserDTOTransfer {
         return modelMapper.map(userFullDTO, User.class);
     }
 
-    public User dtoToModel(UserForUpdateDTO userForUpdateDTO) {
-        return modelMapper.map(userForUpdateDTO, User.class);
+    public User dtoToModel(UserUpdateDTO userUpdateDTO) {
+        return modelMapper.map(userUpdateDTO, User.class);
     }
 
-    public User dtoToModel(UserForSaveDTO userForSaveDTO) {
-        return modelMapper.map(userForSaveDTO, User.class);
+    public User dtoToModel(UserSaveDTO userSaveDTO) {
+        return modelMapper.map(userSaveDTO, User.class);
     }
 
     public User dtoToModel(UserDTO userDTO) {
         return modelMapper.map(userDTO, User.class);
     }
 
-    public UserForUpdateDTO modelToDTOForUpdate(User user) {
-        return modelMapper.map(user, UserForUpdateDTO.class);
+    public UserUpdateDTO modelToDTOForUpdate(User user) {
+        return modelMapper.map(user, UserUpdateDTO.class);
     }
 
     @Deprecated
@@ -50,8 +49,8 @@ public class UserDTOTransfer {
         return modelMapper.map(user, UserFullDTO.class);
     }
 
-    public UserForSaveDTO modelToDTOForSave(User user) {
-        return modelMapper.map(user, UserForSaveDTO.class);
+    public UserSaveDTO modelToDTOForSave(User user) {
+        return modelMapper.map(user, UserSaveDTO.class);
     }
 
     @Deprecated

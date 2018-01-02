@@ -5,8 +5,8 @@ import evolution.business.BusinessServiceExecuteResult;
 import evolution.common.BusinessServiceExecuteStatus;
 import evolution.dto.model.UserDTO;
 import evolution.dto.model.UserDTOLazy;
-import evolution.dto.modelOld.UserForSaveDTO;
-import evolution.dto.modelOld.UserForUpdateDTO;
+import evolution.dto.model.UserSaveDTO;
+import evolution.dto.model.UserUpdateDTO;
 import evolution.dto.model.UserSetPasswordDTO;
 import evolution.model.User;
 import org.springframework.data.domain.Page;
@@ -60,17 +60,17 @@ public interface UserBusinessService {
 
     BusinessServiceExecuteResult<UserDTOLazy> findOneLazy(Long id);
 
-    BusinessServiceExecuteResult<User> createNewUser(UserForSaveDTO userForSaveDTO);
+    BusinessServiceExecuteResult<User> createNewUser(UserSaveDTO userSaveDTO);
 
-    BusinessServiceExecuteResult<UserDTOLazy> createNewUser2(UserForSaveDTO userForSaveDTO);
+    BusinessServiceExecuteResult<UserDTOLazy> createNewUser2(UserSaveDTO userSaveDTO);
 
-    BusinessServiceExecuteResult<BusinessServiceExecuteStatus> createNewUser3(UserForSaveDTO userForSaveDTO);
+    BusinessServiceExecuteResult<BusinessServiceExecuteStatus> createNewUser3(UserSaveDTO userSaveDTO);
 
-    BusinessServiceExecuteResult<User> update(UserForUpdateDTO user);
+    BusinessServiceExecuteResult<User> update(UserUpdateDTO user);
 
-    BusinessServiceExecuteResult<UserDTOLazy> update2(UserForUpdateDTO user);
+    BusinessServiceExecuteResult<UserDTOLazy> update2(UserUpdateDTO user);
 
-    BusinessServiceExecuteResult<BusinessServiceExecuteStatus> update3(UserForUpdateDTO user);
+    BusinessServiceExecuteResult<BusinessServiceExecuteStatus> update3(UserUpdateDTO user);
 
     Optional<UserDTO> findByUsername(String username);
 

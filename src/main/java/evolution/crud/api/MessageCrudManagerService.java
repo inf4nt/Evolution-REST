@@ -1,6 +1,6 @@
 package evolution.crud.api;
 
-import evolution.dto.modelOld.MessageDTO;
+import evolution.dto.model.MessageSaveDTO;
 import evolution.model.Message;
 import org.springframework.data.domain.Page;
 
@@ -13,7 +13,7 @@ import java.util.Optional;
  */
 public interface MessageCrudManagerService extends AbstractCrudManagerService<Message, Long>, PageableManager {
 
-    Optional<Message> findOneByMessageIdAndSenderId(Long messageId, Long senderId);
+    Optional<Message> findOne(Long messageId, Long senderId);
 
     List<Message> findMessageByDialogId(Long dialogId);
 
@@ -53,11 +53,13 @@ public interface MessageCrudManagerService extends AbstractCrudManagerService<Me
 
     Optional<Message> update(Message message);
 
-    boolean deleteMessageAndMaybeDialog(Long messageId);
+    void deleteMessageAndMaybeDialog(Long messageId);
 
-    boolean deleteMessageAndMaybeDialog(Long messageId, Long senderId);
+    void deleteMessageAndMaybeDialog(Long messageId, Long senderId);
 
     Message saveMessageAndMaybeCreateNewDialog(String text, Long senderId, Long recipientId, Date createDateUTC);
+
+    Message saveMessageAndMaybeCreateNewDialog(MessageSaveDTO messageSaveDTO, Date createUTC);
 
     List<Message> findMessageByInterlocutor(Long interlocutor, Long second);
 

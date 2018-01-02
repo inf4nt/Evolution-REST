@@ -7,8 +7,8 @@ import evolution.business.api.UserBusinessService;
 import evolution.common.BusinessServiceExecuteStatus;
 import evolution.dto.model.UserDTO;
 import evolution.dto.model.UserDTOLazy;
-import evolution.dto.modelOld.UserForSaveDTO;
-import evolution.dto.modelOld.UserForUpdateDTO;
+import evolution.dto.model.UserSaveDTO;
+import evolution.dto.model.UserUpdateDTO;
 import evolution.dto.model.UserSetPasswordDTO;
 import evolution.rest.api.UserRestService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -162,7 +162,7 @@ public class UserRestServiceImpl implements UserRestService {
     }
 
     @Override
-    public ResponseEntity<UserDTOLazy> createNewUser(UserForSaveDTO user) {
+    public ResponseEntity<UserDTOLazy> createNewUser(UserSaveDTO user) {
         BusinessServiceExecuteResult<UserDTOLazy> b = userBusinessService.createNewUser2(user);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent()) {
             return ResponseEntity.status(201).body(b.getResultObjectOptional().get());
@@ -174,7 +174,7 @@ public class UserRestServiceImpl implements UserRestService {
     }
 
     @Override
-    public ResponseEntity<UserDTOLazy> update(UserForUpdateDTO user) {
+    public ResponseEntity<UserDTOLazy> update(UserUpdateDTO user) {
         BusinessServiceExecuteResult<UserDTOLazy> b = userBusinessService.update2(user);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent()) {
             return ResponseEntity.ok(b.getResultObjectOptional().get());
@@ -187,12 +187,12 @@ public class UserRestServiceImpl implements UserRestService {
     }
 
     @Override
-    public ResponseEntity<HttpStatus> createNewUser2(UserForSaveDTO user) {
+    public ResponseEntity<HttpStatus> createNewUser2(UserSaveDTO user) {
         return ResponseEntity.status(createNewUser(user).getStatusCode()).build();
     }
 
     @Override
-    public ResponseEntity<HttpStatus> update2(UserForUpdateDTO user) {
+    public ResponseEntity<HttpStatus> update2(UserUpdateDTO user) {
         return ResponseEntity.status(update2(user).getStatusCode()).build();
     }
 

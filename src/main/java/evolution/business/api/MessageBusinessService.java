@@ -1,13 +1,10 @@
 package evolution.business.api;
 
 import evolution.business.BusinessServiceExecuteResult;
-import evolution.dto.MessageDTOTransfer;
-import evolution.dto.modelOld.MessageDTO;
-import evolution.dto.modelOld.MessageDTOForSave;
-import evolution.dto.modelOld.MessageDTOFull;
-import evolution.dto.modelOld.MessageForUpdateDTO;
+import evolution.dto.model.MessageDTO;
+import evolution.dto.model.MessageSaveDTO;
+import evolution.dto.model.MessageUpdateDTO;
 import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,27 +28,35 @@ public interface MessageBusinessService {
 
     List<MessageDTO> findMessageByDialogId(Long dialogId, String sortType, List<String> sortProperties);
 
-    BusinessServiceExecuteResult<MessageDTO> createNewMessage(MessageDTOForSave messageDTOForSave);
+    BusinessServiceExecuteResult<MessageDTO> createNewMessage(MessageSaveDTO messageSaveDTO);
 
     BusinessServiceExecuteResult<MessageDTO> createMessage(Long senderId, Long recipientId, String text);
 
     BusinessServiceExecuteResult delete(Long id);
 
-    BusinessServiceExecuteResult<MessageDTO> update(MessageForUpdateDTO messageForUpdateDTO);
+    BusinessServiceExecuteResult<MessageDTO> update(MessageUpdateDTO messageUpdateDTO);
 
     List<MessageDTO> findLastMessageInMyDialog(Long iam);
+
+    List<MessageDTO> findLastMessageInMyDialog(Long iam, String sortType, List<String> sortProperties);
 
     Page<MessageDTO> findLastMessageInMyDialog(Long iam, Integer page, Integer size, String sortType, List<String> sortProperties);
 
     List<MessageDTO> findMessageBySenderId(Long iam);
 
+    List<MessageDTO> findMessageBySenderId(Long iam, String sortType, List<String> sortProperties);
+
     Page<MessageDTO> findMessageBySenderId(Long iam, Integer page, Integer size, String sortType, List<String> sortProperties);
 
     List<MessageDTO> findMessageByRecipientId(Long iam);
 
+    List<MessageDTO> findMessageByRecipientId(Long iam, String sortType, List<String> sortProperties);
+
     Page<MessageDTO> findMessageByRecipientId(Long iam, Integer page, Integer size, String sortType, List<String> sortProperties);
 
     List<MessageDTO> findMessageByInterlocutor(Long interlocutor);
+
+    List<MessageDTO> findMessageByInterlocutor(Long interlocutor, String sort, List<String> sortProperties);
 
     Page<MessageDTO> findMessageByInterlocutor(Long interlocutor, Integer page, Integer size, String sort, List<String> sortProperties);
 }

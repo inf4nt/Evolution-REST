@@ -1,8 +1,8 @@
 package evolution.controller;
 
 import evolution.dto.modelOld.MessageDTO;
-import evolution.dto.modelOld.MessageDTOForSave;
-import evolution.dto.modelOld.MessageForUpdateDTO;
+import evolution.dto.model.MessageSaveDTO;
+import evolution.dto.model.MessageUpdateDTO;
 import evolution.rest.api.MessageRestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,6 +28,12 @@ public class MessageRestController {
     }
 
     @GetMapping
+    public ResponseEntity<List<MessageDTO>> findAll(@RequestParam(required = false) String sortType,
+                                                    @RequestParam(required = false) List<String> sortProperties) {
+        return messageRestService.findAll(sortType, sortProperties);
+    }
+
+    @GetMapping(value = "/page")
     public ResponseEntity<Page<MessageDTO>> findAll(@RequestParam(required = false) Integer page,
                                                     @RequestParam(required = false) Integer size,
                                                     @RequestParam(required = false) String sortType,
@@ -35,22 +41,18 @@ public class MessageRestController {
         return messageRestService.findAllMessage(page, size, sortType, sortProperties);
     }
 
-    @GetMapping(value = "/list")
-    public ResponseEntity<List<MessageDTO>> findAllMessage() {
-        return messageRestService.findAll();
-    }
 
     @PutMapping
-    public ResponseEntity<MessageDTO> putMessage(@RequestBody MessageForUpdateDTO message) {
+    public ResponseEntity<MessageDTO> putMessage(@RequestBody MessageUpdateDTO message) {
         return messageRestService.updateAfterReturn(message);
     }
 
     @PostMapping
-    public ResponseEntity<MessageDTO> postMessage(@RequestBody MessageDTOForSave message) {
+    public ResponseEntity<MessageDTO> postMessage(@RequestBody MessageSaveDTO message) {
         return messageRestService.save(message);
     }
 
-    @GetMapping(value = "/interlocutor/{id}")
+    @GetMapping(value = "/interlocutor/{id}/page")
     public ResponseEntity<Page<MessageDTO>> findMessageByInterlocutor(@PathVariable Long id,
                                                                       @RequestParam(required = false) Integer page,
                                                                       @RequestParam(required = false) Integer size,
@@ -59,12 +61,14 @@ public class MessageRestController {
         return messageRestService.findMessageByInterlocutor(id, page, size, sortType, sortProperties);
     }
 
-    @GetMapping(value = "/interlocutor/{id}/list")
-    public ResponseEntity<List<MessageDTO>> findMessageByInterlocutor(@PathVariable Long id) {
-        return messageRestService.findMessageByInterlocutor(id);
+    @GetMapping(value = "/interlocutor/{id}")
+    public ResponseEntity<List<MessageDTO>> findMessageByInterlocutor(@PathVariable Long id,
+                                                                      @RequestParam(required = false) String sortType,
+                                                                      @RequestParam(required = false) List<String> sortProperties) {
+        return messageRestService.findMessageByInterlocutor(id, sortType, sortProperties);
     }
 
-    @GetMapping(value = "/recipient/user/{id}")
+    @GetMapping(value = "/recipient/user/{id}/page")
     public ResponseEntity<Page<MessageDTO>> findMessageByRecipient(@PathVariable Long id,
                                                                    @RequestParam(required = false) Integer page,
                                                                    @RequestParam(required = false) Integer size,
@@ -73,7 +77,14 @@ public class MessageRestController {
         return messageRestService.findMessageRecipientId(id, page, size, sortType, sortProperties);
     }
 
-    @GetMapping(value = "/sender/user/{id}")
+    @GetMapping(value = "/recipient/user/{id}")
+    public ResponseEntity<List<MessageDTO>> findMessageByRecipient(@PathVariable Long id,
+                                                                   @RequestParam(required = false) String sortType,
+                                                                   @RequestParam(required = false) List<String> sortProperties) {
+        return messageRestService.findMessageRecipientId(id, sortType, sortProperties);
+    }
+
+    @GetMapping(value = "/sender/user/{id}/page")
     public ResponseEntity<Page<MessageDTO>> findMessageBySender(@PathVariable Long id,
                                                                 @RequestParam(required = false) Integer page,
                                                                 @RequestParam(required = false) Integer size,
@@ -82,18 +93,11 @@ public class MessageRestController {
         return messageRestService.findMessageSenderId(id, page, size, sortType, sortProperties);
     }
 
-    @GetMapping(value = "/dialog/{id}")
-    public ResponseEntity<Page<MessageDTO>> findMessageByDialog(@PathVariable Long id,
-                                                                @RequestParam(required = false) Integer page,
-                                                                @RequestParam(required = false) Integer size,
+    @GetMapping(value = "/sender/user/{id}")
+    public ResponseEntity<List<MessageDTO>> findMessageBySender(@PathVariable Long id,
                                                                 @RequestParam(required = false) String sortType,
                                                                 @RequestParam(required = false) List<String> sortProperties) {
-        return messageRestService.findMessageByDialog(id, page, size, sortType, sortProperties);
-    }
-
-    @GetMapping(value = "/dialog/{id}/list")
-    public ResponseEntity<List<MessageDTO>> findMessageByDialog(@PathVariable Long id) {
-        return messageRestService.findMessageByDialog(id);
+        return messageRestService.findMessageSenderId(id, sortType, sortProperties);
     }
 
     @DeleteMapping(value = "/{id}")
@@ -101,12 +105,19 @@ public class MessageRestController {
         return messageRestService.delete(id);
     }
 
-    @GetMapping(value = "/last-message-dialog/user/{id}/list")
-    public ResponseEntity<List<MessageDTO>> findLastMessageInMyDialog(@PathVariable Long id) {
-        return messageRestService.findLastMessageInMyDialog(id);
+    @DeleteMapping(value = "/list")
+    public ResponseEntity<HttpStatus> delete(@RequestParam List<Long> ids) {
+        return messageRestService.delete(ids);
     }
 
     @GetMapping(value = "/last-message-dialog/user/{id}")
+    public ResponseEntity<List<MessageDTO>> findLastMessageInMyDialog(@PathVariable Long id,
+                                                                      @RequestParam(required = false) String sortType,
+                                                                      @RequestParam(required = false) List<String> sortProperties) {
+        return messageRestService.findLastMessageInMyDialog(id, sortType, sortProperties);
+    }
+
+    @GetMapping(value = "/last-message-dialog/user/{id}/page")
     public ResponseEntity<Page<MessageDTO>> findLastMessageInMyDialog(@PathVariable Long id,
                                                                       @RequestParam(required = false) Integer page,
                                                                       @RequestParam(required = false) Integer size,
