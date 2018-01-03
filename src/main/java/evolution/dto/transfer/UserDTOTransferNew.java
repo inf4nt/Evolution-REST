@@ -5,9 +5,11 @@ import evolution.dto.model.UserDTOLazy;
 import evolution.dto.model.UserSaveDTO;
 import evolution.model.User;
 import evolution.model.UserAdditionalData;
+import evolution.security.model.CustomSecurityUser;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +23,10 @@ public class UserDTOTransferNew {
     private ModelMapper modelMapper;
 
     public UserDTO modelToDTO(User user) {
+        return modelMapper.map(user, UserDTO.class);
+    }
+
+    public UserDTO modelToDTO(CustomSecurityUser user) {
         return modelMapper.map(user, UserDTO.class);
     }
 

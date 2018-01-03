@@ -1,17 +1,20 @@
 package evolution.security.token;
 
 import evolution.model.AuthenticationSession;
+import evolution.security.model.CustomSecurityUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
-public class JwtTokenImpl implements JwtToken {
+@Service
+public class JwtTokenServiceImpl implements JwtTokenService {
 
     @Value("${security.jwt.secret}")
     private String secret;
@@ -36,11 +39,25 @@ public class JwtTokenImpl implements JwtToken {
     }
 
     @Override
+    public String generateToken(UserDetails userDetails, AuthenticationSession authenticationSession) {
+        return generateToken(userDetails.getUsername(), authenticationSession);
+    }
+
+    @Override
+    public String generateToken(UserDetails userDetails, String authenticationSessionKey) {
+        return generateToken(userDetails.getUsername(), authenticationSessionKey);
+    }
+
+    @Override
     public String generateToken(String username) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("sub", username);
-        claims.put("authSession", UUID.randomUUID().toString());
         return this.generateToken(claims);
+    }
+
+    @Override
+    public String generateToken(UserDetails userDetails) {
+        return generateToken(userDetails.getUsername());
     }
 
     @Override
@@ -69,12 +86,16 @@ public class JwtTokenImpl implements JwtToken {
 
     @Override
     public boolean isValidToken(String token, UserDetails userDetails) {
-        return false;
+        final String username = getUsername(token);
+        final String authSession = getAuthenticationSession(token);
+        return (username.equals(userDetails.getUsername())
+                && authSession != null
+        );
     }
 
     @Override
     public String refreshToken(String token) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     private String generateToken(Map<String, Object> claims) {

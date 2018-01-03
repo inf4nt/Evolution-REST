@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Component
+@Deprecated
 public class TokenUtil {
 
     @Value("${security.jwt.secret}")

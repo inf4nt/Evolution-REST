@@ -1,5 +1,6 @@
 package evolution.security.model;
 
+import evolution.dto.model.UserDTO;
 import evolution.model.User;
 import lombok.*;
 
@@ -11,6 +12,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthenticationResponse {
+
     private String token;
-    private User user;
+
+    private UserDTO user;
 }

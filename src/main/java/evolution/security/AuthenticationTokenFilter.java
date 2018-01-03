@@ -2,6 +2,7 @@ package evolution.security;
 
 import evolution.crud.api.AuthenticationSessionCrudManagerService;
 import evolution.model.AuthenticationSession;
+import evolution.security.token.JwtTokenService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,17 +28,17 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
 
     private final UserDetailsService userDetailsService;
 
-    private final TokenUtil tokenUtil;
+    private final JwtTokenService jwtTokenService;
 
     private final AuthenticationSessionCrudManagerService authenticationSessionCrudManagerService;
 
     @Autowired
     public AuthenticationTokenFilter(UserDetailsService userDetailsService,
-                                     TokenUtil tokenUtil,
+                                     JwtTokenService jwtTokenService,
                                      AuthenticationSessionCrudManagerService authenticationSessionCrudManagerService) {
         this.authenticationSessionCrudManagerService = authenticationSessionCrudManagerService;
         this.userDetailsService = userDetailsService;
-        this.tokenUtil = tokenUtil;
+        this.jwtTokenService = jwtTokenService;
     }
 
     @Override
@@ -58,38 +59,38 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
         }
 
         //todo: remove after testing
-        String username = "com.infant@gmail.com";
-
-        if (SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        }
-
-//        String username = tokenUtil.getUsernameFromToken(authToken);
+//        String username = "com.infant@gmail.com";
 //
-//        logger.info("checking authentication für user " + username);
-//
-//        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+//        if (SecurityContextHolder.getContext().getAuthentication() == null) {
 //            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-//            if (this.tokenUtil.validateToken(authToken, userDetails) && checkAuthSession(authToken)) {
-//                UsernamePasswordAuthenticationToken authentication =
-//                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-//                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-//                SecurityContextHolder.getContext().setAuthentication(authentication);
-//            }
+//
+//            UsernamePasswordAuthenticationToken authentication =
+//                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+//            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+//            SecurityContextHolder.getContext().setAuthentication(authentication);
+//
 //        }
+
+        String username = jwtTokenService.getUsername(authToken);
+
+        logger.info("checking authentication für user " + username);
+
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+            if (this.jwtTokenService.isValidToken(authToken, userDetails) && checkAuthSession(authToken)) {
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+        }
 
         System.out.println("Auth filter ============================================================");
         chain.doFilter(request, response);
     }
 
     private boolean checkAuthSession(String authToken) {
-        String session = tokenUtil.getAuthSession(authToken);
+        String session = jwtTokenService.getAuthenticationSession(authToken);
         Optional<AuthenticationSession> authenticationSession = authenticationSessionCrudManagerService.findByAuthSessionKey(session);
         logger.info("auth session " + session);
         logger.info("jwt security modelOld " + authenticationSession);
