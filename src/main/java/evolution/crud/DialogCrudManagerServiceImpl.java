@@ -1,7 +1,6 @@
 package evolution.crud;
 
 import evolution.crud.api.DialogCrudManagerService;
-import evolution.dto.modelOld.MessageDTO;
 import evolution.model.Dialog;
 import evolution.model.Message;
 import evolution.repository.DialogRepository;
