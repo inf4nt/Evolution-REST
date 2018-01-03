@@ -15,6 +15,8 @@ import java.util.Date;
 @AllArgsConstructor
 public class UserDTOLazy extends UserDTO {
 
+    private String role;
+
     private String country;
 
     private String state;

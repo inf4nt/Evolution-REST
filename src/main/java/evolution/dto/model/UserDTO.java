@@ -20,6 +20,4 @@ public class UserDTO {
     private String lastName;
 
     private String nickname;
-
-    private String role;
 }

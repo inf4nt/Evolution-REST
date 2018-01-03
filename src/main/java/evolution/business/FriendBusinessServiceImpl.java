@@ -7,11 +7,11 @@ import evolution.common.RelationshipStatus;
 import evolution.crud.api.FriendCrudManagerService;
 import evolution.crud.api.UserCrudManagerService;
 import evolution.dto.transfer.FriendDTOTransferNew;
-import evolution.dto.UserDTOTransfer;
 import evolution.dto.model.FriendActionDTO;
 import evolution.dto.model.FriendDTO;
 import evolution.dto.model.FriendDTOLazy;
 import evolution.dto.model.FriendResultActionDTO;
+import evolution.dto.transfer.UserDTOTransferNew;
 import evolution.model.Friend;
 import evolution.service.SecuritySupportService;
 import org.slf4j.Logger;
@@ -37,7 +37,7 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
 
     private final FriendDTOTransferNew friendDTOTransferNew;
 
-    private final UserDTOTransfer userDTOTransfer;
+    private final UserDTOTransferNew userDTOTransferNew;
 
     private final UserCrudManagerService userCrudManagerService;
 
@@ -45,12 +45,12 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
     public FriendBusinessServiceImpl(FriendCrudManagerService friendCrudManagerService,
                                      SecuritySupportService securitySupportService,
                                      FriendDTOTransferNew friendDTOTransferNew,
-                                     UserDTOTransfer userDTOTransfer,
+                                     UserDTOTransferNew userDTOTransferNew,
                                      UserCrudManagerService userCrudManagerService) {
         this.friendCrudManagerService = friendCrudManagerService;
         this.securitySupportService = securitySupportService;
         this.friendDTOTransferNew = friendDTOTransferNew;
-        this.userDTOTransfer = userDTOTransfer;
+        this.userDTOTransferNew = userDTOTransferNew;
         this.userCrudManagerService = userCrudManagerService;
     }
 
