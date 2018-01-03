@@ -27,7 +27,7 @@ public class UserDTOTransferNew {
     }
 
     public UserDTO modelToDTO(CustomSecurityUser user) {
-        return modelMapper.map(user, UserDTO.class);
+        return modelMapper.map(user.getUser(), UserDTO.class);
     }
 
     public UserDTOLazy modelToDTOLazy(User user) {
