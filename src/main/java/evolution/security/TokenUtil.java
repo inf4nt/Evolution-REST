@@ -17,10 +17,10 @@ import java.util.UUID;
 @Component
 public class TokenUtil {
 
-    @Value("${security.secret}")
+    @Value("${security.jwt.secret}")
     private String secret;
 
-    @Value("${security.token.life}")
+    @Value("${security.jwt.token.life}")
     private Long expiration;
 
     public String getUsernameFromToken(String token) {
