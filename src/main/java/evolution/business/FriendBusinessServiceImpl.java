@@ -6,14 +6,13 @@ import evolution.common.FriendActionEnum;
 import evolution.common.RelationshipStatus;
 import evolution.crud.api.FriendCrudManagerService;
 import evolution.crud.api.UserCrudManagerService;
-import evolution.dto.FriendDTOTransfer;
+import evolution.dto.transfer.FriendDTOTransferNew;
 import evolution.dto.UserDTOTransfer;
-import evolution.dto.modelOld.FriendActionDTO;
-import evolution.dto.modelOld.FriendDTO;
-import evolution.dto.modelOld.FriendDTOFull;
-import evolution.dto.modelOld.FriendResultActionDTO;
+import evolution.dto.model.FriendActionDTO;
+import evolution.dto.model.FriendDTO;
+import evolution.dto.model.FriendDTOLazy;
+import evolution.dto.model.FriendResultActionDTO;
 import evolution.model.Friend;
-import evolution.model.User;
 import evolution.service.SecuritySupportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +35,7 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
 
     private final SecuritySupportService securitySupportService;
 
-    private final FriendDTOTransfer friendDTOTransfer;
+    private final FriendDTOTransferNew friendDTOTransferNew;
 
     private final UserDTOTransfer userDTOTransfer;
 
@@ -45,79 +44,79 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
     @Autowired
     public FriendBusinessServiceImpl(FriendCrudManagerService friendCrudManagerService,
                                      SecuritySupportService securitySupportService,
-                                     FriendDTOTransfer friendDTOTransfer,
+                                     FriendDTOTransferNew friendDTOTransferNew,
                                      UserDTOTransfer userDTOTransfer,
                                      UserCrudManagerService userCrudManagerService) {
         this.friendCrudManagerService = friendCrudManagerService;
         this.securitySupportService = securitySupportService;
-        this.friendDTOTransfer = friendDTOTransfer;
+        this.friendDTOTransferNew = friendDTOTransferNew;
         this.userDTOTransfer = userDTOTransfer;
         this.userCrudManagerService = userCrudManagerService;
     }
 
 
     @Override
-    public List<FriendDTOFull> findAll2() {
+    public List<FriendDTOLazy> findAll2() {
         return friendCrudManagerService
                 .findAll()
                 .stream()
-                .map(o -> friendDTOTransfer.modelToDTOFull(o))
+                .map(o -> friendDTOTransferNew.modelToDTOLazy(o))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Page<FriendDTOFull> findAll2(Integer page, Integer size) {
+    public Page<FriendDTOLazy> findAll2(Integer page, Integer size) {
         return friendCrudManagerService
                 .findAll(page, size)
-                .map(o -> friendDTOTransfer.modelToDTOFull(o));
+                .map(o -> friendDTOTransferNew.modelToDTOLazy(o));
     }
 
     @Override
-    public List<FriendDTOFull> findFriends2(Long iam) {
+    public List<FriendDTOLazy> findFriends2(Long iam) {
         return friendCrudManagerService
                 .findProgressByUser(iam)
                 .stream()
-                .map(o -> friendDTOTransfer.modelToDTOFull(o))
+                .map(o -> friendDTOTransferNew.modelToDTOLazy(o))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Page<FriendDTOFull> findFriends2(Long iam, Integer page, Integer size) {
+    public Page<FriendDTOLazy> findFriends2(Long iam, Integer page, Integer size) {
         return friendCrudManagerService
                 .findProgressByUser(iam, page, size)
-                .map(o -> friendDTOTransfer.modelToDTOFull(o));
+                .map(o -> friendDTOTransferNew.modelToDTOLazy(o));
     }
 
     @Override
-    public List<FriendDTOFull> findFollowers2(Long iam) {
+    public List<FriendDTOLazy> findFollowers2(Long iam) {
         return friendCrudManagerService
                 .findFollowerByUser(iam)
                 .stream()
-                .map(o -> friendDTOTransfer.modelToDTOFull(o))
+                .map(o -> friendDTOTransferNew.modelToDTOLazy(o))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Page<FriendDTOFull> findFollowers2(Long iam, Integer page, Integer size) {
+    public Page<FriendDTOLazy> findFollowers2(Long iam, Integer page, Integer size) {
         return friendCrudManagerService
                 .findFollowerByUser(iam, page, size)
-                .map(o -> friendDTOTransfer.modelToDTOFull(o));
+                .map(o -> friendDTOTransferNew.modelToDTOLazy(o));
     }
 
     @Override
-    public List<FriendDTOFull> findRequests2(Long iam) {
+    public List<FriendDTOLazy> findRequests2(Long iam) {
         return friendCrudManagerService
                 .findFollowerByUser(iam)
                 .stream()
-                .map(o -> friendDTOTransfer.modelToDTOFull(o))
+                .map(o -> friendDTOTransferNew.modelToDTOLazy(o))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Page<FriendDTOFull> findRequests2(Long iam, Integer page, Integer size) {
+    public Page<FriendDTOLazy> findRequests2(Long iam, Integer page, Integer size) {
         return friendCrudManagerService
                 .findFollowerByUser(iam, page, size)
-                .map(o -> friendDTOTransfer.modelToDTOFull(o));
+                .map(o -> friendDTOTransferNew.modelToDTOLazy(o));
     }
 
     @Override
@@ -133,7 +132,7 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
             dto.setNextAction(getNextAction(request.get()));
 
         } else {
-            dto = friendDTOTransfer.modelToResultActionDTO(request.get());
+            dto = friendDTOTransferNew.modelToResultActionDTO(request.get());
             dto.setNextAction(getNextAction(request.get()));
         }
         return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, dto);
@@ -150,7 +149,7 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
         dto.setNextAction(FriendActionEnum.SEND_REQUEST_TO_FRIEND);
         Optional<Friend> delete = friendCrudManagerService.removeFriend(friendActionDTO.getActionUserId(), friendActionDTO.getRecipientUserId());
         if (delete.isPresent()) {
-            dto = friendDTOTransfer.modelToResultActionDTO(delete.get());
+            dto = friendDTOTransferNew.modelToResultActionDTO(delete.get());
             dto.setNextAction(getNextAction(delete.get()));
         }
         return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, dto);
@@ -194,7 +193,7 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
     public Optional<FriendDTO> findOne(Long first, Long second) {
         return friendCrudManagerService
                 .findOneFriend(first, second)
-                .map(o -> friendDTOTransfer.modelToDTO(o));
+                .map(o -> friendDTOTransferNew.modelToDTO(o));
     }
 
     @Override
@@ -202,7 +201,7 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
         return friendCrudManagerService
                 .findAll()
                 .stream()
-                .map(o -> friendDTOTransfer.modelToDTO(o))
+                .map(o -> friendDTOTransferNew.modelToDTO(o))
                 .collect(Collectors.toList());
     }
 
@@ -210,7 +209,7 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
     public Page<FriendDTO> findAll(Integer page, Integer size) {
         return friendCrudManagerService
                 .findAll(page, size)
-                .map(o -> friendDTOTransfer.modelToDTO(o));
+                .map(o -> friendDTOTransferNew.modelToDTO(o));
     }
 
     @Override
@@ -247,13 +246,13 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
             return friendCrudManagerService
                     .findRequestByUser(iam)
                     .stream()
-                    .map(o -> friendDTOTransfer.modelToDTO(o, iam))
+                    .map(o -> friendDTOTransferNew.modelToDTO(o, iam))
                     .collect(Collectors.toList());
         } else if (securitySupportService.isAdmin()) {
             return friendCrudManagerService
                     .findRequestByUser(iam)
                     .stream()
-                    .map(o -> friendDTOTransfer.modelToDTO(o))
+                    .map(o -> friendDTOTransferNew.modelToDTO(o))
                     .collect(Collectors.toList());
         }
         return new ArrayList<>();
@@ -264,11 +263,11 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
         if (securitySupportService.isAllowedFull(iam)) {
             return friendCrudManagerService
                     .findRequestByUser(iam, page, size)
-                    .map(o -> friendDTOTransfer.modelToDTO(o, iam));
+                    .map(o -> friendDTOTransferNew.modelToDTO(o, iam));
         } else if (securitySupportService.isAdmin()) {
             return friendCrudManagerService
                     .findRequestByUser(iam, page, size)
-                    .map(o -> friendDTOTransfer.modelToDTO(o));
+                    .map(o -> friendDTOTransferNew.modelToDTO(o));
         }
         return new PageImpl<>(new ArrayList<>());
     }
@@ -320,7 +319,7 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
                 return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
             }
 
-            FriendResultActionDTO dto = friendDTOTransfer.modelToResultActionDTO(next.get());
+            FriendResultActionDTO dto = friendDTOTransferNew.modelToResultActionDTO(next.get());
             dto.setNextAction(getNextAction(next.get()));
 
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, dto);
@@ -341,7 +340,7 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, dto);
         }
 
-        dto = friendDTOTransfer.modelToResultActionDTO(next.get());
+        dto = friendDTOTransferNew.modelToResultActionDTO(next.get());
         dto.setNextAction(getNextAction(next.get()));
 
         return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, dto);
@@ -352,17 +351,17 @@ public class FriendBusinessServiceImpl implements FriendBusinessService {
     public Page<FriendDTO> findRandomFriends(Long user) {
         return friendCrudManagerService
                 .findRandomFriends(user, 6)
-                .map(o -> friendDTOTransfer.modelToDTO(o, user));
+                .map(o -> friendDTOTransferNew.modelToDTO(o, user));
     }
 
 
     private List<FriendDTO> result(List<Friend> list, Long iam) {
         return list.stream()
-                .map(o -> friendDTOTransfer.modelToDTO(o, iam))
+                .map(o -> friendDTOTransferNew.modelToDTO(o, iam))
                 .collect(Collectors.toList());
     }
 
     private Page<FriendDTO> result(Page<Friend> page, Long iam) {
-        return page.map(o -> friendDTOTransfer.modelToDTO(o, iam));
+        return page.map(o -> friendDTOTransferNew.modelToDTO(o, iam));
     }
 }

@@ -1,10 +1,10 @@
 package evolution.controller;
 
 
-import evolution.dto.modelOld.FriendActionDTO;
-import evolution.dto.modelOld.FriendDTO;
-import evolution.dto.modelOld.FriendDTOFull;
-import evolution.dto.modelOld.FriendResultActionDTO;
+import evolution.dto.model.FriendActionDTO;
+import evolution.dto.model.FriendDTO;
+import evolution.dto.model.FriendDTOLazy;
+import evolution.dto.model.FriendResultActionDTO;
 import evolution.rest.api.FriendRestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -65,26 +65,26 @@ public class FriendRestController {
     }
 
     @GetMapping(value = "/list")
-    public ResponseEntity<List<FriendDTOFull>> findAllList() {
+    public ResponseEntity<List<FriendDTOLazy>> findAllList() {
         return friendRestService.findAll2();
     }
 
     @GetMapping(value = "/find/followers/{userId}/list")
-    public ResponseEntity<Page<FriendDTOFull>> findUserFollowers2(@PathVariable Long userId,
+    public ResponseEntity<Page<FriendDTOLazy>> findUserFollowers2(@PathVariable Long userId,
                                                                   @RequestParam(required = false) Integer page,
                                                                   @RequestParam(required = false) Integer size) {
         return friendRestService.findUserFollower2(userId, page, size);
     }
 
     @GetMapping(value = "/find/requests/{userId}/list")
-    public ResponseEntity<Page<FriendDTOFull>> findUserRequests2(@PathVariable Long userId,
+    public ResponseEntity<Page<FriendDTOLazy>> findUserRequests2(@PathVariable Long userId,
                                                                  @RequestParam(required = false) Integer page,
                                                                  @RequestParam(required = false) Integer size) {
         return friendRestService.findUserRequest2(userId, page, size);
     }
 
     @GetMapping(value = "/find/progress/{userId}/list")
-    public ResponseEntity<Page<FriendDTOFull>> findUserProgress2(@PathVariable Long userId,
+    public ResponseEntity<Page<FriendDTOLazy>> findUserProgress2(@PathVariable Long userId,
                                                                  @RequestParam(required = false) Integer page,
                                                                  @RequestParam(required = false) Integer size) {
 

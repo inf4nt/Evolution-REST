@@ -2,10 +2,10 @@ package evolution.business.api;
 
 import evolution.business.BusinessServiceExecuteResult;
 import evolution.common.FriendActionEnum;
-import evolution.dto.modelOld.FriendActionDTO;
-import evolution.dto.modelOld.FriendDTO;
-import evolution.dto.modelOld.FriendDTOFull;
-import evolution.dto.modelOld.FriendResultActionDTO;
+import evolution.dto.model.FriendActionDTO;
+import evolution.dto.model.FriendDTO;
+import evolution.dto.model.FriendDTOLazy;
+import evolution.dto.model.FriendResultActionDTO;
 import evolution.model.Friend;
 import org.springframework.data.domain.Page;
 
@@ -27,21 +27,21 @@ public interface FriendBusinessService {
 
     Optional<FriendDTO> findOne(Long first, Long second);
 
-    List<FriendDTOFull> findAll2();
+    List<FriendDTOLazy> findAll2();
 
-    Page<FriendDTOFull> findAll2(Integer page, Integer size);
+    Page<FriendDTOLazy> findAll2(Integer page, Integer size);
 
-    List<FriendDTOFull> findFriends2(Long iam);
+    List<FriendDTOLazy> findFriends2(Long iam);
 
-    Page<FriendDTOFull> findFriends2(Long iam, Integer page, Integer size);
+    Page<FriendDTOLazy> findFriends2(Long iam, Integer page, Integer size);
 
-    List<FriendDTOFull> findFollowers2(Long iam);
+    List<FriendDTOLazy> findFollowers2(Long iam);
 
-    Page<FriendDTOFull> findFollowers2(Long iam, Integer page, Integer size);
+    Page<FriendDTOLazy> findFollowers2(Long iam, Integer page, Integer size);
 
-    List<FriendDTOFull> findRequests2(Long iam);
+    List<FriendDTOLazy> findRequests2(Long iam);
 
-    Page<FriendDTOFull> findRequests2(Long iam, Integer page, Integer size);
+    Page<FriendDTOLazy> findRequests2(Long iam, Integer page, Integer size);
 
     List<FriendDTO> findAll();
 

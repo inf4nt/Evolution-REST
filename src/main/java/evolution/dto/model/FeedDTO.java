@@ -1,10 +1,11 @@
-package evolution.dto.modelOld;
+package evolution.dto.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -20,9 +21,7 @@ public class FeedDTO {
 
     private String content;
 
-    private Long createdDateTimestamp;
-
-    private String createdDateString;
+    private Date date;
 
     private UserDTO sender;
 

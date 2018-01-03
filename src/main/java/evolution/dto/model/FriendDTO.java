@@ -1,7 +1,6 @@
-package evolution.dto.modelOld;
+package evolution.dto.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import evolution.common.FriendActionEnum;
 import evolution.common.RelationshipStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;

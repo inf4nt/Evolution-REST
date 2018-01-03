@@ -1,8 +1,8 @@
 package evolution.rest.api;
 
-import evolution.dto.modelOld.FeedDTO;
-import evolution.dto.modelOld.FeedSaveDTO;
-import evolution.dto.modelOld.FeedUpdateDTO;
+import evolution.dto.model.FeedDTO;
+import evolution.dto.model.FeedSaveDTO;
+import evolution.dto.model.FeedUpdateDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 

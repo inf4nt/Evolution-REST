@@ -30,6 +30,7 @@ public class UserDTOTransferNew {
         userDTOLazy.setId(user.getId());
         userDTOLazy.setFirstName(user.getFirstName());
         userDTOLazy.setLastName(user.getLastName());
+        userDTOLazy.setNickname(user.getNickname());
         userDTOLazy.setRole(user.getRole().name());
 
         userDTOLazy.setActive(user.getUserAdditionalData().isActive());

@@ -1,9 +1,9 @@
 package evolution.rest.api;
 
-import evolution.dto.modelOld.FriendActionDTO;
-import evolution.dto.modelOld.FriendDTO;
-import evolution.dto.modelOld.FriendDTOFull;
-import evolution.dto.modelOld.FriendResultActionDTO;
+import evolution.dto.model.FriendActionDTO;
+import evolution.dto.model.FriendDTO;
+import evolution.dto.model.FriendDTOLazy;
+import evolution.dto.model.FriendResultActionDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 
@@ -26,21 +26,21 @@ public interface FriendRestService extends AbstractRestService {
 
     ResponseEntity<Page<FriendDTO>> findUserProgress(Long userId, Integer page, Integer size);
 
-    ResponseEntity<List<FriendDTOFull>> findAll2();
+    ResponseEntity<List<FriendDTOLazy>> findAll2();
 
-    ResponseEntity<Page<FriendDTOFull>> findAll2(Integer page, Integer size);
+    ResponseEntity<Page<FriendDTOLazy>> findAll2(Integer page, Integer size);
 
-    ResponseEntity<Page<FriendDTOFull>> findUserFollower2(Long userId, Integer page, Integer size);
+    ResponseEntity<Page<FriendDTOLazy>> findUserFollower2(Long userId, Integer page, Integer size);
 
-    ResponseEntity<Page<FriendDTOFull>> findUserRequest2(Long userId, Integer page, Integer size);
+    ResponseEntity<Page<FriendDTOLazy>> findUserRequest2(Long userId, Integer page, Integer size);
 
-    ResponseEntity<Page<FriendDTOFull>> findUserProgress2(Long userId, Integer page, Integer size);
+    ResponseEntity<Page<FriendDTOLazy>> findUserProgress2(Long userId, Integer page, Integer size);
 
-    ResponseEntity<List<FriendDTOFull>> findUserFollower(Long userId);
+    ResponseEntity<List<FriendDTOLazy>> findUserFollower(Long userId);
 
-    ResponseEntity<List<FriendDTOFull>> findUserRequest(Long userId);
+    ResponseEntity<List<FriendDTOLazy>> findUserRequest(Long userId);
 
-    ResponseEntity<List<FriendDTOFull>> findUserProgress(Long userId);
+    ResponseEntity<List<FriendDTOLazy>> findUserProgress(Long userId);
 
     ResponseEntity<FriendResultActionDTO> sendRequest(FriendActionDTO friendDTO);
 

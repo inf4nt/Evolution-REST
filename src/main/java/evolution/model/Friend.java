@@ -46,6 +46,9 @@ public class Friend {
         if (pk.getSecond().getId() > pk.getFirst().getId() || pk.getSecond().getId().equals(pk.getFirst().getId())) {
             throw new UnsupportedOperationException("firstUserId always must be > secondUserId or second == first");
         }
+        if (!actionUser.getId().equals(pk.getFirst().getId()) && !actionUser.getId().equals(pk.getSecond().getId())) {
+            throw new UnsupportedOperationException("Error! Action user not valid. Action user must be = first user or second user");
+        }
     }
 
     @Embeddable

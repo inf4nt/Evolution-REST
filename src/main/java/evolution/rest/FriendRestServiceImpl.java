@@ -4,10 +4,10 @@ import evolution.business.BusinessServiceExecuteResult;
 import evolution.business.api.FriendBusinessService;
 import evolution.common.BusinessServiceExecuteStatus;
 import evolution.common.FriendActionEnum;
-import evolution.dto.modelOld.FriendActionDTO;
-import evolution.dto.modelOld.FriendDTO;
-import evolution.dto.modelOld.FriendDTOFull;
-import evolution.dto.modelOld.FriendResultActionDTO;
+import evolution.dto.model.FriendActionDTO;
+import evolution.dto.model.FriendDTO;
+import evolution.dto.model.FriendDTOLazy;
+import evolution.dto.model.FriendResultActionDTO;
 import evolution.rest.api.FriendRestService;
 import evolution.service.SecuritySupportService;
 import org.slf4j.Logger;
@@ -40,8 +40,8 @@ public class FriendRestServiceImpl implements FriendRestService {
     }
 
     @Override
-    public ResponseEntity<List<FriendDTOFull>> findAll2() {
-        List<FriendDTOFull> list = friendBusinessService.findAll2();
+    public ResponseEntity<List<FriendDTOLazy>> findAll2() {
+        List<FriendDTOLazy> list = friendBusinessService.findAll2();
         return response(list);
     }
 
@@ -63,8 +63,8 @@ public class FriendRestServiceImpl implements FriendRestService {
     }
 
     @Override
-    public ResponseEntity<Page<FriendDTOFull>> findAll2(Integer page, Integer size) {
-        Page<FriendDTOFull> p = friendBusinessService.findAll2(page, size);
+    public ResponseEntity<Page<FriendDTOLazy>> findAll2(Integer page, Integer size) {
+        Page<FriendDTOLazy> p = friendBusinessService.findAll2(page, size);
         return response(p);
     }
 
@@ -87,38 +87,38 @@ public class FriendRestServiceImpl implements FriendRestService {
     }
 
     @Override
-    public ResponseEntity<Page<FriendDTOFull>> findUserFollower2(Long userId, Integer page, Integer size) {
-        Page<FriendDTOFull> p = friendBusinessService.findFollowers2(userId, page, size);
+    public ResponseEntity<Page<FriendDTOLazy>> findUserFollower2(Long userId, Integer page, Integer size) {
+        Page<FriendDTOLazy> p = friendBusinessService.findFollowers2(userId, page, size);
         return response(p);
     }
 
     @Override
-    public ResponseEntity<Page<FriendDTOFull>> findUserRequest2(Long userId, Integer page, Integer size) {
-        Page<FriendDTOFull> p = friendBusinessService.findRequests2(userId, page, size);
+    public ResponseEntity<Page<FriendDTOLazy>> findUserRequest2(Long userId, Integer page, Integer size) {
+        Page<FriendDTOLazy> p = friendBusinessService.findRequests2(userId, page, size);
         return response(p);
     }
 
     @Override
-    public ResponseEntity<Page<FriendDTOFull>> findUserProgress2(Long userId, Integer page, Integer size) {
-        Page<FriendDTOFull> p = friendBusinessService.findFriends2(userId, page, size);
+    public ResponseEntity<Page<FriendDTOLazy>> findUserProgress2(Long userId, Integer page, Integer size) {
+        Page<FriendDTOLazy> p = friendBusinessService.findFriends2(userId, page, size);
         return response(p);
     }
 
     @Override
-    public ResponseEntity<List<FriendDTOFull>> findUserFollower(Long userId) {
-        List<FriendDTOFull> list = friendBusinessService.findFollowers2(userId);
+    public ResponseEntity<List<FriendDTOLazy>> findUserFollower(Long userId) {
+        List<FriendDTOLazy> list = friendBusinessService.findFollowers2(userId);
         return response(list);
     }
 
     @Override
-    public ResponseEntity<List<FriendDTOFull>> findUserRequest(Long userId) {
-        List<FriendDTOFull> list = friendBusinessService.findRequests2(userId);
+    public ResponseEntity<List<FriendDTOLazy>> findUserRequest(Long userId) {
+        List<FriendDTOLazy> list = friendBusinessService.findRequests2(userId);
         return response(list);
     }
 
     @Override
-    public ResponseEntity<List<FriendDTOFull>> findUserProgress(Long userId) {
-        List<FriendDTOFull> list = friendBusinessService.findFriends2(userId);
+    public ResponseEntity<List<FriendDTOLazy>> findUserProgress(Long userId) {
+        List<FriendDTOLazy> list = friendBusinessService.findFriends2(userId);
         return response(list);
     }
 
