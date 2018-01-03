@@ -1,8 +1,6 @@
 package evolution.crud.api;
 
-import evolution.dto.modelOld.MessageDTO;
 import evolution.model.Dialog;
-import evolution.model.Message;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
