@@ -196,7 +196,7 @@ public class MessageBusinessServiceImpl implements MessageBusinessService {
         if (original.isPresent()) {
             if (securitySupportService.isAllowedFull(original.get().getSender().getId())) {
                 Message m = original.get();
-                m.setMessage(messageUpdateDTO.getContent());
+                m.setMessage(messageUpdateDTO.getMessage());
 
                 Optional<Message> res = messageCrudManagerService.update(m);
                 return res

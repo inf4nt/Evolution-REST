@@ -114,7 +114,7 @@ public class UserRestController {
     }
 
     @PutMapping(value = "/set-password")
-    public ResponseEntity setPassword(@RequestBody UserSetPasswordDTO userSetPasswordDTO) {
+    public ResponseEntity<HttpStatus> setPassword(@RequestBody UserSetPasswordDTO userSetPasswordDTO) {
         return userRestService.setPassword(userSetPasswordDTO);
     }
 }
