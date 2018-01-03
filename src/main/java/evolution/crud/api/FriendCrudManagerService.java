@@ -43,5 +43,5 @@ public interface FriendCrudManagerService extends PageableManager {
 
     Optional<Friend> acceptRequest(Long senderId, Long recipientId);
 
-    void deleteAllFriendRowByUser(Long id);
+    void clearRowByUserForeignKey(Long id);
 }

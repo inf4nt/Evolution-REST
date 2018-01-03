@@ -69,7 +69,7 @@ public interface UserCrudManagerService extends AbstractCrudManagerService<User,
 
     List<User> findAllAndIsBlockLazy(boolean block);
 
-    boolean deleteById(Long id);
+    void delete(List<Long> ids);
 
     void deleteAll();
 }

@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.plaf.basic.BasicButtonUI;
 import java.util.List;
@@ -147,7 +148,8 @@ public class FeedCrudManagerServiceImpl implements FeedCrudManagerService {
     }
 
     @Override
-    public void deleteAllFeedRowByUser(Long id) {
+    @Transactional
+    public void clearRowByUserForeignKey(Long id) {
         List<Feed> list = feedRepository.findAllFeedByToUserOrSender(id);
         feedRepository.delete(list);
     }

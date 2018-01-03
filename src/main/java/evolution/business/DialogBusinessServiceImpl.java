@@ -139,18 +139,8 @@ public class DialogBusinessServiceImpl implements DialogBusinessService {
 
     @Override
     public BusinessServiceExecuteResult<HttpStatus> delete(Long id) {
-        try {
-            boolean a = dialogCrudManagerService.deleteById(id);
-            if (a) {
-                return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK);
-            } else {
-                return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            logger.warn(e.getMessage());
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.CATCH_EXCPETION);
-        }
+        dialogCrudManagerService.delete(id);
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK);
     }
 
     @Override

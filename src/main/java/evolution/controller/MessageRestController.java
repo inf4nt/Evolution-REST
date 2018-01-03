@@ -44,7 +44,7 @@ public class MessageRestController {
 
     @PutMapping
     public ResponseEntity<MessageDTO> putMessage(@RequestBody MessageUpdateDTO message) {
-        return messageRestService.updateAfterReturn(message);
+        return messageRestService.update(message);
     }
 
     @PostMapping

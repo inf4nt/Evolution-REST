@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -57,6 +58,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
+    @Transactional
     public BusinessServiceExecuteResult<User> createNewUser(UserSaveDTO userSaveDTO) {
         Optional<User> ou = userCrudManagerService.findByUsername(userSaveDTO.getUsername());
         if (ou.isPresent()) {
@@ -97,6 +99,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
+    @Transactional
     public BusinessServiceExecuteResult<User> update(UserUpdateDTO user) {
         if (!securitySupportService.isAllowedFull(user.getId())) {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
@@ -327,6 +330,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
+    @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public BusinessServiceExecuteResult<UserDTOLazy> setRole(Long userId, String role) {
         Optional<User> user = userCrudManagerService.findOne(userId);
@@ -339,6 +343,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
+    @Transactional
     public BusinessServiceExecuteResult<UserDTOLazy> setPasswordBySecretKey(String newPassword, String secretKey) {
         Optional<User> optional = userCrudManagerService.findUserBySecretKeyLazy(secretKey);
         if (!optional.isPresent()) {
@@ -357,6 +362,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
+    @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public BusinessServiceExecuteResult setPasswordByUserId(String newPassword, Long id) {
         Optional<User> optional = userCrudManagerService.findOneLazy(id);
@@ -372,6 +378,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
+    @Transactional
     public BusinessServiceExecuteResult<UserDTOLazy> setPasswordByOldPassword(UserSetPasswordDTO user) {
         if (!securitySupportService.isAllowed(user.getId())) {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
@@ -393,6 +400,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
+    @Transactional
     public BusinessServiceExecuteResult<UserDTOLazy> generateNewSecretKey(Long id) {
         if (securitySupportService.isAllowedFull(id)) {
             Optional<User> optional = userCrudManagerService.findOneLazy(id);
@@ -417,7 +425,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public BusinessServiceExecuteResult<BusinessServiceExecuteStatus> delete(List<Long> ids) {
-        ids.forEach(o -> userCrudManagerService.delete(o));
+        userCrudManagerService.delete(ids);
         return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK);
     }
 
@@ -429,6 +437,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
+    @Transactional
     public BusinessServiceExecuteResult<UserDTOLazy> activatedUser(String secretKey) {
         Optional<User> optional = userCrudManagerService.findUserBySecretKeyLazy(secretKey);
         if (!optional.isPresent()) {
@@ -442,6 +451,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
+    @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public BusinessServiceExecuteResult<UserDTOLazy> deactivatedUser(Long id) {
         Optional<User> optional = userCrudManagerService.findOneLazy(id);
@@ -456,6 +466,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
+    @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public BusinessServiceExecuteResult<UserDTOLazy> deactivatedUser(String secretKey) {
         Optional<User> optional = userCrudManagerService.findUserBySecretKeyLazy(secretKey);
@@ -470,6 +481,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
+    @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public BusinessServiceExecuteResult<UserDTOLazy> sendBlockToUser(Long id) {
         Optional<User> optional = userCrudManagerService.findOneLazy(id);
@@ -484,6 +496,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
+    @Transactional
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public BusinessServiceExecuteResult<UserDTOLazy> sendUnBlockToUser(Long id) {
         Optional<User> optional = userCrudManagerService.findOneLazy(id);

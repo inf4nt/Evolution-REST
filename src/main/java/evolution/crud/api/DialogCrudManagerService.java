@@ -31,7 +31,7 @@ public interface DialogCrudManagerService extends AbstractCrudManagerService<Dia
 
     Optional<Dialog> findOne(Long iam, Long dialogId);
 
-    boolean deleteById(Long id);
+    void delete(List<Long> ids);
 
-    void deleteAllDialogRowByUser(Long id);
+    void clearRowByUserForeignKey(Long id);
 }

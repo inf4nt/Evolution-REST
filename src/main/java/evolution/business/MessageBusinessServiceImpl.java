@@ -180,6 +180,17 @@ public class MessageBusinessServiceImpl implements MessageBusinessService {
     }
 
     @Override
+    public BusinessServiceExecuteResult delete(List<Long> ids) {
+        if (securitySupportService.isAdmin()) {
+            messageCrudManagerService.deleteMessageAndMaybeDialog(ids);
+        } else {
+            User auth = securitySupportService.getAuthenticationPrincipal().getUser();
+            messageCrudManagerService.deleteMessageAndMaybeDialog(ids, auth.getId());
+        }
+        return BusinessServiceExecuteResult.build(OK);
+    }
+
+    @Override
     public BusinessServiceExecuteResult<MessageDTO> update(MessageUpdateDTO messageUpdateDTO) {
         Optional<Message> original = messageCrudManagerService.findOne(messageUpdateDTO.getId());
         if (original.isPresent()) {

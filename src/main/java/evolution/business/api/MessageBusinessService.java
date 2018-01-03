@@ -34,6 +34,8 @@ public interface MessageBusinessService {
 
     BusinessServiceExecuteResult delete(Long id);
 
+    BusinessServiceExecuteResult delete(List<Long> ids);
+
     BusinessServiceExecuteResult<MessageDTO> update(MessageUpdateDTO messageUpdateDTO);
 
     List<MessageDTO> findLastMessageInMyDialog(Long iam);

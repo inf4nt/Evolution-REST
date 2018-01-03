@@ -6,9 +6,6 @@ import evolution.crud.api.FriendCrudManagerService;
 import evolution.crud.api.UserCrudManagerService;
 import evolution.model.User;
 import evolution.model.UserAdditionalData;
-import evolution.repository.DialogRepository;
-import evolution.repository.FriendRepository;
-import evolution.repository.MessageRepository;
 import evolution.repository.UserRepository;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,6 +122,12 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
     }
 
     @Override
+    @Transactional
+    public void delete(List<Long> ids) {
+        ids.forEach(o -> delete(o));
+    }
+
+    @Override
     public List<User> findAll(String sort, List<String> sortProperties) {
         Sort s = getSortForRestService(sort, sortProperties,
                 this.defaultUserSortType, this.defaultUserSortProperties);
@@ -165,9 +168,9 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
     public void delete(Long aLong) {
         Optional<User> o = userRepository.findOneUserById(aLong);
         if (o.isPresent()) {
-            feedCrudManagerService.deleteAllFeedRowByUser(o.get().getId());
-            friendCrudManagerService.deleteAllFriendRowByUser(o.get().getId());
-            dialogCrudManagerService.deleteAllDialogRowByUser(o.get().getId());
+            feedCrudManagerService.clearRowByUserForeignKey(o.get().getId());
+            friendCrudManagerService.clearRowByUserForeignKey(o.get().getId());
+            dialogCrudManagerService.clearRowByUserForeignKey(o.get().getId());
             userRepository.delete(o.get());
             //todo clear channel message
         }
@@ -258,20 +261,5 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
         Pageable p = getPageableForRestService(page, size, sort, sortProperties,
                 this.userMaxFetch, this.defaultUserSortType, this.defaultUserSortProperties);
         return userRepository.findAllFetchLazy(p);
-    }
-
-    @Override
-    public boolean deleteById(Long id) {
-        try {
-            Optional<User> optional = userRepository.findOneUserById(id);
-            if (!optional.isPresent()) {
-                return false;
-            } else {
-                userRepository.delete(optional.get());
-            }
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
     }
 }

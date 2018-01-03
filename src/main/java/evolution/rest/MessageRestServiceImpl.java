@@ -42,7 +42,8 @@ public class MessageRestServiceImpl implements MessageRestService {
 
     @Override
     public ResponseEntity<List<MessageDTO>> findAll(String sort, List<String> sortProperties) {
-        return null;
+        List<MessageDTO> list = messageBusinessService.findAll(sort, sortProperties);
+        return response(list);
     }
 
     @Override
@@ -52,13 +53,15 @@ public class MessageRestServiceImpl implements MessageRestService {
     }
 
     @Override
-    public ResponseEntity<List<MessageDTO>> findMessageRecipientId() {
-        return null;
+    public ResponseEntity<List<MessageDTO>> findMessageRecipientId(Long recipient) {
+        List<MessageDTO> list = messageBusinessService.findMessageByRecipientId(recipient);
+        return response(list);
     }
 
     @Override
     public ResponseEntity<List<MessageDTO>> findMessageRecipientId(Long recipient, String sort, List<String> sortProperties) {
-        return null;
+        List<MessageDTO> list = messageBusinessService.findMessageByRecipientId(recipient, sort, sortProperties);
+        return response(list);
     }
 
     @Override
@@ -68,13 +71,15 @@ public class MessageRestServiceImpl implements MessageRestService {
     }
 
     @Override
-    public ResponseEntity<List<MessageDTO>> findMessageSenderId() {
-        return null;
+    public ResponseEntity<List<MessageDTO>> findMessageSenderId(Long senderId) {
+        List<MessageDTO> list = messageBusinessService.findMessageBySenderId(senderId);
+        return response(list);
     }
 
     @Override
     public ResponseEntity<List<MessageDTO>> findMessageSenderId(Long sender, String sort, List<String> sortProperties) {
-        return null;
+        List<MessageDTO> list = messageBusinessService.findMessageBySenderId(sender, sort, sortProperties);
+        return response(list);
     }
 
     @Override
@@ -85,7 +90,8 @@ public class MessageRestServiceImpl implements MessageRestService {
 
     @Override
     public ResponseEntity<List<MessageDTO>> findLastMessageInMyDialog(Long userId, String sort, List<String> sortProperties) {
-        return null;
+        List<MessageDTO> list = messageBusinessService.findLastMessageInMyDialog(userId, sort, sortProperties);
+        return response(list);
     }
 
     @Override
@@ -118,12 +124,12 @@ public class MessageRestServiceImpl implements MessageRestService {
     }
 
     @Override
-    public ResponseEntity<HttpStatus> update(MessageUpdateDTO message) {
-        return null;
+    public ResponseEntity<HttpStatus> update2(MessageUpdateDTO message) {
+        return ResponseEntity.status(update(message).getStatusCode()).build();
     }
 
     @Override
-    public ResponseEntity<MessageDTO> updateAfterReturn(MessageUpdateDTO message) {
+    public ResponseEntity<MessageDTO> update(MessageUpdateDTO message) {
         BusinessServiceExecuteResult<MessageDTO> b = messageBusinessService.update(message);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK  && b.getResultObjectOptional().isPresent()) {
             return ResponseEntity.ok(b.getResultObjectOptional().get());
@@ -136,29 +142,15 @@ public class MessageRestServiceImpl implements MessageRestService {
     }
 
     @Override
-    public ResponseEntity<HttpStatus> updateMessage(MessageUpdateDTO message) {
-        return null;
-    }
-
-    @Override
     public ResponseEntity<HttpStatus> delete(Long messageId) {
-        BusinessServiceExecuteResult b = messageBusinessService.delete(messageId);
-        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
-            return ResponseEntity.noContent().build();
-        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE) {
-            return ResponseEntity.status(417).build();
-        }
-        return ResponseEntity.status(500).build();
+        messageBusinessService.delete(messageId);
+        return ResponseEntity.noContent().build();
     }
 
     @Override
     public ResponseEntity<HttpStatus> delete(List<Long> list) {
-        return null;
-    }
-
-    @Override
-    public ResponseEntity<Long> deleteAfterReturnId(Long messageId) {
-        return null;
+        messageBusinessService.delete(list);
+        return ResponseEntity.noContent().build();
     }
 
     @Override

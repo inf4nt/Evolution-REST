@@ -51,9 +51,9 @@ public class UserRestController {
 
     @GetMapping(value = "/page/lazy")
     public ResponseEntity<Page<UserDTOLazy>> findAllPageLazy(@RequestParam(required = false) Integer page,
-                                                         @RequestParam(required = false) Integer size,
-                                                         @RequestParam(required = false) String sort,
-                                                         @RequestParam(required = false) List<String> sortProperties) {
+                                                             @RequestParam(required = false) Integer size,
+                                                             @RequestParam(required = false) String sort,
+                                                             @RequestParam(required = false) List<String> sortProperties) {
         return userRestService.findAllLazy(page, size, sort, sortProperties);
     }
 

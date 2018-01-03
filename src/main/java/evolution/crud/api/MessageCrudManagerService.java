@@ -57,6 +57,10 @@ public interface MessageCrudManagerService extends AbstractCrudManagerService<Me
 
     void deleteMessageAndMaybeDialog(Long messageId, Long senderId);
 
+    void deleteMessageAndMaybeDialog(List<Long> ids);
+
+    void deleteMessageAndMaybeDialog(List<Long> ids, Long senderId);
+
     Message saveMessageAndMaybeCreateNewDialog(String text, Long senderId, Long recipientId, Date createDateUTC);
 
     Message saveMessageAndMaybeCreateNewDialog(MessageSaveDTO messageSaveDTO, Date createUTC);

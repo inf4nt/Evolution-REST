@@ -180,6 +180,18 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
     }
 
     @Override
+    @Transactional
+    public void deleteMessageAndMaybeDialog(List<Long> ids) {
+        ids.forEach(o -> deleteMessageAndMaybeDialog(o));
+    }
+
+    @Override
+    @Transactional
+    public void deleteMessageAndMaybeDialog(List<Long> ids, Long senderId) {
+        ids.forEach(o -> deleteMessageAndMaybeDialog(o, senderId));
+    }
+
+    @Override
     public Optional<Message> findOne(Long messageId, Long senderId) {
         return messageRepository.findOneByMessageIdAndSender(messageId, senderId);
     }

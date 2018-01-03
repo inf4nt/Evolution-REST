@@ -113,6 +113,12 @@ public class DialogCrudManagerServiceImpl implements DialogCrudManagerService {
     }
 
     @Override
+    @Transactional
+    public void delete(List<Long> ids) {
+        ids.forEach(o -> delete(o));
+    }
+
+    @Override
     public Optional<Dialog> findOne(Long aLong) {
         return dialogRepository.findOneDialog(aLong);
     }
@@ -130,17 +136,7 @@ public class DialogCrudManagerServiceImpl implements DialogCrudManagerService {
 
     @Override
     @Transactional
-    public boolean deleteById(Long aLong) {
-        Optional<Dialog> optional = findOne(aLong);
-        if (!optional.isPresent()) {
-            return false;
-        }
-        optional.ifPresent(dialog -> dialogRepository.delete(dialog));
-        return true;
-    }
-
-    @Override
-    public void deleteAllDialogRowByUser(Long id) {
+    public void clearRowByUserForeignKey(Long id) {
         List<Dialog> list = dialogRepository.findMyDialog(id);
         list.forEach(o -> Hibernate.initialize(o.getMessageList().size()));
         dialogRepository.delete(list);

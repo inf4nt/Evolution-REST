@@ -21,13 +21,13 @@ public interface MessageRestService extends AbstractRestService {
 
     ResponseEntity<Page<MessageDTO>> findAllMessage(Integer page, Integer size, String sort, List<String> sortProperties);
 
-    ResponseEntity<List<MessageDTO>> findMessageRecipientId();
+    ResponseEntity<List<MessageDTO>> findMessageRecipientId(Long recipient);
 
     ResponseEntity<List<MessageDTO>> findMessageRecipientId(Long recipient, String sort, List<String> sortProperties);
 
     ResponseEntity<Page<MessageDTO>> findMessageRecipientId(Long recipient, Integer page, Integer size, String sort, List<String> sortProperties);
 
-    ResponseEntity<List<MessageDTO>> findMessageSenderId();
+    ResponseEntity<List<MessageDTO>> findMessageSenderId(Long senderId);
 
     ResponseEntity<List<MessageDTO>> findMessageSenderId(Long sender, String sort, List<String> sortProperties);
 
@@ -43,17 +43,13 @@ public interface MessageRestService extends AbstractRestService {
 
     ResponseEntity<MessageDTO> save(MessageSaveDTO message);
 
-    ResponseEntity<HttpStatus> update(MessageUpdateDTO message);
+    ResponseEntity<HttpStatus> update2(MessageUpdateDTO message);
 
-    ResponseEntity<MessageDTO> updateAfterReturn(MessageUpdateDTO message);
-
-    ResponseEntity<HttpStatus> updateMessage(MessageUpdateDTO message);
+    ResponseEntity<MessageDTO> update(MessageUpdateDTO message);
 
     ResponseEntity<HttpStatus> delete(Long messageId);
 
     ResponseEntity<HttpStatus> delete(List<Long> list);
-
-    ResponseEntity<Long> deleteAfterReturnId(Long messageId);
 
     ResponseEntity<List<MessageDTO>> findMessageByInterlocutor(Long interlocutor);
 

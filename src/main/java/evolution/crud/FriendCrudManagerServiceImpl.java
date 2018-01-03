@@ -237,7 +237,8 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
     }
 
     @Override
-    public void deleteAllFriendRowByUser(Long id) {
+    @Transactional
+    public void clearRowByUserForeignKey(Long id) {
         List<Friend> list = friendRepository.findRowByIam(id);
         friendRepository.delete(list);
     }
