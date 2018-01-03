@@ -8,6 +8,7 @@ import evolution.security.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,13 +37,15 @@ public class AuthController {
         return authenticationService.authenticationRequestAdmin(authenticationRequest);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/clean-auth-session")
     public ResponseEntity<HttpStatus> cleanToken(@RequestBody JwtCleanToken jwtCleanToken) {
         return authenticationService.cleanAuthenticationSessionKey(jwtCleanToken);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/refresh-auth-session")
     public ResponseEntity<AuthenticationResponse> refreshAuthenticationSessionKey(@RequestBody JwtCleanToken jwtCleanToken) {
-        return refreshAuthenticationSessionKey(jwtCleanToken);
+        return authenticationService.refreshAuthenticationSessionKey(jwtCleanToken);
     }
 }

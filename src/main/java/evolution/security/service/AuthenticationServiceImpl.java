@@ -74,13 +74,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         CustomSecurityUser userDetails = (CustomSecurityUser) this.userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
         String token;
-        String authSession;
 
         Optional<AuthenticationSession> op = authenticationSessionCrudManagerService.findByUsername(userDetails.getUsername());
         if (!op.isPresent()) {
-            token = this.jwtTokenService.generateToken(userDetails);
-            authSession = jwtTokenService.getAuthenticationSession(token);
-            AuthenticationSession jwt = new AuthenticationSession(userDetails.getUsername(), authSession, dateService.getCurrentDateInUTC());
+            String session = UUID.randomUUID().toString();
+            token = jwtTokenService.generateToken(userDetails, session);
+            AuthenticationSession jwt = new AuthenticationSession(userDetails.getUsername(), session, dateService.getCurrentDateInUTC());
             authenticationSessionCrudManagerService.save(jwt);
         } else {
             token = this.jwtTokenService.generateToken(userDetails, op.get().getAuthSession());
@@ -108,13 +107,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         String token;
-        String authSession;
 
         Optional<AuthenticationSession> op = authenticationSessionCrudManagerService.findByUsername(userDetails.getUsername());
         if (!op.isPresent()) {
-            token = this.jwtTokenService.generateToken(userDetails);
-            authSession = jwtTokenService.getAuthenticationSession(token);
-            AuthenticationSession jwt = new AuthenticationSession(userDetails.getUsername(), authSession, dateService.getCurrentDateInUTC());
+            String session = UUID.randomUUID().toString();
+            token = jwtTokenService.generateToken(userDetails, session);
+            AuthenticationSession jwt = new AuthenticationSession(userDetails.getUsername(), session, dateService.getCurrentDateInUTC());
             authenticationSessionCrudManagerService.save(jwt);
         } else {
             token = this.jwtTokenService.generateToken(userDetails, op.get().getAuthSession());
@@ -137,7 +135,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 return ResponseEntity.status(403).build();
             }
         } else {
-            return ResponseEntity.status(204).build();
+            return ResponseEntity.status(401).build();
         }
     }
 
@@ -148,16 +146,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (optional.isPresent()) {
             if (optional.get().getUser().getRole() == UserRoleEnum.ADMIN || optional.get().getUser().getUserAdditionalData().getUsername().equals(jwtCleanToken.getUsername())) {
                 authenticationSessionCrudManagerService.delete(jwtCleanToken.getUsername());
-                String authSession = UUID.randomUUID().toString();
-                AuthenticationSession jwt = new AuthenticationSession(jwtCleanToken.getUsername(), authSession, dateService.getCurrentDateInUTC());
+                String session = UUID.randomUUID().toString();
+                AuthenticationSession jwt = new AuthenticationSession(jwtCleanToken.getUsername(), session, dateService.getCurrentDateInUTC());
                 authenticationSessionCrudManagerService.save(jwt);
-                String token = this.jwtTokenService.generateToken(jwtCleanToken.getUsername(), authSession);
+                String token = this.jwtTokenService.generateToken(jwtCleanToken.getUsername(), session);
                 return ResponseEntity.ok(new AuthenticationResponse(token, userDTOTransferNew.modelToDTO(optional.get().getUser())));
             } else {
                 return ResponseEntity.status(403).build();
             }
         } else {
-            return ResponseEntity.status(204).build();
+            return ResponseEntity.status(401).build();
         }
     }
 }
