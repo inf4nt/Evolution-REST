@@ -1,5 +1,6 @@
 package evolution.model.channel;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import evolution.model.User;
 import lombok.Data;
 
@@ -25,6 +26,7 @@ public class MessageChannel implements Serializable {
     @JoinColumn(name = "sender_id", columnDefinition = "bigint")
     private User sender;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "channel_id", columnDefinition = "bigint")
     private Channel channel;

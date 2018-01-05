@@ -69,4 +69,7 @@ public interface ChannelRepository extends JpaRepository<Channel, Long> {
             " from Channel c " +
             " where c.whoCreatedChannel.id =:userId ", countQuery = "select count (c.id) from Channel c")
     Page<Channel> findChannelForWhoCreateChannelUser(@Param("userId") Long userId, Pageable pageable);
+
+    @Query("select count (c.pk.user.id) from ChannelUserReference c where c.pk.channel.id =:id")
+    Long findCountUserByChannelId(@Param("id") Long id);
 }

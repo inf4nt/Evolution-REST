@@ -1,5 +1,11 @@
 package evolution.crud.api;
 
+import evolution.business.BusinessServiceExecuteResult;
+import evolution.common.BusinessServiceExecuteStatus;
+import evolution.dto.model.ChannelDTO;
+import evolution.dto.model.ChannelDTOLazy;
+import evolution.dto.model.ChannelSaveDTO;
+import evolution.dto.model.ChannelUpdateDTO;
 import evolution.model.User;
 import evolution.model.channel.Channel;
 import org.springframework.data.domain.Page;
@@ -31,8 +37,6 @@ public interface ChannelCrudManagerService extends AbstractCrudManagerService<Ch
 
     List<User> findUserByChannelId(Long id);
 
-    List<User> findUserByChannelName(String name);
-
     void clearRowByUserForeignKey(Long userId);
 
     List<Channel> findChannelForWhoCreateChannelUser(Long userId);
@@ -41,4 +45,11 @@ public interface ChannelCrudManagerService extends AbstractCrudManagerService<Ch
 
     Page<Channel> findChannelForWhoCreateChannelUser(Long userId, Integer page, Integer size, String sortType, List<String> sortProperties);
 
+    Long findCountUserByChannelId(Long id);
+
+    List<User> findUserByChannel(Long channelId);
+
+    List<User> findUserByChannel(Long channelId, String sortType, List<String> sortProperties);
+
+    Page<User> findUserByChannel(Long channelId, Integer page, Integer size, String sortType, List<String> sortProperties);
 }

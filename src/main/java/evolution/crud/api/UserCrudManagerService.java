@@ -9,9 +9,7 @@ import java.util.Optional;
 /**
  * Created by Infant on 07.11.2017.
  */
-public interface UserCrudManagerService extends AbstractCrudManagerService<User, Long>, PageableManager {
-
-    Optional<User> findByUsername(String username);
+public interface UserCrudManagerService extends AbstractCrudManagerService<User, Long>, PageableManager, InitializeLazyCrudManagerService<User> {
 
     Optional<User> findByUsernameLazy(String username);
 

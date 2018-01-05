@@ -60,7 +60,9 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
 
     @Override
     public Optional<User> findUserBySecretKeyLazy(String secretKey) {
-        return userRepository.findUserBySecretKeyLazy(secretKey);
+        Optional<User> op = userRepository.findUserBySecretKey(secretKey);
+        op.ifPresent(this::initializeLazy);
+        return op;
     }
 
     @Override
@@ -70,7 +72,9 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
 
     @Override
     public Optional<User> findOneAndIsActiveLazy(Long userId, boolean active) {
-        return userRepository.findOneUserByIdAndIsActiveLazy(userId, active);
+        Optional<User> op = userRepository.findOneUserByIdAndIsActive(userId, active);
+        op.ifPresent(this::initializeLazy);
+        return op;
     }
 
     @Override
@@ -80,7 +84,9 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
 
     @Override
     public Optional<User> findOneLazy(Long userId) {
-        return userRepository.findOneUserByIdLazy(userId);
+        Optional<User> op = userRepository.findOneUserById(userId);
+        op.ifPresent(this::initializeLazy);
+        return op;
     }
 
     @Override
@@ -167,12 +173,16 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
     @Transactional
     public void delete(Long aLong) {
         Optional<User> o = userRepository.findOneUserById(aLong);
+        o.ifPresent(op -> Hibernate.initialize(op.getUserAdditionalData()));
         if (o.isPresent()) {
             feedCrudManagerService.clearRowByUserForeignKey(o.get().getId());
             friendCrudManagerService.clearRowByUserForeignKey(o.get().getId());
             dialogCrudManagerService.clearRowByUserForeignKey(o.get().getId());
-            userRepository.delete(o.get());
             //todo clear channel message
+
+
+
+            userRepository.delete(o.get());
         }
     }
 
@@ -183,18 +193,16 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
     }
 
     @Override
-    public Optional<User> findByUsername(String username) {
-        return userRepository.findUserByUsernameLazy(username);
-    }
-
-    @Override
+    @Transactional
     public Optional<User> findByUsernameLazy(String username) {
-        return userRepository.findUserByUsernameLazy(username);
+        Optional<User> op = userRepository.findUserByUsername(username);
+        op.ifPresent(this::initializeLazy);
+        return op;
     }
 
     @Override
     public Optional<User> findUserBySecretKey(String secretKey) {
-        return userRepository.findUserBySecretKeyLazy(secretKey);
+        return userRepository.findUserBySecretKey(secretKey);
     }
 
     @Override
@@ -210,7 +218,7 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
 
     @Override
     public Optional<User> findOneAndIsActive(Long userId, boolean active) {
-        return userRepository.findOneUserByIdAndIsActiveLazy(userId, active);
+        return userRepository.findOneUserByIdAndIsActive(userId, active);
     }
 
     @Override
@@ -261,5 +269,12 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
         Pageable p = getPageableForRestService(page, size, sort, sortProperties,
                 this.userMaxFetch, this.defaultUserSortType, this.defaultUserSortProperties);
         return userRepository.findAllFetchLazy(p);
+    }
+
+    @Override
+    @Transactional
+    public User initializeLazy(User object) {
+        Hibernate.initialize(object.getUserAdditionalData());
+        return object;
     }
 }

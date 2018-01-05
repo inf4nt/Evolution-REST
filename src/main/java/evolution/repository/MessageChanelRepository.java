@@ -34,15 +34,6 @@ public interface MessageChanelRepository extends JpaRepository<MessageChannel, L
     @Query("select m from MessageChannel m where m.sender.id =:sender")
     Page<MessageChannel> findMessageChannelBySender(@Param("sender") Long senderId, Pageable pageable);
 
-    @Query("select m from MessageChannel m where m.channel.channelName =:name")
-    List<MessageChannel> findMessageChannelByChannelName(@Param("name") String name);
-
-    @Query("select m from MessageChannel m where m.channel.channelName =:name")
-    List<MessageChannel> findMessageChannelByChannelName(@Param("name") String name, Sort sort);
-
-    @Query("select m from MessageChannel m where m.channel.channelName =:name")
-    Page<MessageChannel> findMessageChannelByChannelName(@Param("name") String name, Pageable pageable);
-
     @Query("select count (m.id) from MessageChannel m where m.channel.id =:id")
     Long findCountMessageChannelByChannelId(@Param("id") Long id);
 

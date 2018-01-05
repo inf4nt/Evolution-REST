@@ -26,12 +26,12 @@ public class Channel implements Serializable {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "channel_user_references",
-            joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "channel_id")}
+            joinColumns = {@JoinColumn(name = "channel_id")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id")}
     )
     private List<User> channelUser = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "channel")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "channel", cascade = CascadeType.REMOVE)
     private List<MessageChannel> messageChannelList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)

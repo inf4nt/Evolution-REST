@@ -35,6 +35,6 @@ public class Dialog {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDate;
 
-    @OneToMany(mappedBy = "dialog", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(mappedBy = "dialog", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Message> messageList = new ArrayList<>();
 }

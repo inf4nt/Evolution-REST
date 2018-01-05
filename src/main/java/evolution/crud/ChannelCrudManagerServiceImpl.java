@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +31,8 @@ public class ChannelCrudManagerServiceImpl implements ChannelCrudManagerService 
     private String defaultSortProperties;
 
     private final ChannelRepository channelRepository;
+
+
 
     @Autowired
     public ChannelCrudManagerServiceImpl(ChannelRepository channelRepository) {
@@ -145,16 +148,6 @@ public class ChannelCrudManagerServiceImpl implements ChannelCrudManagerService 
     }
 
     @Override
-    public List<User> findUserByChannelName(String name) {
-        Optional<Channel> op = channelRepository.findChannelByNameLazyChannelUser(name);
-        if (op.isPresent()) {
-            return op.get().getChannelUser();
-        } else {
-            return new ArrayList<>();
-        }
-    }
-
-    @Override
     @Transactional
     public void clearRowByUserForeignKey(Long userId) {
         List<Channel> list = channelRepository.findChannelForChannelUser(userId);
@@ -181,6 +174,30 @@ public class ChannelCrudManagerServiceImpl implements ChannelCrudManagerService 
         Pageable p = getPageableForRestService(page, size, sortType, sortProperties,
                 this.defaultMaxFetch, this.defaultSortType, this.defaultSortProperties);
         return channelRepository.findChannelForWhoCreateChannelUser(userId, p);
+    }
+
+    @Override
+    public Long findCountUserByChannelId(Long id) {
+        return channelRepository.findCountUserByChannelId(id);
+    }
+
+    @Override
+    public List<User> findUserByChannel(Long channelId) {
+        return null;
+    }
+
+    @Override
+    public List<User> findUserByChannel(Long channelId, String sortType, List<String> sortProperties) {
+        Sort s = getSortForRestService(sortType, sortProperties,
+                this.defaultSortType, this.defaultSortProperties);
+        return null;
+    }
+
+    @Override
+    public Page<User> findUserByChannel(Long channelId, Integer page, Integer size, String sortType, List<String> sortProperties) {
+        Pageable p = getPageableForRestService(page, size, sortType, sortProperties,
+                this.defaultMaxFetch, this.defaultSortType, this.defaultSortProperties);
+        return null;
     }
 
     @Override

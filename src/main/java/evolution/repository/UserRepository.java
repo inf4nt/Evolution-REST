@@ -19,15 +19,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select u from User u where u.id =:id")
     Optional<User> findOneUserById(@Param("id") Long userId);
 
-    @Query("select u from User u join fetch u.userAdditionalData where u.id =:id")
-    Optional<User> findOneUserByIdLazy(@Param("id") Long userId);
-
-    @Query("select u " +
-            " from User u " +
-            " join fetch u.userAdditionalData as ua " +
-            " where ua.username =:username ")
-    Optional<User> findUserByUsernameLazy(@Param("username") String username);
-
     @Query("select u " +
             " from User u " +
             " where u.userAdditionalData.username =:username ")
@@ -35,21 +26,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("select u " +
             " from User u " +
-            " join fetch u.userAdditionalData as ua " +
-            " where ua.secretKey =:key ")
-    Optional<User> findUserBySecretKeyLazy(@Param("key") String secretKey);
+            " where u.userAdditionalData =:key ")
+    Optional<User> findUserBySecretKey(@Param("key") String secretKey);
 
     @Query(" select true " +
             "from User u " +
             "where u.userAdditionalData.username =:username ")
     Boolean exist(@Param("username") String username);
-
-    @Query("select u " +
-            " from User u " +
-            " join fetch u.userAdditionalData as ua " +
-            " where u.id =:id " +
-            " and ua.isActive =:active")
-    Optional<User> findOneUserByIdAndIsActiveLazy(@Param("id") Long userId, @Param("active") boolean active);
 
     @Query("select u " +
             " from User u " +
@@ -149,4 +132,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select u from User u " +
             "join fetch u.userAdditionalData ")
     List<User> findAllFetchLazy();
+
+    @Query("select c.pk.user from ChannelUserReference c where c.pk.channel.id =:id")
+    List<User> findUserByChannel(@Param("id") Long id);
+
+    @Query("select c.pk.user from ChannelUserReference c where c.pk.channel.id =:id")
+    List<User> findUserByChannel(@Param("id") Long id, Sort sort);
+
+    @Query("select c.pk.user from ChannelUserReference c where c.pk.channel.id =:id")
+    Page<User> findUserByChannel(@Param("id") Long id, Pageable pageable);
 }

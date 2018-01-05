@@ -72,32 +72,8 @@ public class MessageChannelCrudManagerServiceImpl implements MessageChannelCrudM
     }
 
     @Override
-    public List<MessageChannel> findMessageChannelByChannelName(String name) {
-        return messageChanelRepository.findMessageChannelByChannelName(name);
-    }
-
-    @Override
-    public List<MessageChannel> findMessageChannelByChannelName(String name, String sortType, List<String> sortProperties) {
-        Sort s = getSortForRestService(sortType, sortProperties,
-                this.defaultSortType, this.defaultSortProperties);
-        return messageChanelRepository.findMessageChannelByChannelName(name, s);
-    }
-
-    @Override
-    public Page<MessageChannel> findMessageChannelByChannelName(String name, Integer page, Integer size, String sortType, List<String> sortProperties) {
-        Pageable p = getPageableForRestService(page, size, sortType, sortProperties,
-                this.defaultMaxFetch, this.defaultSortType, this.defaultSortProperties);
-        return messageChanelRepository.findMessageChannelByChannelName(name, p);
-    }
-
-    @Override
-    public Optional<Long> findCountMessageChannelByChannelId(Long id) {
-        return Optional.ofNullable(messageChanelRepository.findCountMessageChannelByChannelId(id));
-    }
-
-    @Override
-    public Optional<Long> findCountMessageChannelByChannelName(String name) {
-        return Optional.ofNullable(messageChanelRepository.findCountMessageChannelByChannelName(name));
+    public Long findCountMessageChannelByChannelId(Long id) {
+        return messageChanelRepository.findCountMessageChannelByChannelId(id);
     }
 
     @Override

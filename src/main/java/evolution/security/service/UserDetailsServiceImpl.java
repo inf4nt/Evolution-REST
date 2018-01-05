@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,8 +35,9 @@ public class UserDetailsServiceImpl
     }
 
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> optional = userCrudManagerService.findByUsername(username);
+        Optional<User> optional = userCrudManagerService.findByUsernameLazy(username);
         if (!optional.isPresent()) {
             LOGGER.info("\nuser  username = " + username + ", not found");
             throw new UsernameNotFoundException("user " + username + " not found");

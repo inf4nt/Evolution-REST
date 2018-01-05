@@ -60,7 +60,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     @Override
     @Transactional
     public BusinessServiceExecuteResult<User> createNewUser(UserSaveDTO userSaveDTO) {
-        Optional<User> ou = userCrudManagerService.findByUsername(userSaveDTO.getUsername());
+        Optional<User> ou = userCrudManagerService.findByUsernameLazy(userSaveDTO.getUsername());
         if (ou.isPresent()) {
             logger.info("user by username " + userSaveDTO.getUsername() + ", is already exist !");
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.USER_IS_ALREADY_EXIST_REGISTRATION_FAILED);
@@ -175,7 +175,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
 
     @Override
     public Optional<UserDTO> findByUsername(String username) {
-        Optional<User> op = userCrudManagerService.findByUsername(username);
+        Optional<User> op = userCrudManagerService.findByUsernameLazy(username);
         return userDTOTransferNew.modelToDTO(op);
     }
 
@@ -185,7 +185,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
         }
 
-        Optional<User> op = userCrudManagerService.findByUsername(username);
+        Optional<User> op = userCrudManagerService.findByUsernameLazy(username);
         if (op.isPresent()) {
             Optional<UserDTOLazy> opl =  userDTOTransferNew.modelToDTOLazy(op);
             if (opl.isPresent()) {
