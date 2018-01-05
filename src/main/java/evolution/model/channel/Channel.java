@@ -6,6 +6,7 @@ import lombok.Data;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -42,6 +43,9 @@ public class Channel implements Serializable {
 
     @Column(name = "is_private", columnDefinition = "boolean default false")
     private boolean isPrivate;
+
+    @Column(name = "date_create", nullable = false, columnDefinition = "timestamp")
+    private Date dateCreate;
 
     @Version
     @Column(columnDefinition = "bigint")
