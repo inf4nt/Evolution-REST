@@ -55,8 +55,7 @@ public class SecuritySupportService {
     }
 
     public boolean isAllowed(Long id) {
-        User user = getAuthenticationPrincipal().getUser();
-        return user.getId().equals(id);
+        return getAuthenticationPrincipal().getUser().getId().equals(id);
     }
 
     public boolean isAllowed(String username) {

@@ -39,6 +39,16 @@ public class DialogRestServiceImpl implements DialogRestService {
     }
 
     @Override
+    public ResponseEntity<List<DialogDTO>> findDialogsByUserId(Long id, String sort, List<String> sortProperties) {
+        return response(dialogBusinessService.findDialogsByUserId(id, sort, sortProperties));
+    }
+
+    @Override
+    public ResponseEntity<Page<DialogDTO>> findDialogsByUserId(Long id, Integer page, Integer size, String sort, List<String> sortProperties) {
+        return response(dialogBusinessService.findDialogsByUserId(id, page, size, sort, sortProperties));
+    }
+
+    @Override
     public ResponseEntity<List<DialogDTO>> findAll() {
         List<DialogDTO> list = dialogBusinessService.findAll();
         return response(list);

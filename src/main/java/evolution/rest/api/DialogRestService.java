@@ -16,6 +16,10 @@ public interface DialogRestService extends AbstractRestService {
 
     ResponseEntity<List<DialogDTO>> findDialogsByUserId(Long id);
 
+    ResponseEntity<List<DialogDTO>> findDialogsByUserId(Long id, String sort, List<String> sortProperties);
+
+    ResponseEntity<Page<DialogDTO>> findDialogsByUserId(Long id, Integer page, Integer size, String sort, List<String> sortProperties);
+
     ResponseEntity<List<DialogDTO>> findAll();
 
     ResponseEntity<Page<DialogDTO>> findAll(Integer page, Integer size, String sort, List<String> sortProperties);

@@ -87,14 +87,14 @@ public class DialogRestController {
 
     @GetMapping(value = "/for-user/{id}")
     public ResponseEntity<List<DialogDTO>> findDialogByUser(@PathVariable Long id) {
-        return null;
+        return dialogRestService.findDialogsByUserId(id);
     }
 
     @GetMapping(value = "/for-user/{id}/list")
     public ResponseEntity<List<DialogDTO>> findDialogByUser(@PathVariable Long id,
                                                           @RequestParam(required = false) String sort,
                                                           @RequestParam(required = false) List<String> sortProperties) {
-        return null;
+        return dialogRestService.findDialogsByUserId(id, sort, sortProperties);
     }
 
     @GetMapping(value = "/for-user/{id}/page")
@@ -103,6 +103,6 @@ public class DialogRestController {
                                                           @RequestParam(required = false) Integer size,
                                                           @RequestParam(required = false) String sort,
                                                           @RequestParam(required = false) List<String> sortProperties) {
-        return null;
+        return dialogRestService.findDialogsByUserId(id, page, size, sort, sortProperties);
     }
 }

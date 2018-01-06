@@ -95,9 +95,14 @@ public class JwtTokenServiceImpl implements JwtTokenService {
     }
 
     private Claims getClaimsFromToken(String token) {
-        return Jwts.parser()
-                .setSigningKey(this.secret)
-                .parseClaimsJws(token)
-                .getBody();
+        if (token != null && !token.isEmpty()) {
+            return Jwts.parser()
+                    .setSigningKey(this.secret)
+                    .parseClaimsJws(token)
+                    .getBody();
+        } else {
+            return null;
+        }
+
     }
 }

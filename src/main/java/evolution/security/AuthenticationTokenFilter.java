@@ -58,32 +58,32 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
             authToken = authToken.substring(7);
         }
 
-//        todo: remove after testing
-        String username = "com.infant@gmail.com";
-
-        if (SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        }
-
-//        String username = jwtTokenService.getUsername(authToken);
+////        todo: remove after testing
+//        String username = "com.infant@gmail.com";
 //
-//        logger.info("checking authentication für user " + username);
-//
-//        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+//        if (SecurityContextHolder.getContext().getAuthentication() == null) {
 //            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-//            if (this.jwtTokenService.isValidToken(authToken, userDetails) && checkAuthSession(authToken)) {
-//                UsernamePasswordAuthenticationToken authentication =
-//                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-//                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-//                SecurityContextHolder.getContext().setAuthentication(authentication);
-//            }
+//
+//            UsernamePasswordAuthenticationToken authentication =
+//                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+//            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+//            SecurityContextHolder.getContext().setAuthentication(authentication);
+//
 //        }
+
+        String username = jwtTokenService.getUsername(authToken);
+
+        logger.info("checking authentication für user " + username);
+
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+            if (this.jwtTokenService.isValidToken(authToken, userDetails) && checkAuthSession(authToken)) {
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+        }
 
         System.out.println("Auth filter ============================================================");
         chain.doFilter(request, response);

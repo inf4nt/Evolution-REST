@@ -29,8 +29,6 @@ import java.util.stream.Collectors;
 @Service
 public class DialogBusinessServiceImpl implements DialogBusinessService {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
     private final DialogCrudManagerService dialogCrudManagerService;
 
     private final DialogDTOTransfer dialogDTOTransfer;
@@ -56,101 +54,81 @@ public class DialogBusinessServiceImpl implements DialogBusinessService {
 
     @Override
     public BusinessServiceExecuteResult<List<DialogDTO>> findDialogsByUserId(Long userId) {
-        if (securitySupportService.isAllowed(userId)) {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK,
-                    dialogCrudManagerService
-                            .findDialogsByUserId(userId)
-                            .stream()
-                            .map(o -> dialogDTOTransfer.modelToDTO(o, userId))
-                            .collect(Collectors.toList()));
-        } else if (securitySupportService.isAdmin()) {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK,
-                    dialogCrudManagerService
-                            .findDialogsByUserId(userId)
-                            .stream()
-                            .map(o -> dialogDTOTransfer.modelToDTO(o))
-                            .collect(Collectors.toList()));
-        } else {
+        if (!securitySupportService.isAllowedFull(userId)) {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
         }
+        List<Dialog> list = dialogCrudManagerService.findDialogsByUserId(userId);
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, repairDialogDTO(list, userId));
     }
 
     @Override
     public BusinessServiceExecuteResult<List<DialogDTO>> findDialogsByUserId(Long userId, String sortType, List<String> sortProperties) {
-        return null;
+        if (!securitySupportService.isAllowedFull(userId)) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
+        }
+        List<Dialog> list = dialogCrudManagerService.findDialogsByUserId(userId, sortType, sortProperties);
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, repairDialogDTO(list, userId));
     }
 
     @Override
-    public BusinessServiceExecuteResult<List<DialogDTO>> findDialogsByUserId(Long userId, Integer size, String sortType, List<String> sortProperties) {
-        return null;
+    public BusinessServiceExecuteResult<Page<DialogDTO>> findDialogsByUserId(Long userId, Integer page, Integer size, String sortType, List<String> sortProperties) {
+        if (!securitySupportService.isAllowedFull(userId)) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
+        }
+        Page<Dialog> p = dialogCrudManagerService.findDialogsByUserId(userId, page, size, sortType, sortProperties);
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, repairDialogDTO(p, userId));
     }
 
     @Override
     public Optional<DialogDTO> findOne(Long id) {
-        return dialogCrudManagerService
-                .findOne(id)
-                .map(o -> dialogDTOTransfer.modelToDTO(o));
+        return dialogDTOTransfer
+                .modelToDTO(dialogCrudManagerService.findOne(id));
     }
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Optional<DialogDTOLazy> findOneLazy(Long id) {
-        return dialogCrudManagerService
-                .findOneLazy(id)
-                .map(o -> dialogDTOTransfer.modelToDTOLazy(o));
+        return dialogDTOTransfer
+                .modelToDTOLazy(dialogCrudManagerService.findOneLazy(id));
     }
 
     @Override
     public List<DialogDTO> findAll() {
-        return dialogCrudManagerService
-                .findAll()
-                .stream()
-                .map(o -> dialogDTOTransfer.modelToDTO(o))
-                .collect(Collectors.toList());
+        return dialogDTOTransfer
+                .modelToDTO(dialogCrudManagerService.findAll());
     }
 
     @Override
     public List<DialogDTO> findAll(String sortType, List<String> sortProperties) {
-        return dialogCrudManagerService
-                .findAll(sortType, sortProperties)
-                .stream()
-                .map(o -> dialogDTOTransfer.modelToDTO(o))
-                .collect(Collectors.toList());
+        return dialogDTOTransfer
+                .modelToDTO(dialogCrudManagerService.findAll(sortType, sortProperties));
     }
 
     @Override
     public Page<DialogDTO> findAll(Integer page, Integer size, String sortType, List<String> sortProperties) {
-        return dialogCrudManagerService
-                .findAll(page, size, sortType, sortProperties)
-                .map(o -> dialogDTOTransfer.modelToDTO(o));
+        return dialogDTOTransfer
+                .modelToDTO(dialogCrudManagerService.findAll(page, size, sortType, sortProperties));
     }
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<DialogDTOLazy> findAllLazy() {
-        return dialogCrudManagerService
-                .findAllLazy()
-                .stream()
-                .map(o -> dialogDTOTransfer.modelToDTOLazy(o))
-                .collect(Collectors.toList());
+        return dialogDTOTransfer
+                .modelToDTOLazy(dialogCrudManagerService.findAllLazy());
     }
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<DialogDTOLazy> findAllLazy(String sortType, List<String> sortProperties) {
-        return dialogCrudManagerService
-                .findAllLazy(sortType, sortProperties)
-                .stream()
-                .map(o -> dialogDTOTransfer.modelToDTOLazy(o))
-                .collect(Collectors.toList());
+        return dialogDTOTransfer
+                .modelToDTOLazy(dialogCrudManagerService.findAllLazy(sortType, sortProperties));
     }
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Page<DialogDTOLazy> findAllLazy(Integer page, Integer size, String sortType, List<String> sortProperties) {
-        return dialogCrudManagerService
-                .findAllLazy(page, size, sortType, sortProperties)
-                .map(o -> dialogDTOTransfer.modelToDTOLazy(o));
+        return dialogDTOTransfer
+                .modelToDTOLazy(dialogCrudManagerService.findAllLazy(page, size, sortType, sortProperties));
     }
 
     @Override
@@ -161,19 +139,17 @@ public class DialogBusinessServiceImpl implements DialogBusinessService {
 
     @Override
     public List<MessageDTO> findMessageByDialog(Long dialogId) {
-        List<MessageDTO> list = new ArrayList<>();
-        Optional<Dialog> op;
+        List<Message> list;
+        User auth = securitySupportService.getAuthenticationPrincipal().getUser();
         if (securitySupportService.isAdmin()) {
-            op = dialogCrudManagerService.findOneLazy(dialogId);
+            list = messageCrudManagerService
+                    .findMessageByDialogId(dialogId);
         } else {
-            User auth = securitySupportService.getAuthenticationPrincipal().getUser();
-            op = dialogCrudManagerService
-                    .findOneLazyAndParticipantId(dialogId, auth.getId());
+            list = messageCrudManagerService
+                    .findMessageByDialogIdAndParticipant(dialogId, auth.getId());
         }
-        op.ifPresent(dialog -> dialog.getMessageList().forEach(o -> {
-            list.add(messageDTOTransfer.modelToDTO(o));
-        }));
-        return list;
+
+        return repairMessageDTO(list, auth.getId());
     }
 
     @Override
@@ -187,10 +163,7 @@ public class DialogBusinessServiceImpl implements DialogBusinessService {
             list = messageCrudManagerService
                     .findMessageByDialogIdAndParticipant(dialogId, auth.getId(), sortType, sortProperties);
         }
-
-        return list.stream()
-                .map(o -> messageDTOTransfer.modelToDTO(o, auth))
-                .collect(Collectors.toList());
+        return repairMessageDTO(list, auth.getId());
     }
 
     @Override
@@ -204,6 +177,38 @@ public class DialogBusinessServiceImpl implements DialogBusinessService {
             p = messageCrudManagerService
                     .findMessageByDialogIdAndParticipant(dialogId, auth.getId(), page, size, sortType, sortProperties);
         }
-        return messageDTOTransfer.modelToDTO(p, auth);
+        return repairMessageDTO(p, auth.getId());
+    }
+
+    private List<DialogDTO> repairDialogDTO(List<Dialog> list, Long auth) {
+        if (securitySupportService.isAllowed(auth)) {
+            return dialogDTOTransfer.modelToDTO(list, auth);
+        } else {
+            return dialogDTOTransfer.modelToDTO(list);
+        }
+    }
+
+    private Page<DialogDTO> repairDialogDTO(Page<Dialog> page, Long auth) {
+        if (securitySupportService.isAllowed(auth)) {
+            return dialogDTOTransfer.modelToDTO(page, auth);
+        } else {
+            return dialogDTOTransfer.modelToDTO(page);
+        }
+    }
+
+    private List<MessageDTO> repairMessageDTO(List<Message> list, Long auth) {
+        if (securitySupportService.isAllowed(auth)) {
+            return messageDTOTransfer.modelToDTO(list, auth);
+        } else {
+            return messageDTOTransfer.modelToDTO(list);
+        }
+    }
+
+    private Page<MessageDTO> repairMessageDTO(Page<Message> page, Long auth) {
+        if (securitySupportService.isAllowed(auth)) {
+            return messageDTOTransfer.modelToDTO(page, auth);
+        } else {
+            return messageDTOTransfer.modelToDTO(page);
+        }
     }
 }

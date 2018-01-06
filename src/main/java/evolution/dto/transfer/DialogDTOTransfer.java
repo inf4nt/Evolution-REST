@@ -5,10 +5,12 @@ import evolution.model.Dialog;
 import evolution.model.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DialogDTOTransfer implements TransferDTOLazy<DialogDTO, DialogDTOLazy, Dialog> {
@@ -55,6 +57,17 @@ public class DialogDTOTransfer implements TransferDTOLazy<DialogDTO, DialogDTOLa
         return modelToDTO(dialog, new User(auth));
     }
 
+    public List<DialogDTO> modelToDTO(List<Dialog> list, Long auth) {
+        return list
+                .stream()
+                .map(o -> modelToDTO(o, auth))
+                .collect(Collectors.toList());
+    }
+
+    public Page<DialogDTO> modelToDTO(Page<Dialog> page, Long auth) {
+        return page.map(o -> modelToDTO(o, auth));
+    }
+
     public DialogDTO modelToDTO(Dialog dialog, User auth) {
         DialogDTO dialogDTO = modelMapper.map(dialog, DialogDTO.class);
         UserDTO first = dialogDTO.getFirst();
@@ -72,12 +85,9 @@ public class DialogDTOTransfer implements TransferDTOLazy<DialogDTO, DialogDTOLa
         if (dialog.getFirst().getId().equals(auth.getId())) {
             dialogDTOLazy.setFirst(userDTOTransfer.modelToDTO(auth));
             dialogDTOLazy.setSecond(userDTOTransfer.modelToDTO(dialog.getSecond()));
-        } else if (dialog.getSecond().getId().equals(auth.getId())) {
+        } else {
             dialogDTOLazy.setFirst(userDTOTransfer.modelToDTO(dialog.getSecond()));
             dialogDTOLazy.setSecond(userDTOTransfer.modelToDTO(auth));
-        } else {
-            dialogDTOLazy.setFirst(userDTOTransfer.modelToDTO(dialog.getFirst()));
-            dialogDTOLazy.setSecond(userDTOTransfer.modelToDTO(dialog.getSecond()));
         }
 
         dialogDTOLazy.setCreateDate(dialog.getCreateDate());

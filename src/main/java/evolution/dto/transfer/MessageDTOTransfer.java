@@ -1,6 +1,8 @@
 package evolution.dto.transfer;
 
+import evolution.dto.model.DialogDTO;
 import evolution.dto.model.MessageDTO;
+import evolution.dto.model.UserDTO;
 import evolution.model.Message;
 import evolution.model.User;
 import org.modelmapper.ModelMapper;
@@ -17,12 +19,9 @@ public class MessageDTOTransfer implements TransferDTO<MessageDTO, Message> {
 
     private final ModelMapper modelMapper;
 
-    private final DialogDTOTransfer dialogDTOTransfer;
-
     @Autowired
-    public MessageDTOTransfer(ModelMapper modelMapper, DialogDTOTransfer dialogDTOTransfer) {
+    public MessageDTOTransfer(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
-        this.dialogDTOTransfer = dialogDTOTransfer;
     }
 
     @Override
@@ -32,7 +31,13 @@ public class MessageDTOTransfer implements TransferDTO<MessageDTO, Message> {
 
     public MessageDTO modelToDTO(Message message, User auth) {
         MessageDTO messageDTO = modelMapper.map(message, MessageDTO.class);
-        messageDTO.setDialog(dialogDTOTransfer.modelToDTO(message.getDialog(), auth));
+        DialogDTO dialogDTO = modelMapper.map(message.getDialog(), DialogDTO.class);
+        UserDTO first = dialogDTO.getFirst();
+        if (!auth.getId().equals(first.getId())) {
+            dialogDTO.setFirst(dialogDTO.getSecond());
+            dialogDTO.setSecond(first);
+        }
+        messageDTO.setDialog(dialogDTO);
         return messageDTO;
     }
 
@@ -73,9 +78,4 @@ public class MessageDTOTransfer implements TransferDTO<MessageDTO, Message> {
         return optional
                 .map(o -> modelToDTO(o, auth));
     }
-
-
-//    public Message dtoToModel(MessageDTO messageDTO) {
-//        return modelMapper.map(messageDTO, Message.class);
-//    }
 }
