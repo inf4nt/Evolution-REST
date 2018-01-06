@@ -27,6 +27,10 @@ public interface DialogCrudManagerService extends AbstractCrudManagerService<Dia
 
     List<Dialog> findDialogsByUserId(Long userId);
 
+    List<Dialog> findDialogsByUserId(Long userId, String sort, List<String> sortProperties);
+
+    Page<Dialog> findDialogsByUserId(Long userId, Integer page, Integer size, String sort, List<String> sortProperties);
+
     Optional<Dialog> findOne(Long iam, Long dialogId);
 
     void delete(List<Long> ids);

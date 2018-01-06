@@ -32,8 +32,7 @@ public class MailService {
             logger.info("Message send:= " + mimeMessageHelper.toString());
             javaMailSender.send(mail);
         } catch (MessagingException exception) {
-            logger.error(exception.toString());
-            exception.printStackTrace();
+            logger.info("error", exception);
         }
     }
 }

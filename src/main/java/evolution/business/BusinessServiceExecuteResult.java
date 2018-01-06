@@ -2,11 +2,7 @@ package evolution.business;
 
 import evolution.common.BusinessServiceExecuteStatus;
 import lombok.Getter;
-
-import java.util.Collection;
 import java.util.Optional;
-
-import static evolution.common.BusinessServiceExecuteStatus.*;
 
 /**
  * Created by Infant on 09.11.2017.
@@ -44,25 +40,11 @@ public class BusinessServiceExecuteResult<T> {
         return new BusinessServiceExecuteResult<>(status, resultObject);
     }
 
-    public static <T> BusinessServiceExecuteResult<T> build(Optional<T> resultObject) {
-        if (resultObject == null) {
-            return new BusinessServiceExecuteResult<>(NO_CONTENT, Optional.empty());
-        }
-        if (resultObject.isPresent()) {
-            if (resultObject.get() instanceof Collection && ((Collection) resultObject.get()).isEmpty()) {
-                return new BusinessServiceExecuteResult<>(NO_CONTENT, resultObject);
-            }
-            return new BusinessServiceExecuteResult<>(OK, resultObject);
-        } else {
-            return new BusinessServiceExecuteResult<>(NO_CONTENT, resultObject);
-        }
-    }
-
     public T getResultObject() {
-        return resultObject.orElseThrow(() -> new NullPointerException());
+        return resultObject.orElseThrow(NullPointerException::new);
     }
 
     public Optional<T> getResultObjectOptional() {
-        return resultObject == null ? Optional.empty() : resultObject;
+        return resultObject;
     }
 }

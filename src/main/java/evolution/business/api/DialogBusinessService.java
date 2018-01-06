@@ -18,6 +18,10 @@ public interface DialogBusinessService {
 
     BusinessServiceExecuteResult<List<DialogDTO>> findDialogsByUserId(Long userId);
 
+    BusinessServiceExecuteResult<List<DialogDTO>> findDialogsByUserId(Long userId, String sortType, List<String> sortProperties);
+
+    BusinessServiceExecuteResult<List<DialogDTO>> findDialogsByUserId(Long userId, Integer size, String sortType, List<String> sortProperties);
+
     Optional<DialogDTO> findOne(Long id);
 
     Optional<DialogDTOLazy> findOneLazy(Long id);

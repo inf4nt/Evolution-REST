@@ -13,35 +13,31 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class MessageDTOTransferNew {
+public class MessageDTOTransfer implements TransferDTO<MessageDTO, Message> {
+
+    private final ModelMapper modelMapper;
+
+    private final DialogDTOTransfer dialogDTOTransfer;
 
     @Autowired
-    private ModelMapper modelMapper;
+    public MessageDTOTransfer(ModelMapper modelMapper, DialogDTOTransfer dialogDTOTransfer) {
+        this.modelMapper = modelMapper;
+        this.dialogDTOTransfer = dialogDTOTransfer;
+    }
 
-    @Autowired
-    private DialogDTOTransferNew dialogDTOTransferNew;
-
+    @Override
     public MessageDTO modelToDTO(Message message) {
         return modelMapper.map(message, MessageDTO.class);
     }
 
     public MessageDTO modelToDTO(Message message, User auth) {
         MessageDTO messageDTO = modelMapper.map(message, MessageDTO.class);
-        messageDTO.setDialog(dialogDTOTransferNew.modelToDTO(message.getDialog(), auth));
+        messageDTO.setDialog(dialogDTOTransfer.modelToDTO(message.getDialog(), auth));
         return messageDTO;
     }
 
     public MessageDTO modelToDTO(Message message, Long auth) {
-        MessageDTO messageDTO = modelMapper.map(message, MessageDTO.class);
-        messageDTO.setDialog(dialogDTOTransferNew.modelToDTO(message.getDialog(), new User(auth)));
-        return messageDTO;
-    }
-
-    public List<MessageDTO> modelToDTO(List<Message> list) {
-        return list
-                .stream()
-                .map(o -> modelToDTO(o))
-                .collect(Collectors.toList());
+        return modelToDTO(message, new User(auth));
     }
 
     public List<MessageDTO> modelToDTO(List<Message> list, User auth) {
@@ -58,11 +54,6 @@ public class MessageDTOTransferNew {
                 .collect(Collectors.toList());
     }
 
-    public Page<MessageDTO> modelToDTO(Page<Message> page) {
-        return page
-                .map(o -> modelToDTO(o));
-    }
-
     public Page<MessageDTO> modelToDTO(Page<Message> page, User auth) {
         return page
                 .map(o -> modelToDTO(o, auth));
@@ -71,11 +62,6 @@ public class MessageDTOTransferNew {
     public Page<MessageDTO> modelToDTO(Page<Message> page, Long auth) {
         return page
                 .map(o -> modelToDTO(o, auth));
-    }
-
-    public Optional<MessageDTO> modelToDTO(Optional<Message> optional) {
-        return optional
-                .map(o -> modelToDTO(o));
     }
 
     public Optional<MessageDTO> modelToDTO(Optional<Message> optional, User auth) {

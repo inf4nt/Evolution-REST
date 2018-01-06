@@ -4,7 +4,7 @@ import evolution.business.api.FeedBusinessService;
 import evolution.common.BusinessServiceExecuteStatus;
 import evolution.crud.api.FeedCrudManagerService;
 import evolution.crud.api.UserCrudManagerService;
-import evolution.dto.transfer.FeedDTOTransferNew;
+import evolution.dto.transfer.FeedDTOTransfer;
 import evolution.dto.model.FeedDTO;
 import evolution.dto.model.FeedSaveDTO;
 import evolution.dto.model.FeedUpdateDTO;
@@ -30,7 +30,7 @@ public class FeedBusinessServiceImpl implements FeedBusinessService {
 
     private final UserCrudManagerService userCrudManagerService;
 
-    private final FeedDTOTransferNew feedDTOTransferNew;
+    private final FeedDTOTransfer feedDTOTransfer;
 
     private final DateService dateService;
 
@@ -38,12 +38,12 @@ public class FeedBusinessServiceImpl implements FeedBusinessService {
     public FeedBusinessServiceImpl(FeedCrudManagerService feedCrudManagerService,
                                    SecuritySupportService securitySupportService,
                                    UserCrudManagerService userCrudManagerService,
-                                   FeedDTOTransferNew feedDTOTransferNew,
+                                   FeedDTOTransfer feedDTOTransfer,
                                    DateService dateService) {
         this.feedCrudManagerService = feedCrudManagerService;
         this.securitySupportService = securitySupportService;
         this.userCrudManagerService = userCrudManagerService;
-        this.feedDTOTransferNew = feedDTOTransferNew;
+        this.feedDTOTransfer = feedDTOTransfer;
         this.dateService = dateService;
     }
 
@@ -115,7 +115,7 @@ public class FeedBusinessServiceImpl implements FeedBusinessService {
 
         Feed result = feedCrudManagerService.save(original);
 
-        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, feedDTOTransferNew.modelToDTO(result));
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, feedDTOTransfer.modelToDTO(result));
     }
 
     @Override
@@ -146,7 +146,7 @@ public class FeedBusinessServiceImpl implements FeedBusinessService {
 
         f = feedCrudManagerService.save(f);
 
-        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, feedDTOTransferNew.modelToDTO(f));
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, feedDTOTransfer.modelToDTO(f));
     }
 
     @Override
@@ -155,7 +155,7 @@ public class FeedBusinessServiceImpl implements FeedBusinessService {
         return feedCrudManagerService
                 .findAll()
                 .stream()
-                .map(o -> feedDTOTransferNew.modelToDTO(o))
+                .map(o -> feedDTOTransfer.modelToDTO(o))
                 .collect(Collectors.toList());
     }
 
@@ -163,7 +163,7 @@ public class FeedBusinessServiceImpl implements FeedBusinessService {
     public Page<FeedDTO> findAll(Integer page, Integer size, String sortType, List<String> sortProperties) {
         return feedCrudManagerService
                 .findAll(page, size, sortType, sortProperties)
-                .map(o -> feedDTOTransferNew.modelToDTO(o));
+                .map(o -> feedDTOTransfer.modelToDTO(o));
     }
 
     @Override
@@ -171,7 +171,7 @@ public class FeedBusinessServiceImpl implements FeedBusinessService {
         return feedCrudManagerService
                 .findMyFriendsFeed(iam)
                 .stream()
-                .map(o -> feedDTOTransferNew.modelToDTO(o))
+                .map(o -> feedDTOTransfer.modelToDTO(o))
                 .collect(Collectors.toList());
 
     }
@@ -180,7 +180,7 @@ public class FeedBusinessServiceImpl implements FeedBusinessService {
     public Page<FeedDTO> findMyFriendsFeed(Long iam, Integer page, Integer size, String sortType, List<String> sortProperties) {
         return feedCrudManagerService
                 .findMyFriendsFeed(iam, page, size, sortType, sortProperties)
-                .map(o -> feedDTOTransferNew.modelToDTO(o));
+                .map(o -> feedDTOTransfer.modelToDTO(o));
     }
 
     @Override
@@ -189,7 +189,7 @@ public class FeedBusinessServiceImpl implements FeedBusinessService {
         return feedCrudManagerService
                 .findMyFriendsFeed(auth)
                 .stream()
-                .map(o -> feedDTOTransferNew.modelToDTO(o))
+                .map(o -> feedDTOTransfer.modelToDTO(o))
                 .collect(Collectors.toList());
     }
 
@@ -198,7 +198,7 @@ public class FeedBusinessServiceImpl implements FeedBusinessService {
         Long auth = securitySupportService.getAuthenticationPrincipal().getUser().getId();
         return feedCrudManagerService
                 .findMyFriendsFeed(auth, page, size, sortType, sortProperties)
-                .map(o -> feedDTOTransferNew.modelToDTO(o));
+                .map(o -> feedDTOTransfer.modelToDTO(o));
     }
 
     @Override
@@ -206,7 +206,7 @@ public class FeedBusinessServiceImpl implements FeedBusinessService {
         return feedCrudManagerService
                 .findFeedsForMe(iam)
                 .stream()
-                .map(o -> feedDTOTransferNew.modelToDTO(o))
+                .map(o -> feedDTOTransfer.modelToDTO(o))
                 .collect(Collectors.toList());
     }
 
@@ -214,7 +214,7 @@ public class FeedBusinessServiceImpl implements FeedBusinessService {
     public Page<FeedDTO> findFeedsForMe(Long iam, Integer page, Integer size, String sortType, List<String> sortProperties) {
         return feedCrudManagerService
                 .findFeedsForMe(iam, page, size, sortType, sortProperties)
-                .map(o -> feedDTOTransferNew.modelToDTO(o));
+                .map(o -> feedDTOTransfer.modelToDTO(o));
     }
 
     @Override
@@ -223,7 +223,7 @@ public class FeedBusinessServiceImpl implements FeedBusinessService {
         return feedCrudManagerService
                 .findFeedsForMe(auth)
                 .stream()
-                .map(o -> feedDTOTransferNew.modelToDTO(o))
+                .map(o -> feedDTOTransfer.modelToDTO(o))
                 .collect(Collectors.toList());
     }
 
@@ -232,21 +232,21 @@ public class FeedBusinessServiceImpl implements FeedBusinessService {
         Long auth = securitySupportService.getAuthenticationPrincipal().getUser().getId();
         return feedCrudManagerService
                 .findFeedsForMe(auth, page, size, sortType, sortProperties)
-                .map(o -> feedDTOTransferNew.modelToDTO(o));
+                .map(o -> feedDTOTransfer.modelToDTO(o));
     }
 
     @Override
     public Optional<FeedDTO> findFeedByIdAndToUserId(Long feedId, Long toUserId) {
         return feedCrudManagerService
                 .findFeedByIdAndToUserId(feedId, toUserId)
-                .map(o -> feedDTOTransferNew.modelToDTO(o));
+                .map(o -> feedDTOTransfer.modelToDTO(o));
     }
 
     @Override
     public Optional<FeedDTO> findFeedByIdAndSenderId(Long feedId, Long senderId) {
         return feedCrudManagerService
                 .findFeedByIdAndSenderId(feedId, senderId)
-                .map(o -> feedDTOTransferNew.modelToDTO(o));
+                .map(o -> feedDTOTransfer.modelToDTO(o));
     }
 
     @Override
@@ -254,7 +254,7 @@ public class FeedBusinessServiceImpl implements FeedBusinessService {
         Long auth = securitySupportService.getAuthenticationPrincipal().getUser().getId();
         return feedCrudManagerService
                 .findFeedByIdAndSenderId(feedId, auth)
-                .map(o -> feedDTOTransferNew.modelToDTO(o));
+                .map(o -> feedDTOTransfer.modelToDTO(o));
     }
 
     @Override
@@ -262,12 +262,12 @@ public class FeedBusinessServiceImpl implements FeedBusinessService {
         if (securitySupportService.isAdmin()) {
             return feedCrudManagerService
                     .findOne(id)
-                    .map(o -> feedDTOTransferNew.modelToDTO(o));
+                    .map(o -> feedDTOTransfer.modelToDTO(o));
         } else {
             Long auth = securitySupportService.getAuthenticationPrincipal().getUser().getId();
             return feedCrudManagerService
                     .findFeedByIdAndSenderId(id, auth)
-                    .map(o -> feedDTOTransferNew.modelToDTO(o));
+                    .map(o -> feedDTOTransfer.modelToDTO(o));
         }
     }
 
@@ -277,7 +277,7 @@ public class FeedBusinessServiceImpl implements FeedBusinessService {
             List<FeedDTO> list = feedCrudManagerService
                     .findFeedBySender(sender)
                     .stream()
-                    .map(o -> feedDTOTransferNew.modelToDTO(o))
+                    .map(o -> feedDTOTransfer.modelToDTO(o))
                     .collect(Collectors.toList());
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, list);
         } else {
@@ -290,7 +290,7 @@ public class FeedBusinessServiceImpl implements FeedBusinessService {
         if (securitySupportService.isAllowedFull(sender)) {
             Page<FeedDTO> p = feedCrudManagerService
                     .findFeedBySender(sender, page, size, sortType, sortProperties)
-                    .map(o -> feedDTOTransferNew.modelToDTO(o));
+                    .map(o -> feedDTOTransfer.modelToDTO(o));
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, p);
         } else {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);

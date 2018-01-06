@@ -10,8 +10,6 @@ import evolution.dto.model.FriendDTOLazy;
 import evolution.dto.model.FriendResultActionDTO;
 import evolution.rest.api.FriendRestService;
 import evolution.service.SecuritySupportService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -26,17 +24,11 @@ import java.util.Optional;
 @Service
 public class FriendRestServiceImpl implements FriendRestService {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
     private final FriendBusinessService friendBusinessService;
 
-    private final SecuritySupportService securitySupportService;
-
     @Autowired
-    public FriendRestServiceImpl(FriendBusinessService friendBusinessService,
-                                 SecuritySupportService securitySupportService) {
+    public FriendRestServiceImpl(FriendBusinessService friendBusinessService) {
         this.friendBusinessService = friendBusinessService;
-        this.securitySupportService = securitySupportService;
     }
 
     @Override
@@ -142,7 +134,7 @@ public class FriendRestServiceImpl implements FriendRestService {
         BusinessServiceExecuteResult<FriendResultActionDTO> b = friendBusinessService.deleteRequest(friendDTO);
 
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent()) {
-            return ResponseEntity.ok(b.getResultObjectOptional().get());
+            return ResponseEntity.ok(b.getResultObject());
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.EXPECTATION_FAILED) {
             return ResponseEntity.status(417).body(b.getResultObject());
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {
@@ -206,7 +198,7 @@ public class FriendRestServiceImpl implements FriendRestService {
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE) {
             return ResponseEntity.noContent().build();
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent()) {
-            return ResponseEntity.ok(b.getResultObjectOptional().get());
+            return ResponseEntity.ok(b.getResultObject());
         }
 
         return ResponseEntity.status(417).build();
@@ -220,7 +212,7 @@ public class FriendRestServiceImpl implements FriendRestService {
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE) {
             return ResponseEntity.noContent().build();
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent()) {
-            return ResponseEntity.ok(b.getResultObjectOptional().get());
+            return ResponseEntity.ok(b.getResultObject());
         }
 
         return ResponseEntity.status(417).build();
@@ -228,11 +220,6 @@ public class FriendRestServiceImpl implements FriendRestService {
 
     @Override
     public ResponseEntity<Page<FriendDTO>> findRandomProgress(Long user) {
-        Page<FriendDTO> b = friendBusinessService.findRandomFriends(user);
-        if (b.getContent().isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(b);
-        }
+        return response(friendBusinessService.findRandomFriends(user));
     }
 }

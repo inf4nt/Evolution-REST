@@ -7,7 +7,7 @@ import evolution.crud.api.MessageChannelCrudManagerService;
 import evolution.dto.model.*;
 import evolution.dto.transfer.ChannelDTOTransfer;
 import evolution.dto.transfer.MessageChannelDTOTransfer;
-import evolution.dto.transfer.UserDTOTransferNew;
+import evolution.dto.transfer.UserDTOTransfer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -26,19 +26,19 @@ public class ChannelBusinessServiceImpl implements ChannelBusinessService {
 
     private final ChannelDTOTransfer channelDTOTransfer;
 
-    private final UserDTOTransferNew userDTOTransferNew;
+    private final UserDTOTransfer userDTOTransfer;
 
     @Autowired
     public ChannelBusinessServiceImpl(ChannelCrudManagerService channelCrudManagerService,
                                       MessageChannelCrudManagerService messageChannelCrudManagerService,
                                       MessageChannelDTOTransfer messageChannelDTOTransfer,
                                       ChannelDTOTransfer channelDTOTransfer,
-                                      UserDTOTransferNew userDTOTransferNew) {
+                                      UserDTOTransfer userDTOTransfer) {
         this.channelCrudManagerService = channelCrudManagerService;
         this.messageChannelCrudManagerService = messageChannelCrudManagerService;
         this.messageChannelDTOTransfer = messageChannelDTOTransfer;
         this.channelDTOTransfer = channelDTOTransfer;
-        this.userDTOTransferNew = userDTOTransferNew;
+        this.userDTOTransfer = userDTOTransfer;
     }
 
     @Override
@@ -148,17 +148,17 @@ public class ChannelBusinessServiceImpl implements ChannelBusinessService {
 
     @Override
     public List<UserDTO> findUserByChannelId(Long id) {
-        return userDTOTransferNew.modelToDTO(channelCrudManagerService.findUserByChannel(id));
+        return userDTOTransfer.modelToDTO(channelCrudManagerService.findUserByChannel(id));
     }
 
     @Override
     public List<UserDTO> findUserByChannelId(Long id, String sortType, List<String> sortProperties) {
-        return userDTOTransferNew.modelToDTO(channelCrudManagerService.findUserByChannel(id, sortType, sortProperties));
+        return userDTOTransfer.modelToDTO(channelCrudManagerService.findUserByChannel(id, sortType, sortProperties));
     }
 
     @Override
     public Page<UserDTO> findUserByChannelId(Long id, Integer page, Integer size, String sortType, List<String> sortProperties) {
-        return userDTOTransferNew.modelToDTO(channelCrudManagerService.findUserByChannel(id, page, size, sortType, sortProperties));
+        return userDTOTransfer.modelToDTO(channelCrudManagerService.findUserByChannel(id, page, size, sortType, sortProperties));
     }
 
     @Override

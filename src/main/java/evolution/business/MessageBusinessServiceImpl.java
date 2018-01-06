@@ -5,7 +5,7 @@ import evolution.crud.api.MessageCrudManagerService;
 import evolution.dto.model.MessageDTO;
 import evolution.dto.model.MessageSaveDTO;
 import evolution.dto.model.MessageUpdateDTO;
-import evolution.dto.transfer.MessageDTOTransferNew;
+import evolution.dto.transfer.MessageDTOTransfer;
 import evolution.model.Dialog;
 import evolution.model.Message;
 import evolution.model.User;
@@ -38,49 +38,49 @@ public class MessageBusinessServiceImpl implements MessageBusinessService {
 
     private final SecuritySupportService securitySupportService;
 
-    private final MessageDTOTransferNew messageDTOTransferNew;
+    private final MessageDTOTransfer messageDTOTransfer;
 
     private final DateService dateService;
 
     @Autowired
     public MessageBusinessServiceImpl(MessageCrudManagerService messageCrudManagerService,
                                       SecuritySupportService securitySupportService,
-                                      MessageDTOTransferNew messageDTOTransferNew,
+                                      MessageDTOTransfer messageDTOTransfer,
                                       DateService dateService) {
         this.messageCrudManagerService = messageCrudManagerService;
         this.securitySupportService = securitySupportService;
-        this.messageDTOTransferNew = messageDTOTransferNew;
+        this.messageDTOTransfer = messageDTOTransfer;
         this.dateService = dateService;
     }
 
     @Override
     public Optional<MessageDTO> findOne(Long id) {
         if (securitySupportService.isAdmin()) {
-            return messageDTOTransferNew.modelToDTO(messageCrudManagerService.findOne(id));
+            return messageDTOTransfer.modelToDTO(messageCrudManagerService.findOne(id));
         } else {
             User auth = securitySupportService.getAuthenticationPrincipal().getUser();
-            return messageDTOTransferNew.modelToDTO(messageCrudManagerService.findOne(id, auth.getId()));
+            return messageDTOTransfer.modelToDTO(messageCrudManagerService.findOne(id, auth.getId()));
         }
     }
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<MessageDTO> findAll() {
-        return messageDTOTransferNew
+        return messageDTOTransfer
                 .modelToDTO(messageCrudManagerService.findAll());
     }
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Page<MessageDTO> findAll(Integer page, Integer size, String sortType, List<String> sortProperties) {
-        return messageDTOTransferNew
+        return messageDTOTransfer
                 .modelToDTO(messageCrudManagerService.findAll(page, size, sortType, sortProperties));
     }
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<MessageDTO> findAll(String sortType, List<String> sortProperties) {
-        return messageDTOTransferNew
+        return messageDTOTransfer
                 .modelToDTO(messageCrudManagerService.findAll(sortType, sortProperties));
     }
 
@@ -95,15 +95,15 @@ public class MessageBusinessServiceImpl implements MessageBusinessService {
             if (!list.isEmpty()) {
                 Dialog dialog = list.get(0).getDialog();
                 if (dialog.getFirst().getId().equals(auth.getId()) || dialog.getSecond().getId().equals(auth.getId())) {
-                    return messageDTOTransferNew.modelToDTO(list, auth);
+                    return messageDTOTransfer.modelToDTO(list, auth);
                 } else {
-                    return messageDTOTransferNew.modelToDTO(list);
+                    return messageDTOTransfer.modelToDTO(list);
                 }
             }
             return new ArrayList<>();
         }
         list = messageCrudManagerService.findMessageByDialogId(dialogId, auth.getId());
-        return messageDTOTransferNew.modelToDTO(list, auth.getId());
+        return messageDTOTransfer.modelToDTO(list, auth.getId());
     }
 
     @Override
@@ -117,15 +117,15 @@ public class MessageBusinessServiceImpl implements MessageBusinessService {
             if (!p.getContent().isEmpty()) {
                 Dialog dialog = p.getContent().get(0).getDialog();
                 if (dialog.getFirst().getId().equals(auth.getId()) || dialog.getSecond().getId().equals(auth.getId())) {
-                    return messageDTOTransferNew.modelToDTO(p, auth);
+                    return messageDTOTransfer.modelToDTO(p, auth);
                 } else {
-                    return messageDTOTransferNew.modelToDTO(p);
+                    return messageDTOTransfer.modelToDTO(p);
                 }
             }
             return new PageImpl<>(new ArrayList<>());
         }
         p = messageCrudManagerService.findMessageByDialogId(dialogId, auth.getId(), page, size, sortType, sortProperties);
-        return messageDTOTransferNew.modelToDTO(p, auth.getId());
+        return messageDTOTransfer.modelToDTO(p, auth.getId());
     }
 
     @Override
@@ -139,22 +139,22 @@ public class MessageBusinessServiceImpl implements MessageBusinessService {
             if (!list.isEmpty()) {
                 Dialog dialog = list.get(0).getDialog();
                 if (dialog.getFirst().getId().equals(auth.getId()) || dialog.getSecond().getId().equals(auth.getId())) {
-                    return messageDTOTransferNew.modelToDTO(list, auth);
+                    return messageDTOTransfer.modelToDTO(list, auth);
                 } else {
-                    return messageDTOTransferNew.modelToDTO(list);
+                    return messageDTOTransfer.modelToDTO(list);
                 }
             }
             return new ArrayList<>();
         }
         list = messageCrudManagerService.findMessageByDialogId(dialogId, auth.getId(), sortType, sortProperties);
-        return messageDTOTransferNew.modelToDTO(list, auth.getId());
+        return messageDTOTransfer.modelToDTO(list, auth.getId());
     }
 
 
     @Override
     public BusinessServiceExecuteResult<MessageDTO> createNewMessage(MessageSaveDTO messageSaveDTO) {
         Message message = messageCrudManagerService.saveMessageAndMaybeCreateNewDialog(messageSaveDTO, dateService.getCurrentDateInUTC());
-        return BusinessServiceExecuteResult.build(OK, messageDTOTransferNew.modelToDTO(message, securitySupportService.getAuthenticationPrincipal().getUser()));
+        return BusinessServiceExecuteResult.build(OK, messageDTOTransfer.modelToDTO(message, securitySupportService.getAuthenticationPrincipal().getUser()));
     }
 
     @Override
@@ -165,7 +165,7 @@ public class MessageBusinessServiceImpl implements MessageBusinessService {
         }
 
         Message message = messageCrudManagerService.saveMessageAndMaybeCreateNewDialog(text, senderId, recipientId, dateService.getCurrentDateInUTC());
-        return BusinessServiceExecuteResult.build(OK, messageDTOTransferNew.modelToDTO(message, securitySupportService.getAuthenticationPrincipal().getUser()));
+        return BusinessServiceExecuteResult.build(OK, messageDTOTransfer.modelToDTO(message, securitySupportService.getAuthenticationPrincipal().getUser()));
     }
 
     @Override
@@ -200,7 +200,7 @@ public class MessageBusinessServiceImpl implements MessageBusinessService {
 
                 Optional<Message> res = messageCrudManagerService.update(m);
                 return res
-                        .map(message -> BusinessServiceExecuteResult.build(OK, messageDTOTransferNew.modelToDTO(message)))
+                        .map(message -> BusinessServiceExecuteResult.build(OK, messageDTOTransfer.modelToDTO(message)))
                         .orElseGet(() -> BusinessServiceExecuteResult.build(NOT_FOUNT_OBJECT_FOR_EXECUTE));
 
             } else {
@@ -222,15 +222,15 @@ public class MessageBusinessServiceImpl implements MessageBusinessService {
             if (!list.isEmpty()) {
                 Dialog dialog = list.get(0).getDialog();
                 if (dialog.getFirst().getId().equals(auth.getId()) || dialog.getSecond().getId().equals(auth.getId())) {
-                    return messageDTOTransferNew.modelToDTO(list, auth);
+                    return messageDTOTransfer.modelToDTO(list, auth);
                 } else {
-                    return messageDTOTransferNew.modelToDTO(list);
+                    return messageDTOTransfer.modelToDTO(list);
                 }
             }
             return new ArrayList<>();
         } else if (securitySupportService.isAllowed(iam)) {
             list = messageCrudManagerService.findLastMessageInMyDialog(iam);
-            return messageDTOTransferNew.modelToDTO(list, auth.getId());
+            return messageDTOTransfer.modelToDTO(list, auth.getId());
         }
         return new ArrayList<>();
     }
@@ -246,15 +246,15 @@ public class MessageBusinessServiceImpl implements MessageBusinessService {
             if (!list.isEmpty()) {
                 Dialog dialog = list.get(0).getDialog();
                 if (dialog.getFirst().getId().equals(auth.getId()) || dialog.getSecond().getId().equals(auth.getId())) {
-                    return messageDTOTransferNew.modelToDTO(list, auth);
+                    return messageDTOTransfer.modelToDTO(list, auth);
                 } else {
-                    return messageDTOTransferNew.modelToDTO(list);
+                    return messageDTOTransfer.modelToDTO(list);
                 }
             }
             return new ArrayList<>();
         } else if (securitySupportService.isAllowed(iam)) {
             list = messageCrudManagerService.findLastMessageInMyDialog(auth.getId(), sortType, sortProperties);
-            return messageDTOTransferNew.modelToDTO(list, auth);
+            return messageDTOTransfer.modelToDTO(list, auth);
         }
         return new ArrayList<>();
     }
@@ -270,15 +270,15 @@ public class MessageBusinessServiceImpl implements MessageBusinessService {
             if (!p.getContent().isEmpty()) {
                 Dialog dialog = p.getContent().get(0).getDialog();
                 if (dialog.getFirst().getId().equals(auth.getId()) || dialog.getSecond().getId().equals(auth.getId())) {
-                    return messageDTOTransferNew.modelToDTO(p, auth);
+                    return messageDTOTransfer.modelToDTO(p, auth);
                 } else {
-                    return messageDTOTransferNew.modelToDTO(p);
+                    return messageDTOTransfer.modelToDTO(p);
                 }
             }
             return new PageImpl<>(new ArrayList<>());
         } else if (securitySupportService.isAllowed(iam)) {
             p = messageCrudManagerService.findLastMessageInMyDialog(auth.getId(), page, size, sortType, sortProperties);
-            return messageDTOTransferNew.modelToDTO(p, auth);
+            return messageDTOTransfer.modelToDTO(p, auth);
         }
         return new PageImpl<>(new ArrayList<>());
     }
@@ -289,13 +289,13 @@ public class MessageBusinessServiceImpl implements MessageBusinessService {
             return messageCrudManagerService
                     .findMessageBySenderId(iam)
                     .stream()
-                    .map(o -> messageDTOTransferNew.modelToDTO(o, iam))
+                    .map(o -> messageDTOTransfer.modelToDTO(o, iam))
                     .collect(Collectors.toList());
         } else if (securitySupportService.isAdmin()) {
             return messageCrudManagerService
                     .findMessageBySenderId(iam)
                     .stream()
-                    .map(o -> messageDTOTransferNew.modelToDTO(o))
+                    .map(o -> messageDTOTransfer.modelToDTO(o))
                     .collect(Collectors.toList());
         }
         return new ArrayList<>();
@@ -311,11 +311,11 @@ public class MessageBusinessServiceImpl implements MessageBusinessService {
         if (securitySupportService.isAllowed(iam)) {
             return messageCrudManagerService
                     .findMessageBySenderId(iam, page, size, sortType, sortProperties)
-                    .map(o -> messageDTOTransferNew.modelToDTO(o, iam));
+                    .map(o -> messageDTOTransfer.modelToDTO(o, iam));
         } else if (securitySupportService.isAdmin()) {
             return messageCrudManagerService
                     .findMessageBySenderId(iam, page, size, sortType, sortProperties)
-                    .map(o -> messageDTOTransferNew.modelToDTO(o));
+                    .map(o -> messageDTOTransfer.modelToDTO(o));
         }
         return new PageImpl<>(new ArrayList<>());
     }
@@ -326,13 +326,13 @@ public class MessageBusinessServiceImpl implements MessageBusinessService {
             return messageCrudManagerService
                     .findMessageByRecipientId(iam)
                     .stream()
-                    .map(o -> messageDTOTransferNew.modelToDTO(o, iam))
+                    .map(o -> messageDTOTransfer.modelToDTO(o, iam))
                     .collect(Collectors.toList());
         } else if (securitySupportService.isAdmin()) {
             return messageCrudManagerService
                     .findMessageByRecipientId(iam)
                     .stream()
-                    .map(o -> messageDTOTransferNew.modelToDTO(o))
+                    .map(o -> messageDTOTransfer.modelToDTO(o))
                     .collect(Collectors.toList());
         }
         return new ArrayList<>();
@@ -348,11 +348,11 @@ public class MessageBusinessServiceImpl implements MessageBusinessService {
         if (securitySupportService.isAllowed(iam)) {
             return messageCrudManagerService
                     .findMessageByRecipientId(iam, page, size, sortType, sortProperties)
-                    .map(o -> messageDTOTransferNew.modelToDTO(o, iam));
+                    .map(o -> messageDTOTransfer.modelToDTO(o, iam));
         } else if (securitySupportService.isAdmin()) {
             return messageCrudManagerService
                     .findMessageByRecipientId(iam, page, size, sortType, sortProperties)
-                    .map(o -> messageDTOTransferNew.modelToDTO(o));
+                    .map(o -> messageDTOTransfer.modelToDTO(o));
         }
         return new PageImpl<>(new ArrayList<>());
     }
@@ -363,7 +363,7 @@ public class MessageBusinessServiceImpl implements MessageBusinessService {
         return messageCrudManagerService
                 .findMessageByInterlocutor(interlocutor, auth.getId())
                 .stream()
-                .map(o -> messageDTOTransferNew.modelToDTO(o))
+                .map(o -> messageDTOTransfer.modelToDTO(o))
                 .collect(Collectors.toList());
     }
 
@@ -377,6 +377,6 @@ public class MessageBusinessServiceImpl implements MessageBusinessService {
         User auth = securitySupportService.getAuthenticationPrincipal().getUser();
         return messageCrudManagerService
                 .findMessageByInterlocutor(interlocutor, auth.getId(), page, size, sort, sortProperties)
-                .map(o -> messageDTOTransferNew.modelToDTO(o));
+                .map(o -> messageDTOTransfer.modelToDTO(o));
     }
 }

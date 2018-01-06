@@ -7,8 +7,8 @@ import evolution.crud.api.MessageCrudManagerService;
 import evolution.dto.model.DialogDTO;
 import evolution.dto.model.DialogDTOLazy;
 import evolution.dto.model.MessageDTO;
-import evolution.dto.transfer.DialogDTOTransferNew;
-import evolution.dto.transfer.MessageDTOTransferNew;
+import evolution.dto.transfer.DialogDTOTransfer;
+import evolution.dto.transfer.MessageDTOTransfer;
 import evolution.model.Dialog;
 import evolution.model.Message;
 import evolution.model.User;
@@ -33,36 +33,42 @@ public class DialogBusinessServiceImpl implements DialogBusinessService {
 
     private final DialogCrudManagerService dialogCrudManagerService;
 
-    private final DialogDTOTransferNew dialogDTOTransferNew;
+    private final DialogDTOTransfer dialogDTOTransfer;
 
     private final SecuritySupportService securitySupportService;
 
     private final MessageCrudManagerService messageCrudManagerService;
 
-    private final MessageDTOTransferNew messageDTOTransferNew;
+    private final MessageDTOTransfer messageDTOTransfer;
 
     @Autowired
     public DialogBusinessServiceImpl(DialogCrudManagerService dialogCrudManagerService,
-                                     DialogDTOTransferNew dialogDTOTransferNew,
+                                     DialogDTOTransfer dialogDTOTransfer,
                                      SecuritySupportService securitySupportService,
                                      MessageCrudManagerService messageCrudManagerService,
-                                     MessageDTOTransferNew messageDTOTransferNew) {
+                                     MessageDTOTransfer messageDTOTransfer) {
         this.dialogCrudManagerService = dialogCrudManagerService;
-        this.dialogDTOTransferNew = dialogDTOTransferNew;
+        this.dialogDTOTransfer = dialogDTOTransfer;
         this.securitySupportService = securitySupportService;
         this.messageCrudManagerService = messageCrudManagerService;
-        this.messageDTOTransferNew = messageDTOTransferNew;
+        this.messageDTOTransfer = messageDTOTransfer;
     }
 
     @Override
     public BusinessServiceExecuteResult<List<DialogDTO>> findDialogsByUserId(Long userId) {
         if (securitySupportService.isAllowed(userId)) {
-            User auth = securitySupportService.getAuthenticationPrincipal().getUser();
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK,
                     dialogCrudManagerService
                             .findDialogsByUserId(userId)
                             .stream()
-                            .map(o -> dialogDTOTransferNew.modelToDTO(o, auth))
+                            .map(o -> dialogDTOTransfer.modelToDTO(o, userId))
+                            .collect(Collectors.toList()));
+        } else if (securitySupportService.isAdmin()) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK,
+                    dialogCrudManagerService
+                            .findDialogsByUserId(userId)
+                            .stream()
+                            .map(o -> dialogDTOTransfer.modelToDTO(o))
                             .collect(Collectors.toList()));
         } else {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
@@ -70,10 +76,20 @@ public class DialogBusinessServiceImpl implements DialogBusinessService {
     }
 
     @Override
+    public BusinessServiceExecuteResult<List<DialogDTO>> findDialogsByUserId(Long userId, String sortType, List<String> sortProperties) {
+        return null;
+    }
+
+    @Override
+    public BusinessServiceExecuteResult<List<DialogDTO>> findDialogsByUserId(Long userId, Integer size, String sortType, List<String> sortProperties) {
+        return null;
+    }
+
+    @Override
     public Optional<DialogDTO> findOne(Long id) {
         return dialogCrudManagerService
                 .findOne(id)
-                .map(o -> dialogDTOTransferNew.modelToDTO(o));
+                .map(o -> dialogDTOTransfer.modelToDTO(o));
     }
 
     @Override
@@ -81,7 +97,7 @@ public class DialogBusinessServiceImpl implements DialogBusinessService {
     public Optional<DialogDTOLazy> findOneLazy(Long id) {
         return dialogCrudManagerService
                 .findOneLazy(id)
-                .map(o -> dialogDTOTransferNew.modelToDTOLazy(o));
+                .map(o -> dialogDTOTransfer.modelToDTOLazy(o));
     }
 
     @Override
@@ -89,7 +105,7 @@ public class DialogBusinessServiceImpl implements DialogBusinessService {
         return dialogCrudManagerService
                 .findAll()
                 .stream()
-                .map(o -> dialogDTOTransferNew.modelToDTO(o))
+                .map(o -> dialogDTOTransfer.modelToDTO(o))
                 .collect(Collectors.toList());
     }
 
@@ -98,7 +114,7 @@ public class DialogBusinessServiceImpl implements DialogBusinessService {
         return dialogCrudManagerService
                 .findAll(sortType, sortProperties)
                 .stream()
-                .map(o -> dialogDTOTransferNew.modelToDTO(o))
+                .map(o -> dialogDTOTransfer.modelToDTO(o))
                 .collect(Collectors.toList());
     }
 
@@ -106,7 +122,7 @@ public class DialogBusinessServiceImpl implements DialogBusinessService {
     public Page<DialogDTO> findAll(Integer page, Integer size, String sortType, List<String> sortProperties) {
         return dialogCrudManagerService
                 .findAll(page, size, sortType, sortProperties)
-                .map(o -> dialogDTOTransferNew.modelToDTO(o));
+                .map(o -> dialogDTOTransfer.modelToDTO(o));
     }
 
     @Override
@@ -115,7 +131,7 @@ public class DialogBusinessServiceImpl implements DialogBusinessService {
         return dialogCrudManagerService
                 .findAllLazy()
                 .stream()
-                .map(o -> dialogDTOTransferNew.modelToDTOLazy(o))
+                .map(o -> dialogDTOTransfer.modelToDTOLazy(o))
                 .collect(Collectors.toList());
     }
 
@@ -125,7 +141,7 @@ public class DialogBusinessServiceImpl implements DialogBusinessService {
         return dialogCrudManagerService
                 .findAllLazy(sortType, sortProperties)
                 .stream()
-                .map(o -> dialogDTOTransferNew.modelToDTOLazy(o))
+                .map(o -> dialogDTOTransfer.modelToDTOLazy(o))
                 .collect(Collectors.toList());
     }
 
@@ -134,7 +150,7 @@ public class DialogBusinessServiceImpl implements DialogBusinessService {
     public Page<DialogDTOLazy> findAllLazy(Integer page, Integer size, String sortType, List<String> sortProperties) {
         return dialogCrudManagerService
                 .findAllLazy(page, size, sortType, sortProperties)
-                .map(o -> dialogDTOTransferNew.modelToDTOLazy(o));
+                .map(o -> dialogDTOTransfer.modelToDTOLazy(o));
     }
 
     @Override
@@ -155,7 +171,7 @@ public class DialogBusinessServiceImpl implements DialogBusinessService {
                     .findOneLazyAndParticipantId(dialogId, auth.getId());
         }
         op.ifPresent(dialog -> dialog.getMessageList().forEach(o -> {
-            list.add(messageDTOTransferNew.modelToDTO(o));
+            list.add(messageDTOTransfer.modelToDTO(o));
         }));
         return list;
     }
@@ -173,7 +189,7 @@ public class DialogBusinessServiceImpl implements DialogBusinessService {
         }
 
         return list.stream()
-                .map(o -> messageDTOTransferNew.modelToDTO(o, auth))
+                .map(o -> messageDTOTransfer.modelToDTO(o, auth))
                 .collect(Collectors.toList());
     }
 
@@ -188,6 +204,6 @@ public class DialogBusinessServiceImpl implements DialogBusinessService {
             p = messageCrudManagerService
                     .findMessageByDialogIdAndParticipant(dialogId, auth.getId(), page, size, sortType, sortProperties);
         }
-        return messageDTOTransferNew.modelToDTO(p, auth);
+        return messageDTOTransfer.modelToDTO(p, auth);
     }
 }

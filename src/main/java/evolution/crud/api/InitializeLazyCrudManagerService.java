@@ -6,27 +6,25 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-public interface InitializeLazyCrudManagerService<Object> {
+public interface InitializeLazyCrudManagerService<T> {
 
     @Transactional
-    Object initializeLazy(Object object);
+    T initializeLazy(T t);
 
     @Transactional
-    default List<Object> initializeLazy(List<Object> list) {
+    default List<T> initializeLazy(List<T> list) {
         list.forEach(this::initializeLazy);
         return list;
     }
 
     @Transactional
-    default Page<Object> initializeLazy(Page<Object> page) {
-        page.map(this::initializeLazy);
-        return page;
+    default Page<T> initializeLazy(Page<T> page) {
+        return page.map(this::initializeLazy);
     }
 
     @Transactional
-    default Optional<Object> initializeLazy(Optional<Object> optional) {
-        optional.map(this::initializeLazy);
-        return optional;
+    default Optional<T> initializeLazy(Optional<T> optional) {
+        return optional.map(this::initializeLazy);
     }
 
 }

@@ -18,10 +18,10 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public String uploadFile(MultipartFile multipartFile) throws IOException {
-        File file = new File(multipartFile.getOriginalFilename());
-        FileOutputStream fileOutputStream = new FileOutputStream(file);
-        fileOutputStream.write(multipartFile.getBytes());
-        fileOutputStream.close();
+//        File file = new File(multipartFile.getOriginalFilename());
+//        FileOutputStream fileOutputStream = new FileOutputStream(file);
+//        fileOutputStream.write(multipartFile.getBytes());
+//        fileOutputStream.close();
         return null;
     }
 

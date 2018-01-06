@@ -84,4 +84,25 @@ public class DialogRestController {
     public ResponseEntity<HttpStatus> deleteById(@PathVariable Long id) {
         return dialogRestService.delete(id);
     }
+
+    @GetMapping(value = "/for-user/{id}")
+    public ResponseEntity<List<DialogDTO>> findDialogByUser(@PathVariable Long id) {
+        return null;
+    }
+
+    @GetMapping(value = "/for-user/{id}/list")
+    public ResponseEntity<List<DialogDTO>> findDialogByUser(@PathVariable Long id,
+                                                          @RequestParam(required = false) String sort,
+                                                          @RequestParam(required = false) List<String> sortProperties) {
+        return null;
+    }
+
+    @GetMapping(value = "/for-user/{id}/page")
+    public ResponseEntity<Page<DialogDTO>> findDialogByUser(@PathVariable Long id,
+                                                          @RequestParam(required = false) Integer page,
+                                                          @RequestParam(required = false) Integer size,
+                                                          @RequestParam(required = false) String sort,
+                                                          @RequestParam(required = false) List<String> sortProperties) {
+        return null;
+    }
 }

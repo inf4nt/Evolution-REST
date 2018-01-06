@@ -10,12 +10,12 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @Service
-public class FeedDTOTransferNew {
+public class FeedDTOTransfer {
 
     private final ModelMapper modelMapper;
 
     @Autowired
-    public FeedDTOTransferNew(ModelMapper modelMapper) {
+    public FeedDTOTransfer(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
     }
 

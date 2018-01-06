@@ -25,17 +25,16 @@ public interface AbstractRestService {
     }
 
     default <T> ResponseEntity<T> response(Optional<T> optional) {
-        if (optional == null || !optional.isPresent()) {
+        if (!optional.isPresent()) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(optional.get());
     }
 
-
     default <T> ResponseEntity<T> response(BusinessServiceExecuteResult<T> executeResult) {
-        if (executeResult.getExecuteStatus() == BusinessServiceExecuteStatus.OK && executeResult.getResultObjectOptional() != null && executeResult.getResultObjectOptional().isPresent()) {
+        if (executeResult.getExecuteStatus() == BusinessServiceExecuteStatus.OK && executeResult.getResultObjectOptional().isPresent()) {
             return ResponseEntity.ok(executeResult.getResultObject());
-        } else if (executeResult.getExecuteStatus() == BusinessServiceExecuteStatus.OK && executeResult.getResultObjectOptional() == null) {
+        } else if (executeResult.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
             return ResponseEntity.ok().build();
         } else if (executeResult.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {
             return ResponseEntity.status(403).build();

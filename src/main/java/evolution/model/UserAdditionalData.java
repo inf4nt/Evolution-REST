@@ -80,7 +80,6 @@ public class UserAdditionalData {
         return "UserAdditionalData{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
                 ", registrationDate=" + registrationDate +
                 ", country='" + country + '\'' +
                 ", state='" + state + '\'' +

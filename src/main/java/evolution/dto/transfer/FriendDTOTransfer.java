@@ -4,7 +4,6 @@ import evolution.dto.model.FriendDTO;
 import evolution.dto.model.FriendDTOLazy;
 import evolution.dto.model.FriendResultActionDTO;
 import evolution.dto.model.UserDTO;
-import evolution.dto.transfer.UserDTOTransferNew;
 import evolution.model.Friend;
 import evolution.model.User;
 import org.modelmapper.ModelMapper;
@@ -14,24 +13,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FriendDTOTransferNew {
+public class FriendDTOTransfer {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final UserDTOTransferNew userDTOTransferNew;
+    private final UserDTOTransfer userDTOTransfer;
 
     private final ModelMapper modelMapper;
 
     @Autowired
-    public FriendDTOTransferNew(UserDTOTransferNew userDTOTransferNew,
-                                ModelMapper modelMapper) {
-        this.userDTOTransferNew = userDTOTransferNew;
+    public FriendDTOTransfer(UserDTOTransfer userDTOTransfer,
+                             ModelMapper modelMapper) {
+        this.userDTOTransfer = userDTOTransfer;
         this.modelMapper = modelMapper;
     }
 
     public FriendDTO modelToDTO(Friend friend) {
-        UserDTO first = userDTOTransferNew.modelToDTO(friend.getPk().getFirst());
-        UserDTO second = userDTOTransferNew.modelToDTO(friend.getPk().getSecond());
+        UserDTO first = userDTOTransfer.modelToDTO(friend.getPk().getFirst());
+        UserDTO second = userDTOTransfer.modelToDTO(friend.getPk().getSecond());
         UserDTO action = null;
 
         if (first.getId().equals(friend.getActionUser().getId())) {
@@ -57,9 +56,9 @@ public class FriendDTOTransferNew {
 
     public FriendDTOLazy modelToDTOLazy(Friend friend) {
         FriendDTOLazy f = modelMapper.map(friend, FriendDTOLazy.class);
-        f.setFirst(userDTOTransferNew.modelToDTO(friend.getPk().getFirst()));
-        f.setSecond(userDTOTransferNew.modelToDTO(friend.getPk().getSecond()));
-        f.setActionUser(userDTOTransferNew.modelToDTO(friend.getActionUser()));
+        f.setFirst(userDTOTransfer.modelToDTO(friend.getPk().getFirst()));
+        f.setSecond(userDTOTransfer.modelToDTO(friend.getPk().getSecond()));
+        f.setActionUser(userDTOTransfer.modelToDTO(friend.getActionUser()));
         return f;
     }
 
@@ -79,9 +78,9 @@ public class FriendDTOTransferNew {
 
     public FriendResultActionDTO modelToResultActionDTO(Friend friend) {
         FriendResultActionDTO dto = new FriendResultActionDTO();
-        dto.setFirst(userDTOTransferNew.modelToDTO(friend.getPk().getFirst()));
-        dto.setSecond(userDTOTransferNew.modelToDTO(friend.getPk().getSecond()));
-        dto.setActionUser(userDTOTransferNew.modelToDTO(friend.getActionUser()));
+        dto.setFirst(userDTOTransfer.modelToDTO(friend.getPk().getFirst()));
+        dto.setSecond(userDTOTransfer.modelToDTO(friend.getPk().getSecond()));
+        dto.setActionUser(userDTOTransfer.modelToDTO(friend.getActionUser()));
         dto.setStatus(friend.getStatus());
         return dto;
     }

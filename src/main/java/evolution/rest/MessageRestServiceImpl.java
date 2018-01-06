@@ -9,8 +9,6 @@ import evolution.dto.model.MessageDTO;
 import evolution.dto.model.MessageSaveDTO;
 import evolution.dto.model.MessageUpdateDTO;
 import evolution.rest.api.MessageRestService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -24,8 +22,6 @@ import java.util.Optional;
  */
 @Service
 public class MessageRestServiceImpl implements MessageRestService {
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final MessageBusinessService messageBusinessService;
 
@@ -116,7 +112,7 @@ public class MessageRestServiceImpl implements MessageRestService {
     public ResponseEntity<MessageDTO> save(MessageSaveDTO message) {
         BusinessServiceExecuteResult<MessageDTO> b = messageBusinessService.createMessage(message.getSenderId(), message.getRecipientId(), message.getText());
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent()) {
-            return ResponseEntity.status(201).body(b.getResultObjectOptional().get());
+            return ResponseEntity.status(201).body(b.getResultObject());
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {
             return ResponseEntity.status(403).build();
         }
@@ -132,7 +128,7 @@ public class MessageRestServiceImpl implements MessageRestService {
     public ResponseEntity<MessageDTO> update(MessageUpdateDTO message) {
         BusinessServiceExecuteResult<MessageDTO> b = messageBusinessService.update(message);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK  && b.getResultObjectOptional().isPresent()) {
-            return ResponseEntity.ok(b.getResultObjectOptional().get());
+            return ResponseEntity.ok(b.getResultObject());
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE) {
             return ResponseEntity.noContent().build();
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {

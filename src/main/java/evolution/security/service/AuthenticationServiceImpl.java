@@ -2,10 +2,8 @@ package evolution.security.service;
 
 import evolution.common.UserRoleEnum;
 import evolution.crud.api.AuthenticationSessionCrudManagerService;
-import evolution.crud.api.UserCrudManagerService;
-import evolution.dto.transfer.UserDTOTransferNew;
+import evolution.dto.transfer.UserDTOTransfer;
 import evolution.model.AuthenticationSession;
-import evolution.model.User;
 import evolution.security.model.AuthenticationRequest;
 import evolution.security.model.AuthenticationResponse;
 import evolution.security.model.CustomSecurityUser;
@@ -43,7 +41,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final SecuritySupportService securitySupportService;
 
-    private final UserDTOTransferNew userDTOTransferNew;
+    private final UserDTOTransfer userDTOTransfer;
 
     @Autowired
     public AuthenticationServiceImpl(AuthenticationManager authenticationManager,
@@ -52,14 +50,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                                      AuthenticationSessionCrudManagerService authenticationSessionCrudManagerService,
                                      DateService dateService,
                                      SecuritySupportService securitySupportService,
-                                     UserDTOTransferNew userDTOTransferNew) {
+                                     UserDTOTransfer userDTOTransfer) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenService = jwtTokenService;
         this.userDetailsService = userDetailsService;
         this.authenticationSessionCrudManagerService = authenticationSessionCrudManagerService;
         this.dateService = dateService;
         this.securitySupportService = securitySupportService;
-        this.userDTOTransferNew = userDTOTransferNew;
+        this.userDTOTransfer = userDTOTransfer;
     }
 
     @Override
@@ -88,7 +86,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         System.out.println("TOKEN " + token);
-        return ResponseEntity.ok(new AuthenticationResponse(token, userDTOTransferNew.modelToDTO(userDetails)));
+        return ResponseEntity.ok(new AuthenticationResponse(token, userDTOTransfer.modelToDTO(userDetails)));
     }
 
     @Override
@@ -121,7 +119,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         System.out.println("TOKEN " + token);
-        return ResponseEntity.ok(new AuthenticationResponse(token, userDTOTransferNew.modelToDTO(userDetails)));
+        return ResponseEntity.ok(new AuthenticationResponse(token, userDTOTransfer.modelToDTO(userDetails)));
     }
 
     @Override
@@ -150,7 +148,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 AuthenticationSession jwt = new AuthenticationSession(jwtCleanToken.getUsername(), session, dateService.getCurrentDateInUTC());
                 authenticationSessionCrudManagerService.save(jwt);
                 String token = this.jwtTokenService.generateToken(jwtCleanToken.getUsername(), session);
-                return ResponseEntity.ok(new AuthenticationResponse(token, userDTOTransferNew.modelToDTO(optional.get().getUser())));
+                return ResponseEntity.ok(new AuthenticationResponse(token, userDTOTransfer.modelToDTO(optional.get().getUser())));
             } else {
                 return ResponseEntity.status(403).build();
             }

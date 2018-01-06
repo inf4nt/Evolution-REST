@@ -25,6 +25,9 @@ import java.util.Optional;
 @Service
 public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
 
+    @Value("${model.second.maxfetch}")
+    private Integer friendMaxFetch;
+
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     private final FriendRepository friendRepository;
@@ -34,9 +37,6 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
     private Long firstId;
 
     private Long secondId;
-
-    @Value("${model.second.maxfetch}")
-    private Integer friendMaxFetch;
 
     @Autowired
     public FriendCrudManagerServiceImpl(FriendRepository friendRepository,

@@ -8,7 +8,6 @@ import evolution.model.User;
 import evolution.repository.DialogRepository;
 import evolution.repository.MessageRepository;
 import evolution.repository.UserRepository;
-import evolution.service.DateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -33,8 +32,6 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
 
     private final UserRepository userRepository;
 
-    private final DateService dateService;
-
     @Value("${model.message.maxfetch}")
     private Integer messageMaxFetch;
 
@@ -46,13 +43,11 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
 
     @Autowired
     public MessageCrudManagerServiceImpl(MessageRepository messageRepository,
-                                         DateService dateService,
                                          DialogRepository dialogRepository,
                                          UserRepository userRepository) {
         this.messageRepository = messageRepository;
         this.dialogRepository = dialogRepository;
         this.userRepository = userRepository;
-        this.dateService = dateService;
     }
 
 

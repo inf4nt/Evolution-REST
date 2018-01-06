@@ -10,7 +10,7 @@ import evolution.dto.model.UserDTOLazy;
 import evolution.dto.model.UserSaveDTO;
 import evolution.dto.model.UserUpdateDTO;
 import evolution.dto.model.UserSetPasswordDTO;
-import evolution.dto.transfer.UserDTOTransferNew;
+import evolution.dto.transfer.UserDTOTransfer;
 import evolution.model.User;
 import evolution.service.DateService;
 import evolution.service.SecuritySupportService;
@@ -41,7 +41,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
 
     private final DateService dateService;
 
-    private final UserDTOTransferNew userDTOTransferNew;
+    private final UserDTOTransfer userDTOTransfer;
 
     @Autowired
     private UserTechnicalService userTechnicalService;
@@ -50,11 +50,11 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     public UserBusinessServiceImpl(SecuritySupportService securitySupportService,
                                    UserCrudManagerService userCrudManagerService,
                                    DateService dateService,
-                                   UserDTOTransferNew userDTOTransferNew) {
+                                   UserDTOTransfer userDTOTransfer) {
         this.securitySupportService = securitySupportService;
         this.userCrudManagerService = userCrudManagerService;
         this.dateService = dateService;
-        this.userDTOTransferNew = userDTOTransferNew;
+        this.userDTOTransfer = userDTOTransfer;
     }
 
     @Override
@@ -66,7 +66,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.USER_IS_ALREADY_EXIST_REGISTRATION_FAILED);
         }
 
-        User user = userDTOTransferNew.dtoToModel(userSaveDTO);
+        User user = userDTOTransfer.dtoToModel(userSaveDTO);
 
         String encodePassword = userTechnicalService.encodePassword(userSaveDTO.getPassword());
         user.getUserAdditionalData().setPassword(encodePassword);
@@ -87,7 +87,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         BusinessServiceExecuteResult<User> b = createNewUser(userSaveDTO);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
             return BusinessServiceExecuteResult
-                    .build(BusinessServiceExecuteStatus.OK, b.getResultObjectOptional().map(o -> userDTOTransferNew.modelToDTOLazy(o)));
+                    .build(BusinessServiceExecuteStatus.OK, b.getResultObjectOptional().map(o -> userDTOTransfer.modelToDTOLazy(o)));
         }
         return BusinessServiceExecuteResult.build(b.getExecuteStatus());
     }
@@ -127,7 +127,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     public BusinessServiceExecuteResult<UserDTOLazy> update2(UserUpdateDTO user) {
         BusinessServiceExecuteResult<User> b = update(user);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent()) {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, b.getResultObjectOptional().map(o -> userDTOTransferNew.modelToDTOLazy(o)));
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, b.getResultObjectOptional().map(o -> userDTOTransfer.modelToDTOLazy(o)));
         }
         return BusinessServiceExecuteResult.build(b.getExecuteStatus());
     }
@@ -142,13 +142,13 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     public List<UserDTO> findAll(String sortType, List<String> sortProperties) {
         List<User> list = userCrudManagerService
                 .findAll(sortType, sortProperties);
-        return userDTOTransferNew.modelToDTO(list);
+        return userDTOTransfer.modelToDTO(list);
     }
 
     @Override
     public Page<UserDTO> findAll(Integer page, Integer size, String sortType, List<String> sortProperties) {
         Page<User> p = userCrudManagerService.findAll(page, size, sortType, sortProperties);
-        return userDTOTransferNew
+        return userDTOTransfer
                 .modelToDTO(p);
     }
 
@@ -156,27 +156,27 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<UserDTOLazy> findAllLazy() {
         List<User> list = userCrudManagerService.findAllLazy();
-        return userDTOTransferNew.modelToDTOLazy(list);
+        return userDTOTransfer.modelToDTOLazy(list);
     }
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<UserDTOLazy> findAllLazy(String sortType, List<String> sortProperties) {
         List<User> list = userCrudManagerService.findAllLazy(sortType, sortProperties);
-        return userDTOTransferNew.modelToDTOLazy(list);
+        return userDTOTransfer.modelToDTOLazy(list);
     }
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Page<UserDTOLazy> findAllLazy(Integer page, Integer size, String sortType, List<String> sortProperties) {
         Page<User> p = userCrudManagerService.findAllLazy(page, size, sortType, sortProperties);
-        return userDTOTransferNew.modelToDTOLazy(p);
+        return userDTOTransfer.modelToDTOLazy(p);
     }
 
     @Override
     public Optional<UserDTO> findByUsername(String username) {
         Optional<User> op = userCrudManagerService.findByUsernameLazy(username);
-        return userDTOTransferNew.modelToDTO(op);
+        return userDTOTransfer.modelToDTO(op);
     }
 
     @Override
@@ -187,7 +187,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
 
         Optional<User> op = userCrudManagerService.findByUsernameLazy(username);
         if (op.isPresent()) {
-            Optional<UserDTOLazy> opl =  userDTOTransferNew.modelToDTOLazy(op);
+            Optional<UserDTOLazy> opl =  userDTOTransfer.modelToDTOLazy(op);
             if (opl.isPresent()) {
                 return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, opl.get());
             }
@@ -199,25 +199,25 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     public Page<UserDTO> findAllAndIsBlock(boolean isBlock, Integer page, Integer size, String sortType, List<String> sortProperties) {
         Page<User> p = userCrudManagerService
                 .findAllAndIsBlock(isBlock, page, size, sortType, sortProperties);
-        return userDTOTransferNew.modelToDTO(p);
+        return userDTOTransfer.modelToDTO(p);
     }
 
     @Override
     public List<UserDTO> findAllAndIsBlock(boolean isBlock, String sortType, List<String> sortProperties) {
         List<User> list = userCrudManagerService.findAllAndIsBlock(isBlock, sortType, sortProperties);
-        return userDTOTransferNew.modelToDTO(list);
+        return userDTOTransfer.modelToDTO(list);
     }
 
     @Override
     public List<UserDTO> findAllAndIsBlock(boolean isBlock) {
         List<User> list = userCrudManagerService.findAllAndIsBlock(isBlock);
-        return userDTOTransferNew.modelToDTO(list);
+        return userDTOTransfer.modelToDTO(list);
     }
 
     @Override
     public Optional<UserDTO> findOne(Long id) {
         Optional<User> op = userCrudManagerService.findOne(id);
-        return userDTOTransferNew.modelToDTO(op);
+        return userDTOTransfer.modelToDTO(op);
     }
 
     @Override
@@ -225,66 +225,66 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     public Page<UserDTOLazy> findAllAndIsBlockLazy(boolean isBlock, Integer page, Integer size, String sortType, List<String> sortProperties) {
         Page<User> p = userCrudManagerService
                 .findAllAndIsBlockLazy(isBlock, page, size, sortType, sortProperties);
-        return userDTOTransferNew.modelToDTOLazy(p);
+        return userDTOTransfer.modelToDTOLazy(p);
     }
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<UserDTOLazy> findAllAndIsBlockLazy(boolean isBlock, String sortType, List<String> sortProperties) {
         List<User> list = userCrudManagerService.findAllAndIsBlockLazy(isBlock, sortType, sortProperties);
-        return userDTOTransferNew.modelToDTOLazy(list);
+        return userDTOTransfer.modelToDTOLazy(list);
     }
 
     @Override
     public List<UserDTO> findAllAndIsActive(boolean isActive) {
         List<User> list = userCrudManagerService.findAllAndIsActive(isActive);
-        return userDTOTransferNew.modelToDTO(list);
+        return userDTOTransfer.modelToDTO(list);
     }
 
     @Override
     public List<UserDTO> findAllAndIsActive(boolean isActive, String sortType, List<String> sortProperties) {
         List<User> list = userCrudManagerService.findAllAndIsActive(isActive, sortType, sortProperties);
-        return userDTOTransferNew.modelToDTO(list);
+        return userDTOTransfer.modelToDTO(list);
     }
 
     @Override
     public Page<UserDTO> findAllAndIsActive(boolean isActive, Integer page, Integer size, String sortType, List<String> sortProperties) {
         Page<User> p = userCrudManagerService.findAllAndIsActive(isActive, page, size, sortType, sortProperties);
-        return userDTOTransferNew.modelToDTO(p);
+        return userDTOTransfer.modelToDTO(p);
     }
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<UserDTOLazy> findAllAndIsActiveLazy(boolean isActive) {
         List<User> list = userCrudManagerService.findAllAndIsActiveLazy(isActive);
-        return userDTOTransferNew.modelToDTOLazy(list);
+        return userDTOTransfer.modelToDTOLazy(list);
     }
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Page<UserDTOLazy> findAllAndIsActiveLazy(boolean isActive, Integer page, Integer size, String sortType, List<String> sortProperties) {
         Page<User> p = userCrudManagerService.findAllAndIsActiveLazy(isActive, page, size, sortType, sortProperties);
-        return userDTOTransferNew.modelToDTOLazy(p);
+        return userDTOTransfer.modelToDTOLazy(p);
     }
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<UserDTOLazy> findAllAndIsActiveLazy(boolean isActive, String sortType, List<String> sortProperties) {
         List<User> list = userCrudManagerService.findAllAndIsActiveLazy(isActive, sortType, sortProperties);
-        return userDTOTransferNew.modelToDTOLazy(list);
+        return userDTOTransfer.modelToDTOLazy(list);
     }
 
     @Override
     public List<UserDTO> findAll() {
         List<User> list = userCrudManagerService.findAll();
-        return userDTOTransferNew.modelToDTO(list);
+        return userDTOTransfer.modelToDTO(list);
     }
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<UserDTOLazy> findAllAndIsBlockLazy(boolean isBlock) {
         List<User> list = userCrudManagerService.findAllAndIsBlockLazy(isBlock);
-        return userDTOTransferNew.modelToDTOLazy(list);
+        return userDTOTransfer.modelToDTOLazy(list);
     }
 
     @Override
@@ -295,7 +295,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         }
         Optional<UserDTOLazy> o = userCrudManagerService
                 .findOneLazy(id)
-                .map(op -> userDTOTransferNew.modelToDTOLazy(op));
+                .map(op -> userDTOTransfer.modelToDTOLazy(op));
 
         if (o.isPresent()) {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, o.get());
@@ -306,27 +306,27 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     @Override
     public Optional<UserDTO> findOneAndIsBlock(Long id, boolean isBlock) {
         Optional<User> op = userCrudManagerService.findOneAndIsBlock(id, isBlock);
-        return userDTOTransferNew.modelToDTO(op);
+        return userDTOTransfer.modelToDTO(op);
     }
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Optional<UserDTOLazy> findOneAndIsBlockLazy(Long id, boolean isBlock) {
         Optional<User> op = userCrudManagerService.findOneAndIsBlockLazy(id, isBlock);
-        return userDTOTransferNew.modelToDTOLazy(op);
+        return userDTOTransfer.modelToDTOLazy(op);
     }
 
     @Override
     public Optional<UserDTO> findOneAndIsActive(Long id, boolean isActive) {
         Optional<User> op = userCrudManagerService.findOneAndIsActive(id, isActive);
-        return userDTOTransferNew.modelToDTO(op);
+        return userDTOTransfer.modelToDTO(op);
     }
 
     @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Optional<UserDTOLazy> findOneAndIsActiveLazy(Long id, boolean isActive) {
         Optional<User> op = userCrudManagerService.findOneAndIsActiveLazy(id, isActive);
-        return userDTOTransferNew.modelToDTOLazy(op);
+        return userDTOTransfer.modelToDTOLazy(op);
     }
 
     @Override
@@ -339,7 +339,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         }
         user.get().setRole(UserRoleEnum.valueOf(role.toUpperCase()));
         User r = userCrudManagerService.save(user.get());
-        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, userDTOTransferNew.modelToDTOLazy(r));
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, userDTOTransfer.modelToDTOLazy(r));
     }
 
     @Override
@@ -358,7 +358,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         optional.get().getUserAdditionalData().setPassword(newPasswordEncode);
         User r = userCrudManagerService.save(optional.get());
 
-        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, userDTOTransferNew.modelToDTOLazy(r));
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, userDTOTransfer.modelToDTOLazy(r));
     }
 
     @Override
@@ -396,7 +396,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         u.getUserAdditionalData().setPassword(newPassword);
         User r = userCrudManagerService.save(u);
 
-        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, userDTOTransferNew.modelToDTOLazy(r));
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, userDTOTransfer.modelToDTOLazy(r));
     }
 
     @Override
@@ -409,7 +409,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
             }
             optional.get().getUserAdditionalData().setSecretKey(UUID.randomUUID().toString());
             User r = userCrudManagerService.save(optional.get());
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, userDTOTransferNew.modelToDTOLazy(r));
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, userDTOTransfer.modelToDTOLazy(r));
         } else {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
         }
@@ -447,7 +447,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         optional.get().getUserAdditionalData().setActive(true);
         User r = userCrudManagerService.save(optional.get());
 
-        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, userDTOTransferNew.modelToDTOLazy(r));
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, userDTOTransfer.modelToDTOLazy(r));
     }
 
     @Override
@@ -462,7 +462,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         optional.get().getUserAdditionalData().setActive(false);
         User r = userCrudManagerService.save(optional.get());
 
-        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, userDTOTransferNew.modelToDTOLazy(r));
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, userDTOTransfer.modelToDTOLazy(r));
     }
 
     @Override
@@ -477,7 +477,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         optional.get().getUserAdditionalData().setActive(false);
         User r = userCrudManagerService.save(optional.get());
 
-        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, userDTOTransferNew.modelToDTOLazy(r));
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, userDTOTransfer.modelToDTOLazy(r));
     }
 
     @Override
@@ -492,7 +492,7 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         optional.get().getUserAdditionalData().setBlock(true);
         User r = userCrudManagerService.save(optional.get());
 
-        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, userDTOTransferNew.modelToDTOLazy(r));
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, userDTOTransfer.modelToDTOLazy(r));
     }
 
     @Override
@@ -507,6 +507,6 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         optional.get().getUserAdditionalData().setActive(false);
         User r = userCrudManagerService.save(optional.get());
 
-        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, userDTOTransferNew.modelToDTOLazy(r));
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, userDTOTransfer.modelToDTOLazy(r));
     }
 }

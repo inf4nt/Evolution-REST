@@ -107,6 +107,20 @@ public class DialogCrudManagerServiceImpl implements DialogCrudManagerService {
     }
 
     @Override
+    public List<Dialog> findDialogsByUserId(Long userId, String sort, List<String> sortProperties) {
+        Sort s = getSortForRestService(sort, sortProperties,
+                this.defaultDialogSortType, this.defaultDialogSortProperties);
+        return dialogRepository.findMyDialog(userId, s);
+    }
+
+    @Override
+    public Page<Dialog> findDialogsByUserId(Long userId, Integer page, Integer size, String sort, List<String> sortProperties) {
+        Pageable pageable = getPageableForRestService(page, size, sort, sortProperties,
+                this.dialogMaxFetch, this.defaultDialogSortType, this.defaultDialogSortProperties);
+        return dialogRepository.findMyDialog(userId, pageable);
+    }
+
+    @Override
     public Optional<Dialog> findOne(Long iam, Long dialogId) {
         return dialogRepository.findOneDialog(iam, dialogId);
     }

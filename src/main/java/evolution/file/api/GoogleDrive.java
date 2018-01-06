@@ -14,6 +14,8 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.Drive;
 import lombok.Getter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -25,64 +27,72 @@ import java.util.List;
 
 public class GoogleDrive {
 
-    private static final String APPLICATION_NAME = "Evolution social";
-    private static final String CREDENTIALS_PATH = GoogleDrive.class.getClassLoader().getResource("/google/drive/.credentials").getPath();
-    private static final java.io.File DATA_STORE_DIR = new java.io.File(CREDENTIALS_PATH);
-    private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
-    private static final List<String> SCOPES = Arrays.asList(DriveScopes.DRIVE);
-    private static FileDataStoreFactory DATA_STORE_FACTORY;
-    private static HttpTransport HTTP_TRANSPORT;
-    // Build a new authorized API client service.
-    private static Drive driveService;
-    private static HashMap<String, String> extensions = new HashMap<String, String>();
-
-    static {
-        try {
-            HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-            DATA_STORE_FACTORY = new FileDataStoreFactory(DATA_STORE_DIR);
-        } catch (Throwable t) {
-            t.printStackTrace();
-            System.exit(1);
-        }
-        try {
-            driveService = getDriveService();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    static {
-        extensions.put(".mp3", "audio/mpeg");
-        extensions.put(".json", "application/json");
-        extensions.put(".txt", "text/pain");
-        extensions.put(".png", "image/png");
-        extensions.put(".bmp", "image/x-windows-bmp");
-        extensions.put(".jpg", "image/jpeg");
-        extensions.put("", "application/vnd.google-apps.folder");
-    }
-
-    private static Credential authorize() throws IOException {
-        InputStream in = GoogleDrive.class.getResourceAsStream("/google/drive/client_secret.json");
-        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
-        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-                HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-                .setDataStoreFactory(DATA_STORE_FACTORY)
-                .setAccessType("offline")
-                .build();
-        Credential credential = new AuthorizationCodeInstalledApp(
-                flow, new LocalServerReceiver()).authorize("user");
-        System.out.println(
-                "Credentials saved to " + DATA_STORE_DIR.getAbsolutePath());
-        return credential;
-    }
-
-    public static Drive getDriveService() throws IOException {
-        Credential credential = authorize();
-        return new Drive.Builder(
-                HTTP_TRANSPORT, JSON_FACTORY, credential)
-                .setApplicationName(APPLICATION_NAME)
-                .build();
-    }
+//    private static final String APPLICATION_NAME = "Evolution social";
+//
+//    private static final String CREDENTIALS_PATH = GoogleDrive.class.getClassLoader().getResource("/google/drive/.credentials").getPath();
+//
+//    private static final java.io.File DATA_STORE_DIR = new java.io.File(CREDENTIALS_PATH);
+//
+//    private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
+//
+//    private static final List<String> SCOPES = Arrays.asList(DriveScopes.DRIVE);
+//
+//    private static FileDataStoreFactory DATA_STORE_FACTORY;
+//
+//    private static HttpTransport HTTP_TRANSPORT;
+//
+//    // Build a new authorized API client service.
+//    private static Drive driveService;
+//
+//    private static HashMap<String, String> extensions = new HashMap<String, String>();
+//
+//    static {
+//        try {
+//            HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+//            DATA_STORE_FACTORY = new FileDataStoreFactory(DATA_STORE_DIR);
+//        } catch (Throwable t) {
+//            t.printStackTrace();
+//            System.exit(1);
+//        }
+//        try {
+//            driveService = getDriveService();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    static {
+//        extensions.put(".mp3", "audio/mpeg");
+//        extensions.put(".json", "application/json");
+//        extensions.put(".txt", "text/pain");
+//        extensions.put(".png", "image/png");
+//        extensions.put(".bmp", "image/x-windows-bmp");
+//        extensions.put(".jpg", "image/jpeg");
+//        extensions.put("", "application/vnd.google-apps.folder");
+//    }
+//
+//    private static Credential authorize() throws IOException {
+//        InputStream in = GoogleDrive.class.getResourceAsStream("/google/drive/client_secret.json");
+//        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+//        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
+//                HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
+//                .setDataStoreFactory(DATA_STORE_FACTORY)
+//                .setAccessType("offline")
+//                .build();
+//        Credential credential = new AuthorizationCodeInstalledApp(
+//                flow, new LocalServerReceiver()).authorize("user");
+//        System.out.println(
+//                "Credentials saved to " + DATA_STORE_DIR.getAbsolutePath());
+//        return credential;
+//    }
+//
+//    public static Drive getDriveService() throws IOException {
+//        Credential credential = authorize();
+//        return new Drive.Builder(
+//                HTTP_TRANSPORT, JSON_FACTORY, credential)
+//                .setApplicationName(APPLICATION_NAME)
+//                .build();
+//    }
 
 
 //    private File getFileByName(String fileName){

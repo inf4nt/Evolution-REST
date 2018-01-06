@@ -62,26 +62,14 @@ public class JwtTokenServiceImpl implements JwtTokenService {
 
     @Override
     public String getUsername(String token) {
-        String username;
-        try {
-            final Claims claims = this.getClaimsFromToken(token);
-            username = claims.getSubject();
-        } catch (Exception e) {
-            username = null;
-        }
-        return username;
+        Claims claims = getClaimsFromToken(token);
+        return claims == null ? null : claims.getSubject();
     }
 
     @Override
     public String getAuthenticationSession(String token) {
-        String session;
-        try {
-            final Claims claims = this.getClaimsFromToken(token);
-            session = claims.get("authSession").toString();
-        } catch (Exception e) {
-            session = null;
-        }
-        return session;
+        final Claims claims = this.getClaimsFromToken(token);
+        return claims == null ? null : claims.get("authSession").toString();
     }
 
     @Override
@@ -107,15 +95,9 @@ public class JwtTokenServiceImpl implements JwtTokenService {
     }
 
     private Claims getClaimsFromToken(String token) {
-        Claims claims;
-        try {
-            claims = Jwts.parser()
-                    .setSigningKey(this.secret)
-                    .parseClaimsJws(token)
-                    .getBody();
-        } catch (Exception e) {
-            claims = null;
-        }
-        return claims;
+        return Jwts.parser()
+                .setSigningKey(this.secret)
+                .parseClaimsJws(token)
+                .getBody();
     }
 }

@@ -165,7 +165,7 @@ public class UserRestServiceImpl implements UserRestService {
     public ResponseEntity<UserDTOLazy> createNewUser(UserSaveDTO user) {
         BusinessServiceExecuteResult<UserDTOLazy> b = userBusinessService.createNewUser2(user);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent()) {
-            return ResponseEntity.status(201).body(b.getResultObjectOptional().get());
+            return ResponseEntity.status(201).body(b.getResultObject());
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.USER_IS_ALREADY_EXIST_REGISTRATION_FAILED) {
             return ResponseEntity.status(417).build();
         }
@@ -177,7 +177,7 @@ public class UserRestServiceImpl implements UserRestService {
     public ResponseEntity<UserDTOLazy> update(UserUpdateDTO user) {
         BusinessServiceExecuteResult<UserDTOLazy> b = userBusinessService.update2(user);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent()) {
-            return ResponseEntity.ok(b.getResultObjectOptional().get());
+            return ResponseEntity.ok(b.getResultObject());
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE) {
             return ResponseEntity.status(417).build();
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {

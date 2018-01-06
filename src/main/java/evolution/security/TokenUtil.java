@@ -25,61 +25,30 @@ public class TokenUtil {
     private Long expiration;
 
     public String getUsernameFromToken(String token) {
-        String username;
-        try {
-            final Claims claims = this.getClaimsFromToken(token);
-            username = claims.getSubject();
-        } catch (Exception e) {
-            username = null;
-        }
-        return username;
+        final Claims claims = this.getClaimsFromToken(token);
+        return claims.getSubject();
     }
 
     public String getAuthSession(String token) {
-        String session;
-        try {
-            final Claims claims = this.getClaimsFromToken(token);
-            session = claims.get("authSession").toString();
-        } catch (Exception e) {
-            session = null;
-        }
-
-        return session;
+        final Claims claims = this.getClaimsFromToken(token);
+        return claims.get("authSession").toString();
     }
 
     public Date getCreatedDateFromToken(String token) {
-        Date created;
-        try {
-            final Claims claims = this.getClaimsFromToken(token);
-            created = new Date((Long) claims.get("created"));
-        } catch (Exception e) {
-            created = null;
-        }
-        return created;
+        final Claims claims = this.getClaimsFromToken(token);
+        return new Date((Long) claims.get("created"));
     }
 
     public Date getExpirationDateFromToken(String token) {
-        Date expiration;
-        try {
-            final Claims claims = this.getClaimsFromToken(token);
-            expiration = claims.getExpiration();
-        } catch (Exception e) {
-            expiration = null;
-        }
-        return expiration;
+        final Claims claims = this.getClaimsFromToken(token);
+        return claims.getExpiration();
     }
 
     private Claims getClaimsFromToken(String token) {
-        Claims claims;
-        try {
-            claims = Jwts.parser()
-                    .setSigningKey(this.secret)
-                    .parseClaimsJws(token)
-                    .getBody();
-        } catch (Exception e) {
-            claims = null;
-        }
-        return claims;
+        return Jwts.parser()
+                .setSigningKey(this.secret)
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     private Date generateCurrentDate() {
@@ -130,15 +99,9 @@ public class TokenUtil {
     }
 
     public String refreshToken(String token) {
-        String refreshedToken;
-        try {
-            final Claims claims = this.getClaimsFromToken(token);
-            claims.put("created", this.generateCurrentDate());
-            refreshedToken = this.generateToken(claims);
-        } catch (Exception e) {
-            refreshedToken = null;
-        }
-        return refreshedToken;
+        final Claims claims = this.getClaimsFromToken(token);
+        claims.put("created", this.generateCurrentDate());
+        return this.generateToken(claims);
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {

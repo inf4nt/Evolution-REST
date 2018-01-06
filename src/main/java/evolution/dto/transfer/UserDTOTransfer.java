@@ -16,19 +16,21 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class UserDTOTransferNew {
+public class UserDTOTransfer implements TransferDTOLazy<UserDTO, UserDTOLazy, User> {
+
+    private final ModelMapper modelMapper;
 
     @Autowired
-    private ModelMapper modelMapper;
+    public UserDTOTransfer(ModelMapper modelMapper) {
+        this.modelMapper = modelMapper;
+    }
 
+    @Override
     public UserDTO modelToDTO(User user) {
         return modelMapper.map(user, UserDTO.class);
     }
 
-    public UserDTO modelToDTO(CustomSecurityUser user) {
-        return modelMapper.map(user.getUser(), UserDTO.class);
-    }
-
+    @Override
     public UserDTOLazy modelToDTOLazy(User user) {
         UserDTOLazy userDTOLazy = new UserDTOLazy();
 
@@ -49,6 +51,10 @@ public class UserDTOTransferNew {
         return userDTOLazy;
     }
 
+    public UserDTO modelToDTO(CustomSecurityUser user) {
+        return modelMapper.map(user.getUser(), UserDTO.class);
+    }
+
     public User dtoToModel(UserSaveDTO saveDTO) {
         User res = new User();
 
@@ -66,40 +72,6 @@ public class UserDTOTransferNew {
         res.setUserAdditionalData(ad);
 
         return res;
-    }
-
-    public List<UserDTO> modelToDTO(List<User> list) {
-        return list
-                .stream()
-                .map(o -> modelToDTO(o))
-                .collect(Collectors.toList());
-    }
-
-    public List<UserDTOLazy> modelToDTOLazy(List<User> list) {
-        return list
-                .stream()
-                .map(o -> modelToDTOLazy(o))
-                .collect(Collectors.toList());
-    }
-
-    public Page<UserDTO> modelToDTO(Page<User> page) {
-        return page
-                .map(o -> modelToDTO(o));
-    }
-
-    public Page<UserDTOLazy> modelToDTOLazy(Page<User> page) {
-        return page
-                .map(o -> modelToDTOLazy(o));
-    }
-
-    public Optional<UserDTO> modelToDTO(Optional<User> page) {
-        return page
-                .map(o -> modelToDTO(o));
-    }
-
-    public Optional<UserDTOLazy> modelToDTOLazy(Optional<User> page) {
-        return page
-                .map(o -> modelToDTOLazy(o));
     }
 
 //    public User dtoToModel(UserDTO userDTO) {
