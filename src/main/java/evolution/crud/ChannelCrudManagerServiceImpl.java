@@ -32,8 +32,6 @@ public class ChannelCrudManagerServiceImpl implements ChannelCrudManagerService 
 
     private final ChannelRepository channelRepository;
 
-
-
     @Autowired
     public ChannelCrudManagerServiceImpl(ChannelRepository channelRepository) {
         this.channelRepository = channelRepository;
@@ -46,7 +44,7 @@ public class ChannelCrudManagerServiceImpl implements ChannelCrudManagerService 
 
     @Override
     public Channel save(Channel object) {
-        return null;
+        return channelRepository.save(object);
     }
 
     @Override

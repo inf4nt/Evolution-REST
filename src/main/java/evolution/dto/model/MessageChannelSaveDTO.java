@@ -6,4 +6,10 @@ import lombok.Data;
 @Data
 @JsonInclude
 public class MessageChannelSaveDTO {
+
+    private String text;
+
+    private Long channelId;
+
+    private Long senderId;
 }

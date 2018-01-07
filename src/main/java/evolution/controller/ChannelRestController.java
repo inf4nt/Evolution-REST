@@ -1,11 +1,10 @@
 package evolution.controller;
 
-import evolution.dto.model.ChannelDTO;
-import evolution.dto.model.ChannelDTOLazy;
-import evolution.dto.model.MessageChannelDTO;
+import evolution.dto.model.*;
 import evolution.rest.api.ChannelRestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -102,6 +101,21 @@ public class ChannelRestController {
                                                                       @RequestParam(required = false) String sortType,
                                                                       @RequestParam(required = false) List<String> sortProperties) {
         return channelRestService.findChannelForChannelUser(id, page, size, sortType, sortProperties);
+    }
+
+    @PostMapping(value = "/message")
+    public ResponseEntity<MessageChannelDTO> postMessage(@RequestBody MessageChannelSaveDTO messageChannelSaveDTO) {
+        return channelRestService.createNewMessageChannel(messageChannelSaveDTO);
+    }
+
+    @PostMapping
+    public ResponseEntity<ChannelDTO> postChannel(@RequestBody ChannelSaveDTO channelSaveDTO) {
+        return channelRestService.createNewChannel(channelSaveDTO);
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<HttpStatus> deleteChannel(@PathVariable Long id) {
+        return channelRestService.deleteChannel(id);
     }
 
 }

@@ -22,4 +22,6 @@ public interface MessageChannelCrudManagerService extends AbstractCrudManagerSer
     Page<MessageChannel> findMessageChannelBySender(Long senderId, Integer page, Integer size, String sortType, List<String> sortProperties);
 
     Long findCountMessageChannelByChannelId(Long id);
+
+//    MessageChannel save(String text, Long senderId, Long channelId);
 }

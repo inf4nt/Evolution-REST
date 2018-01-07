@@ -221,6 +221,11 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     }
 
     @Override
+    public Optional<User> findOneModel(Long id) {
+        return userCrudManagerService.findOne(id);
+    }
+
+    @Override
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Page<UserDTOLazy> findAllAndIsBlockLazy(boolean isBlock, Integer page, Integer size, String sortType, List<String> sortProperties) {
         Page<User> p = userCrudManagerService

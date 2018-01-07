@@ -3,6 +3,8 @@ package evolution.business.api;
 import evolution.business.BusinessServiceExecuteResult;
 import evolution.common.BusinessServiceExecuteStatus;
 import evolution.dto.model.*;
+import evolution.model.channel.Channel;
+import evolution.model.channel.MessageChannel;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -11,6 +13,8 @@ import java.util.Optional;
 public interface ChannelBusinessService {
 
     Optional<ChannelDTO> findOneChannel(Long id);
+
+    Optional<Channel> findOneChannelModel(Long id);
 
     Optional<ChannelDTOLazy> findOneChannelLazy(Long id);
 
@@ -62,9 +66,11 @@ public interface ChannelBusinessService {
 
     Long findCountChannelUserByChannelId(Long id);
 
-    BusinessServiceExecuteResult<ChannelDTO> createNewChannel(ChannelSaveDTO channelSaveDTO);
+    BusinessServiceExecuteResult<ChannelDTO> createNewChannel3(ChannelSaveDTO channelSaveDTO);
 
     BusinessServiceExecuteResult<ChannelDTOLazy> createNewChannel2(ChannelSaveDTO channelSaveDTO);
+
+    BusinessServiceExecuteResult<Channel> createNewChannel(ChannelSaveDTO channelSaveDTO);
 
     BusinessServiceExecuteResult<BusinessServiceExecuteStatus> deleteChannel(Long id);
 
@@ -73,6 +79,8 @@ public interface ChannelBusinessService {
     BusinessServiceExecuteResult<ChannelDTOLazy> updateChannel2(ChannelUpdateDTO channelUpdateDTO);
 
     BusinessServiceExecuteResult<MessageChannelDTO> createNewMessageChannel(MessageChannelSaveDTO messageChannelSaveDTO);
+
+    BusinessServiceExecuteResult<MessageChannel> createNewMessageChannel2(MessageChannelSaveDTO messageChannelSaveDTO);
 
     BusinessServiceExecuteResult<BusinessServiceExecuteStatus> deleteMessageChannel(Long id);
 

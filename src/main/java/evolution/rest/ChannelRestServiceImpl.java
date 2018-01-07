@@ -1,6 +1,8 @@
 package evolution.rest;
 
+import evolution.business.BusinessServiceExecuteResult;
 import evolution.business.api.ChannelBusinessService;
+import evolution.common.BusinessServiceExecuteStatus;
 import evolution.dto.model.*;
 import evolution.rest.api.ChannelRestService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -153,7 +155,11 @@ public class ChannelRestServiceImpl implements ChannelRestService {
 
     @Override
     public ResponseEntity<ChannelDTO> createNewChannel(ChannelSaveDTO channelSaveDTO) {
-        return null;
+        BusinessServiceExecuteResult<ChannelDTO> b = channelBusinessService.createNewChannel3(channelSaveDTO);
+        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent()) {
+            return ResponseEntity.status(201).body(b.getResultObject());
+        }
+        return ResponseEntity.noContent().build();
     }
 
     @Override
@@ -163,7 +169,11 @@ public class ChannelRestServiceImpl implements ChannelRestService {
 
     @Override
     public ResponseEntity<HttpStatus> deleteChannel(Long id) {
-        return null;
+        BusinessServiceExecuteResult<BusinessServiceExecuteStatus> b = channelBusinessService.deleteChannel(id);
+        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.status(417).build();
     }
 
     @Override
@@ -178,7 +188,11 @@ public class ChannelRestServiceImpl implements ChannelRestService {
 
     @Override
     public ResponseEntity<MessageChannelDTO> createNewMessageChannel(MessageChannelSaveDTO messageChannelSaveDTO) {
-        return null;
+        BusinessServiceExecuteResult<MessageChannelDTO> b = channelBusinessService.createNewMessageChannel(messageChannelSaveDTO);
+        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent()) {
+            return ResponseEntity.status(201).body(b.getResultObject());
+        }
+        return ResponseEntity.noContent().build();
     }
 
     @Override

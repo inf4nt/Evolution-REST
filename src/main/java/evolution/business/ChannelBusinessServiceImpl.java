@@ -1,6 +1,7 @@
 package evolution.business;
 
 import evolution.business.api.ChannelBusinessService;
+import evolution.business.api.UserBusinessService;
 import evolution.common.BusinessServiceExecuteStatus;
 import evolution.crud.api.ChannelCrudManagerService;
 import evolution.crud.api.MessageChannelCrudManagerService;
@@ -8,10 +9,17 @@ import evolution.dto.model.*;
 import evolution.dto.transfer.ChannelDTOTransfer;
 import evolution.dto.transfer.MessageChannelDTOTransfer;
 import evolution.dto.transfer.UserDTOTransfer;
+import evolution.model.User;
+import evolution.model.channel.Channel;
+import evolution.model.channel.MessageChannel;
+import evolution.service.DateService;
+import org.mortbay.util.ajax.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,22 +36,35 @@ public class ChannelBusinessServiceImpl implements ChannelBusinessService {
 
     private final UserDTOTransfer userDTOTransfer;
 
+    private final UserBusinessService userBusinessService;
+
+    private final DateService dateService;
+
     @Autowired
     public ChannelBusinessServiceImpl(ChannelCrudManagerService channelCrudManagerService,
                                       MessageChannelCrudManagerService messageChannelCrudManagerService,
                                       MessageChannelDTOTransfer messageChannelDTOTransfer,
                                       ChannelDTOTransfer channelDTOTransfer,
-                                      UserDTOTransfer userDTOTransfer) {
+                                      UserDTOTransfer userDTOTransfer,
+                                      UserBusinessService userBusinessService,
+                                      DateService dateService) {
         this.channelCrudManagerService = channelCrudManagerService;
         this.messageChannelCrudManagerService = messageChannelCrudManagerService;
         this.messageChannelDTOTransfer = messageChannelDTOTransfer;
         this.channelDTOTransfer = channelDTOTransfer;
         this.userDTOTransfer = userDTOTransfer;
+        this.userBusinessService = userBusinessService;
+        this.dateService = dateService;
     }
 
     @Override
     public Optional<ChannelDTO> findOneChannel(Long id) {
         return channelDTOTransfer.modelToDTO(channelCrudManagerService.findOne(id));
+    }
+
+    @Override
+    public Optional<Channel> findOneChannelModel(Long id) {
+        return channelCrudManagerService.findOne(id);
     }
 
     @Override
@@ -172,18 +193,46 @@ public class ChannelBusinessServiceImpl implements ChannelBusinessService {
     }
 
     @Override
-    public BusinessServiceExecuteResult<ChannelDTO> createNewChannel(ChannelSaveDTO channelSaveDTO) {
-        return null;
+    public BusinessServiceExecuteResult<ChannelDTO> createNewChannel3(ChannelSaveDTO channelSaveDTO) {
+        BusinessServiceExecuteResult<Channel> b = createNewChannel(channelSaveDTO);
+        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent()) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, channelDTOTransfer.modelToDTO(b.getResultObject()));
+        }
+        return BusinessServiceExecuteResult.build(b.getExecuteStatus());
+    }
+
+    @Override
+    @Transactional
+    public BusinessServiceExecuteResult<Channel> createNewChannel(ChannelSaveDTO channelSaveDTO) {
+        Optional<User> ou = userBusinessService.findOneModel(channelSaveDTO.getWhoCreateId());
+        if (!ou.isPresent()) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
+        }
+        Channel channel = new Channel();
+        channel.setActive(true);
+        channel.setPrivate(channelSaveDTO.isPrivate());
+        channel.setChannelName(channelSaveDTO.getChannelName());
+        channel.setDateCreate(dateService.getCurrentDateInUTC());
+        channel.setWhoCreatedChannel(ou.get());
+        channel.setChannelUser(new ArrayList<User>(){{add(ou.get());}});
+
+        Channel res = channelCrudManagerService.save(channel);
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, res);
     }
 
     @Override
     public BusinessServiceExecuteResult<ChannelDTOLazy> createNewChannel2(ChannelSaveDTO channelSaveDTO) {
-        return null;
+        BusinessServiceExecuteResult<Channel> b = createNewChannel(channelSaveDTO);
+        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent()) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, channelDTOTransfer.modelToDTOLazy(b.getResultObject()));
+        }
+        return BusinessServiceExecuteResult.build(b.getExecuteStatus());
     }
 
     @Override
     public BusinessServiceExecuteResult<BusinessServiceExecuteStatus> deleteChannel(Long id) {
-        return null;
+        channelCrudManagerService.delete(id);
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK);
     }
 
     @Override
@@ -197,8 +246,35 @@ public class ChannelBusinessServiceImpl implements ChannelBusinessService {
     }
 
     @Override
+    @Transactional
     public BusinessServiceExecuteResult<MessageChannelDTO> createNewMessageChannel(MessageChannelSaveDTO messageChannelSaveDTO) {
-        return null;
+        BusinessServiceExecuteResult<MessageChannel> b = createNewMessageChannel2(messageChannelSaveDTO);
+        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent()) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, messageChannelDTOTransfer.modelToDTO(b.getResultObject()));
+        }
+        return BusinessServiceExecuteResult.build(b.getExecuteStatus());
+    }
+
+    @Override
+    public BusinessServiceExecuteResult<MessageChannel> createNewMessageChannel2(MessageChannelSaveDTO messageChannelSaveDTO) {
+        Optional<User> ou = userBusinessService.findOneModel(messageChannelSaveDTO.getSenderId());
+        if (!ou.isPresent()) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
+        }
+        Optional<Channel> oc = findOneChannelModel(messageChannelSaveDTO.getChannelId());
+        if (!oc.isPresent()) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
+        }
+
+        MessageChannel messageChannel = new MessageChannel();
+        messageChannel.setActive(true);
+        messageChannel.setText(messageChannelSaveDTO.getText());
+        messageChannel.setSender(ou.get());
+        messageChannel.setChannel(oc.get());
+        messageChannel.setDatePost(dateService.getCurrentDateInUTC());
+
+        MessageChannel res = messageChannelCrudManagerService.save(messageChannel);
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, res);
     }
 
     @Override

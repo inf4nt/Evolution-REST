@@ -31,7 +31,7 @@ public class Channel implements Serializable {
     )
     private List<User> channelUser = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "channel", cascade = CascadeType.REMOVE)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "channel", cascade = CascadeType.ALL)
     private List<MessageChannel> messageChannelList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)

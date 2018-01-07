@@ -58,6 +58,8 @@ public interface UserBusinessService {
 
     Optional<UserDTO> findOne(Long id);
 
+    Optional<User> findOneModel(Long id);
+
     BusinessServiceExecuteResult<UserDTOLazy> findOneLazy(Long id);
 
     BusinessServiceExecuteResult<User> createNewUser(UserSaveDTO userSaveDTO);

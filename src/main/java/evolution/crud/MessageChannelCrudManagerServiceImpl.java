@@ -1,6 +1,9 @@
 package evolution.crud;
 
 import evolution.crud.api.MessageChannelCrudManagerService;
+import evolution.crud.api.UserCrudManagerService;
+import evolution.model.User;
+import evolution.model.channel.Channel;
 import evolution.model.channel.MessageChannel;
 import evolution.repository.MessageChanelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +31,13 @@ public class MessageChannelCrudManagerServiceImpl implements MessageChannelCrudM
 
     private final MessageChanelRepository messageChanelRepository;
 
+    private final UserCrudManagerService userCrudManagerService;
+
     @Autowired
-    public MessageChannelCrudManagerServiceImpl(MessageChanelRepository messageChanelRepository) {
+    public MessageChannelCrudManagerServiceImpl(MessageChanelRepository messageChanelRepository,
+                                                UserCrudManagerService userCrudManagerService) {
         this.messageChanelRepository = messageChanelRepository;
+        this.userCrudManagerService = userCrudManagerService;
     }
 
     @Override
@@ -102,7 +109,7 @@ public class MessageChannelCrudManagerServiceImpl implements MessageChannelCrudM
 
     @Override
     public MessageChannel save(MessageChannel object) {
-        return null;
+        return messageChanelRepository.save(object);
     }
 
     @Override
