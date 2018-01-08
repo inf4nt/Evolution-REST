@@ -292,11 +292,6 @@ public class ChannelCrudManagerServiceImpl implements ChannelCrudManagerService 
             return Optional.empty();
         }
 
-        if (oc.get().getChannelUser().size() == 1 && oc.get().getChannelUser().contains(ou.get())) {
-            detach(oc.get());
-            return Optional.empty();
-        }
-
         oc.get().getChannelUser().remove(ou.get());
         MessageChannel m = new MessageChannel();
         m.setSender(ou.get());
