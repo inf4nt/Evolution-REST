@@ -49,12 +49,6 @@ public interface ChannelRepository extends JpaRepository<Channel, Long> {
             " where c.id =:id ")
     Optional<Channel> findChannelByIdLazyChannelUser(@Param("id") Long id);
 
-    @Query(" select c " +
-            " from Channel c " +
-            " join fetch c.channelUser cu " +
-            " where c.channelName =:name ")
-    Optional<Channel> findChannelByNameLazyChannelUser(@Param("name") String name);
-
     @Query("select c " +
             " from Channel c " +
             " where c.whoCreatedChannel.id =:userId ")

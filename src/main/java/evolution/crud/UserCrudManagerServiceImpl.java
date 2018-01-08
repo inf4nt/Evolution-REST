@@ -16,6 +16,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,6 +37,9 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
 
     @Value("${model.user.defaultsortproperties}")
     private String defaultUserSortProperties;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     private final FriendCrudManagerService friendCrudManagerService;
 
@@ -269,6 +274,11 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
         Pageable p = getPageableForRestService(page, size, sort, sortProperties,
                 this.userMaxFetch, this.defaultUserSortType, this.defaultUserSortProperties);
         return userRepository.findAllFetchLazy(p);
+    }
+
+    @Override
+    public void detach(User user) {
+        entityManager.detach(user);
     }
 
     @Override

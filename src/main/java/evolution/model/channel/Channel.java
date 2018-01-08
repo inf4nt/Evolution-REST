@@ -23,7 +23,7 @@ public class Channel implements Serializable {
     @Column(name = "channel_name", columnDefinition = "varchar(255)")
     private String channelName;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH})
     @JoinTable(
             name = "channel_user_references",
             joinColumns = {@JoinColumn(name = "channel_id")},
@@ -34,7 +34,7 @@ public class Channel implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "channel", cascade = CascadeType.ALL)
     private List<MessageChannel> messageChannelList = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH})
     @JoinColumn(name = "who_created_channel_user_id", columnDefinition = "bigint")
     private User whoCreatedChannel;
 

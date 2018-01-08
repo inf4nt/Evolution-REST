@@ -1,9 +1,13 @@
 package evolution.crud;
 
 import evolution.crud.api.ChannelCrudManagerService;
+import evolution.crud.api.UserCrudManagerService;
+import evolution.dto.model.ChannelSaveDTO;
 import evolution.model.User;
 import evolution.model.channel.Channel;
+import evolution.model.channel.MessageChannel;
 import evolution.repository.ChannelRepository;
+import evolution.service.DateService;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +17,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,11 +36,22 @@ public class ChannelCrudManagerServiceImpl implements ChannelCrudManagerService 
     @Value("${model.channel.defaultsortproperties}")
     private String defaultSortProperties;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     private final ChannelRepository channelRepository;
 
+    private final UserCrudManagerService userCrudManagerService;
+
+    private final DateService dateService;
+
     @Autowired
-    public ChannelCrudManagerServiceImpl(ChannelRepository channelRepository) {
+    public ChannelCrudManagerServiceImpl(ChannelRepository channelRepository,
+                                         UserCrudManagerService userCrudManagerService,
+                                         DateService dateService) {
         this.channelRepository = channelRepository;
+        this.userCrudManagerService = userCrudManagerService;
+        this.dateService = dateService;
     }
 
     @Override
@@ -146,6 +163,11 @@ public class ChannelCrudManagerServiceImpl implements ChannelCrudManagerService 
     }
 
     @Override
+    public Optional<Channel> findChannelByIdLazyChannelUser(Long id) {
+        return channelRepository.findChannelByIdLazyChannelUser(id);
+    }
+
+    @Override
     @Transactional
     public void clearRowByUserForeignKey(Long userId) {
         List<Channel> list = channelRepository.findChannelForChannelUser(userId);
@@ -196,6 +218,100 @@ public class ChannelCrudManagerServiceImpl implements ChannelCrudManagerService 
         Pageable p = getPageableForRestService(page, size, sortType, sortProperties,
                 this.defaultMaxFetch, this.defaultSortType, this.defaultSortProperties);
         return null;
+    }
+
+    @Override
+    @Transactional
+    public Optional<Channel> createNewChannel(ChannelSaveDTO channelSaveDTO) {
+        Optional<User> ou = userCrudManagerService.findOne(channelSaveDTO.getWhoCreateId());
+        if (!ou.isPresent()) {
+            return Optional.empty();
+        }
+
+        Channel channel = new Channel();
+        channel.setChannelUser(new ArrayList<User>(){{add(ou.get());}});
+        channel.setWhoCreatedChannel(ou.get());
+        channel.setPrivate(channelSaveDTO.isPrivate());
+        channel.setDateCreate(dateService.getCurrentDateInUTC());
+        channel.setChannelName(channelSaveDTO.getChannelName());
+        channel.setActive(true);
+
+        MessageChannel messageChannel = new MessageChannel();
+        messageChannel.setText(ou.get().getFirstName() + " " + ou.get().getLastName() + " create channel #" + channelSaveDTO.getChannelName());
+        messageChannel.setDatePost(dateService.getCurrentDateInUTC());
+        messageChannel.setChannel(channel);
+        messageChannel.setActive(true);
+        messageChannel.setSender(ou.get());
+
+        channel.setMessageChannelList(new ArrayList<MessageChannel>(){{add(messageChannel);}});
+
+        return Optional.of(save(channel));
+    }
+
+    @Override
+    public Optional<Channel> createNewChannel(String channelName, Long whoCreateChannelId, boolean isPrivate) {
+        return createNewChannel(new ChannelSaveDTO(channelName, isPrivate, whoCreateChannelId));
+    }
+
+    @Override
+    @Transactional
+    public Optional<Channel> joinChannel(Long channelId, Long userId) {
+        Optional<Channel> oc = findOne(channelId);
+        if (!oc.isPresent()) {
+            return Optional.empty();
+        }
+        Optional<User> ou = userCrudManagerService.findOne(userId);
+        if (!ou.isPresent()) {
+            detach(oc.get());
+            return Optional.empty();
+        }
+        MessageChannel m = new MessageChannel();
+
+        oc.get().getChannelUser().add(ou.get());
+
+        m.setSender(ou.get());
+        m.setChannel(oc.get());
+        m.setActive(true);
+        m.setDatePost(dateService.getCurrentDateInUTC());
+        m.setText(ou.get().getFirstName() + " " + ou.get().getLastName() + " join to channel #" + oc.get().getChannelName());
+        oc.get().getMessageChannelList().add(m);
+        return Optional.of(save(oc.get()));
+    }
+
+    @Override
+    @Transactional
+    public Optional<Channel> outFromChannel(Long channelId, Long userId) {
+        Optional<User> ou = userCrudManagerService.findOne(userId);
+        if (!ou.isPresent()) {
+            return Optional.empty();
+        }
+
+        Optional<Channel> oc = findOne(channelId);
+        if (!oc.isPresent()) {
+            userCrudManagerService.detach(ou.get());
+            return Optional.empty();
+        }
+
+        if (oc.get().getChannelUser().size() == 1 && oc.get().getChannelUser().contains(ou.get())) {
+            detach(oc.get());
+            return Optional.empty();
+        }
+
+        oc.get().getChannelUser().remove(ou.get());
+        MessageChannel m = new MessageChannel();
+        m.setSender(ou.get());
+        m.setChannel(oc.get());
+        m.setActive(true);
+        m.setDatePost(dateService.getCurrentDateInUTC());
+        m.setText(ou.get().getFirstName() + " " + ou.get().getLastName() + " out from channel #" + oc.get().getChannelName());
+        oc.get().getMessageChannelList().add(m);
+
+        return Optional.of(channelRepository.save(oc.get()));
+    }
+
+    @Override
+    public void detach(Channel channel) {
+        entityManager.detach(channel);
     }
 
     @Override

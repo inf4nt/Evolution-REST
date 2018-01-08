@@ -86,5 +86,7 @@ public interface ChannelBusinessService {
 
     BusinessServiceExecuteResult<MessageChannelDTO> updateMessageChannel(MessageChannelUpdateDTO messageChannelUpdateDTO);
 
+    BusinessServiceExecuteResult<ChannelDTO> joinToChannel(Long id);
 
+    BusinessServiceExecuteResult<ChannelDTO> outFromChannel(Long id);
 }

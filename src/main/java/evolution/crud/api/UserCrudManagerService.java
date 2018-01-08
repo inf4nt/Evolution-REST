@@ -70,4 +70,6 @@ public interface UserCrudManagerService extends AbstractCrudManagerService<User,
     void delete(List<Long> ids);
 
     void deleteAll();
+
+    void detach(User user);
 }

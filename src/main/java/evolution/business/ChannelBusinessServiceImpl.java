@@ -13,9 +13,10 @@ import evolution.model.User;
 import evolution.model.channel.Channel;
 import evolution.model.channel.MessageChannel;
 import evolution.service.DateService;
-import org.mortbay.util.ajax.JSON;
+import evolution.service.SecuritySupportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +41,8 @@ public class ChannelBusinessServiceImpl implements ChannelBusinessService {
 
     private final DateService dateService;
 
+    private final SecuritySupportService securitySupportService;
+
     @Autowired
     public ChannelBusinessServiceImpl(ChannelCrudManagerService channelCrudManagerService,
                                       MessageChannelCrudManagerService messageChannelCrudManagerService,
@@ -47,7 +50,8 @@ public class ChannelBusinessServiceImpl implements ChannelBusinessService {
                                       ChannelDTOTransfer channelDTOTransfer,
                                       UserDTOTransfer userDTOTransfer,
                                       UserBusinessService userBusinessService,
-                                      DateService dateService) {
+                                      DateService dateService,
+                                      SecuritySupportService securitySupportService) {
         this.channelCrudManagerService = channelCrudManagerService;
         this.messageChannelCrudManagerService = messageChannelCrudManagerService;
         this.messageChannelDTOTransfer = messageChannelDTOTransfer;
@@ -55,6 +59,7 @@ public class ChannelBusinessServiceImpl implements ChannelBusinessService {
         this.userDTOTransfer = userDTOTransfer;
         this.userBusinessService = userBusinessService;
         this.dateService = dateService;
+        this.securitySupportService = securitySupportService;
     }
 
     @Override
@@ -202,22 +207,12 @@ public class ChannelBusinessServiceImpl implements ChannelBusinessService {
     }
 
     @Override
-    @Transactional
     public BusinessServiceExecuteResult<Channel> createNewChannel(ChannelSaveDTO channelSaveDTO) {
-        Optional<User> ou = userBusinessService.findOneModel(channelSaveDTO.getWhoCreateId());
-        if (!ou.isPresent()) {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
+        Optional<Channel> oc = channelCrudManagerService.createNewChannel(channelSaveDTO);
+        if (oc.isPresent()) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, oc.get());
         }
-        Channel channel = new Channel();
-        channel.setActive(true);
-        channel.setPrivate(channelSaveDTO.isPrivate());
-        channel.setChannelName(channelSaveDTO.getChannelName());
-        channel.setDateCreate(dateService.getCurrentDateInUTC());
-        channel.setWhoCreatedChannel(ou.get());
-        channel.setChannelUser(new ArrayList<User>(){{add(ou.get());}});
-
-        Channel res = channelCrudManagerService.save(channel);
-        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, res);
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.EXPECTATION_FAILED);
     }
 
     @Override
@@ -230,6 +225,7 @@ public class ChannelBusinessServiceImpl implements ChannelBusinessService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public BusinessServiceExecuteResult<BusinessServiceExecuteStatus> deleteChannel(Long id) {
         channelCrudManagerService.delete(id);
         return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK);
@@ -285,5 +281,27 @@ public class ChannelBusinessServiceImpl implements ChannelBusinessService {
     @Override
     public BusinessServiceExecuteResult<MessageChannelDTO> updateMessageChannel(MessageChannelUpdateDTO messageChannelUpdateDTO) {
         return null;
+    }
+
+    @Override
+    public BusinessServiceExecuteResult<ChannelDTO> joinToChannel(Long id) {
+        User user = securitySupportService.getAuthenticationPrincipal().getUser();
+        Optional<Channel> oc = channelCrudManagerService.joinChannel(id, user.getId());
+        if (oc.isPresent()) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, channelDTOTransfer.modelToDTO(oc.get()));
+        }
+
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.EXPECTATION_FAILED);
+    }
+
+    @Override
+    public BusinessServiceExecuteResult<ChannelDTO> outFromChannel(Long id) {
+        User user = securitySupportService.getAuthenticationPrincipal().getUser();
+        Optional<Channel> oc = channelCrudManagerService.outFromChannel(id, user.getId());
+        if (oc.isPresent()) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, channelDTOTransfer.modelToDTO(oc.get()));
+        }
+
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.EXPECTATION_FAILED);
     }
 }

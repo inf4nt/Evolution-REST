@@ -1,7 +1,9 @@
 package evolution.model.channel;
 
 import evolution.model.User;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -16,6 +18,8 @@ public class ChannelUserReference implements Serializable {
 
     @Embeddable
     @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class ChannelUserReferenceEmbeddable implements Serializable {
 
         @ManyToOne

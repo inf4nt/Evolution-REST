@@ -12,6 +12,7 @@ import java.util.Date;
 @Entity
 @Table(name = "user_additional_data")
 @Data
+@EqualsAndHashCode(exclude = "user")
 public class UserAdditionalData {
 
     @Id

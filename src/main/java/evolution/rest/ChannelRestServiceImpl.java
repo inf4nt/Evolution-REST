@@ -204,4 +204,22 @@ public class ChannelRestServiceImpl implements ChannelRestService {
     public ResponseEntity<MessageChannelDTO> updateMessageChannel(MessageChannelUpdateDTO messageChannelUpdateDTO) {
         return null;
     }
+
+    @Override
+    public ResponseEntity<ChannelDTO> joinToChannel(Long id) {
+        BusinessServiceExecuteResult<ChannelDTO> b = channelBusinessService.joinToChannel(id);
+        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent()) {
+            return ResponseEntity.ok(b.getResultObject());
+        }
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<ChannelDTO> outFromChannel(Long id) {
+        BusinessServiceExecuteResult<ChannelDTO> b = channelBusinessService.outFromChannel(id);
+        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok().build();
+    }
 }

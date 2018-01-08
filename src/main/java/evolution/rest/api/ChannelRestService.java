@@ -79,4 +79,8 @@ public interface ChannelRestService extends AbstractRestService {
     ResponseEntity<HttpStatus> deleteMessageChannel(Long id);
 
     ResponseEntity<MessageChannelDTO> updateMessageChannel(MessageChannelUpdateDTO messageChannelUpdateDTO);
+
+    ResponseEntity<ChannelDTO> joinToChannel(Long id);
+
+    ResponseEntity<ChannelDTO> outFromChannel(Long id);
 }
