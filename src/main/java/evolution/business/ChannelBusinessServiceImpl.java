@@ -290,7 +290,12 @@ public class ChannelBusinessServiceImpl implements ChannelBusinessService {
     @Override
     public BusinessServiceExecuteResult<ChannelDTO> joinToChannel(Long id) {
         User user = securitySupportService.getAuthenticationPrincipal().getUser();
-        Optional<Channel> oc = channelCrudManagerService.joinChannel(id, user.getId());
+        return joinToChannel(id, user.getId());
+    }
+
+    @Override
+    public BusinessServiceExecuteResult<ChannelDTO> joinToChannel(Long channelId, Long userId) {
+        Optional<Channel> oc = channelCrudManagerService.joinChannel(channelId, userId);
         if (oc.isPresent()) {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, channelDTOTransfer.modelToDTO(oc.get()));
         }

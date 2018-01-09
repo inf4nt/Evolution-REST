@@ -1,5 +1,6 @@
 package evolution.business;
 
+import evolution.business.api.MessageBusinessService;
 import evolution.business.api.UserBusinessService;
 import evolution.common.BusinessServiceExecuteStatus;
 import evolution.common.UserRoleEnum;
@@ -43,6 +44,8 @@ public class UserBusinessServiceImpl implements UserBusinessService {
 
     private final UserDTOTransfer userDTOTransfer;
 
+    private final MessageBusinessService messageBusinessService;
+
     @Autowired
     private UserTechnicalService userTechnicalService;
 
@@ -50,11 +53,13 @@ public class UserBusinessServiceImpl implements UserBusinessService {
     public UserBusinessServiceImpl(SecuritySupportService securitySupportService,
                                    UserCrudManagerService userCrudManagerService,
                                    DateService dateService,
-                                   UserDTOTransfer userDTOTransfer) {
+                                   UserDTOTransfer userDTOTransfer,
+                                   MessageBusinessService messageBusinessService) {
         this.securitySupportService = securitySupportService;
         this.userCrudManagerService = userCrudManagerService;
         this.dateService = dateService;
         this.userDTOTransfer = userDTOTransfer;
+        this.messageBusinessService = messageBusinessService;
     }
 
     @Override
@@ -76,8 +81,9 @@ public class UserBusinessServiceImpl implements UserBusinessService {
         user.getUserAdditionalData().setRegistrationDate(dateService.getCurrentDateInUTC());
         user.setRole(UserRoleEnum.USER);
 
-
         User result = userCrudManagerService.save(user);
+
+        messageBusinessService.createFirstMessageAfterRegistration(result.getId());
 
         return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, result);
     }

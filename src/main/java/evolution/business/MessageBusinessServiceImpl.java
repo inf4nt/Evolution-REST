@@ -2,6 +2,7 @@ package evolution.business;
 
 import evolution.business.api.MessageBusinessService;
 import evolution.crud.api.MessageCrudManagerService;
+import evolution.crud.api.UserCrudManagerService;
 import evolution.dto.model.MessageDTO;
 import evolution.dto.model.MessageSaveDTO;
 import evolution.dto.model.MessageUpdateDTO;
@@ -14,6 +15,7 @@ import evolution.service.SecuritySupportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,6 +34,12 @@ import static evolution.common.BusinessServiceExecuteStatus.*;
 @Service
 public class MessageBusinessServiceImpl implements MessageBusinessService {
 
+    @Value("${admin.god.id}")
+    private Long adminGodId;
+
+    @Value("${firstMessageForNewUser}")
+    private String firstMessageForNewUser;
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final MessageCrudManagerService messageCrudManagerService;
@@ -42,15 +50,19 @@ public class MessageBusinessServiceImpl implements MessageBusinessService {
 
     private final DateService dateService;
 
+    private final UserCrudManagerService userCrudManagerService;
+
     @Autowired
     public MessageBusinessServiceImpl(MessageCrudManagerService messageCrudManagerService,
                                       SecuritySupportService securitySupportService,
                                       MessageDTOTransfer messageDTOTransfer,
-                                      DateService dateService) {
+                                      DateService dateService,
+                                      UserCrudManagerService userCrudManagerService) {
         this.messageCrudManagerService = messageCrudManagerService;
         this.securitySupportService = securitySupportService;
         this.messageDTOTransfer = messageDTOTransfer;
         this.dateService = dateService;
+        this.userCrudManagerService = userCrudManagerService;
     }
 
     @Override
@@ -379,5 +391,11 @@ public class MessageBusinessServiceImpl implements MessageBusinessService {
         return messageCrudManagerService
                 .findMessageByInterlocutor(interlocutor, auth.getId(), page, size, sort, sortProperties)
                 .map(o -> messageDTOTransfer.modelToDTO(o));
+    }
+
+    @Override
+    public BusinessServiceExecuteResult<MessageDTO> createFirstMessageAfterRegistration(Long forUserId) {
+        Message message = messageCrudManagerService.saveMessageAndMaybeCreateNewDialog(firstMessageForNewUser, adminGodId, forUserId, dateService.getCurrentDateInUTC());
+        return BusinessServiceExecuteResult.build(OK, messageDTOTransfer.modelToDTO(message));
     }
 }

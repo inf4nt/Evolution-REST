@@ -61,4 +61,6 @@ public interface MessageBusinessService {
     List<MessageDTO> findMessageByInterlocutor(Long interlocutor, String sort, List<String> sortProperties);
 
     Page<MessageDTO> findMessageByInterlocutor(Long interlocutor, Integer page, Integer size, String sort, List<String> sortProperties);
+
+    BusinessServiceExecuteResult<MessageDTO> createFirstMessageAfterRegistration(Long forUserId);
 }
