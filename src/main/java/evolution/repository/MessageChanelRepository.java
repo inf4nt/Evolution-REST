@@ -16,7 +16,7 @@ public interface MessageChanelRepository extends JpaRepository<MessageChannel, L
     @Query("select m from MessageChannel m where m.id =:id")
     Optional<MessageChannel> findOneMessageChannel(@Param("id") Long id);
 
-    @Query("select m from MessageChannel m where m.channel.id =:id")
+    @Query("select m from MessageChannel m where m.channel.id =:id order by m.id desc")
     List<MessageChannel> findMessageChannelByChannelId(@Param("id") Long id);
 
     @Query("select m from MessageChannel m where m.channel.id =:id")
