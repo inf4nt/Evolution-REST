@@ -360,16 +360,17 @@ public class MessageBusinessServiceImpl implements MessageBusinessService {
     @Override
     public List<MessageDTO> findMessageByInterlocutor(Long interlocutor) {
         User auth = securitySupportService.getAuthenticationPrincipal().getUser();
-        return messageCrudManagerService
-                .findMessageByInterlocutor(interlocutor, auth.getId())
-                .stream()
-                .map(o -> messageDTOTransfer.modelToDTO(o))
-                .collect(Collectors.toList());
+        List<Message> list =  messageCrudManagerService
+                .findMessageByInterlocutor(interlocutor, auth.getId());
+        return messageDTOTransfer.modelToDTO(list, auth);
     }
 
     @Override
     public List<MessageDTO> findMessageByInterlocutor(Long interlocutor, String sort, List<String> sortProperties) {
-        return null;
+        User auth = securitySupportService.getAuthenticationPrincipal().getUser();
+        List<Message> list =  messageCrudManagerService
+                .findMessageByInterlocutor(interlocutor, auth.getId(), sort, sortProperties);
+        return messageDTOTransfer.modelToDTO(list, auth);
     }
 
     @Override

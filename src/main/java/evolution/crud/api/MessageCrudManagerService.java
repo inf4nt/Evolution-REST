@@ -67,5 +67,7 @@ public interface MessageCrudManagerService extends AbstractCrudManagerService<Me
 
     List<Message> findMessageByInterlocutor(Long interlocutor, Long second);
 
+    List<Message> findMessageByInterlocutor(Long interlocutor, Long second, String sortType, List<String> sortProperties);
+
     Page<Message> findMessageByInterlocutor(Long interlocutor, Long second, Integer page, Integer size, String sort, List<String> sortProperties);
 }

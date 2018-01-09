@@ -157,7 +157,8 @@ public class MessageRestServiceImpl implements MessageRestService {
 
     @Override
     public ResponseEntity<List<MessageDTO>> findMessageByInterlocutor(Long interlocutor, String sort, List<String> sortProperties) {
-        return null;
+        List<MessageDTO> list = messageBusinessService.findMessageByInterlocutor(interlocutor, sort, sortProperties);
+        return response(list);
     }
 
     @Override

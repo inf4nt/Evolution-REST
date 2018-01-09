@@ -52,6 +52,18 @@ public class MessageRestController {
         return messageRestService.save(message);
     }
 
+    @GetMapping(value = "/interlocutor/{id}")
+    public ResponseEntity<List<MessageDTO>> findMessageByInterlocutor(@PathVariable Long id) {
+        return messageRestService.findMessageByInterlocutor(id);
+    }
+
+    @GetMapping(value = "/interlocutor/{id}/list")
+    public ResponseEntity<List<MessageDTO>> findMessageByInterlocutor(@PathVariable Long id,
+                                                                      @RequestParam(required = false) String sortType,
+                                                                      @RequestParam(required = false) List<String> sortProperties) {
+        return messageRestService.findMessageByInterlocutor(id, sortType, sortProperties);
+    }
+
     @GetMapping(value = "/interlocutor/{id}/page")
     public ResponseEntity<Page<MessageDTO>> findMessageByInterlocutor(@PathVariable Long id,
                                                                       @RequestParam(required = false) Integer page,
@@ -59,13 +71,6 @@ public class MessageRestController {
                                                                       @RequestParam(required = false) String sortType,
                                                                       @RequestParam(required = false) List<String> sortProperties) {
         return messageRestService.findMessageByInterlocutor(id, page, size, sortType, sortProperties);
-    }
-
-    @GetMapping(value = "/interlocutor/{id}")
-    public ResponseEntity<List<MessageDTO>> findMessageByInterlocutor(@PathVariable Long id,
-                                                                      @RequestParam(required = false) String sortType,
-                                                                      @RequestParam(required = false) List<String> sortProperties) {
-        return messageRestService.findMessageByInterlocutor(id, sortType, sortProperties);
     }
 
     @GetMapping(value = "/recipient/user/{id}/page")

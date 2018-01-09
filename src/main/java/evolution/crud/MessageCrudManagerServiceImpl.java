@@ -126,6 +126,13 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
     }
 
     @Override
+    public List<Message> findMessageByInterlocutor(Long interlocutor, Long second, String sortType, List<String> sortProperties) {
+        Sort s = getSortForRestService(sortType, sortProperties,
+                this.defaultMessageSortType, this.defaultMessageSortProperties);
+        return messageRepository.findMessageByInterlocutor(interlocutor, second, s);
+    }
+
+    @Override
     public Page<Message> findMessageByInterlocutor(Long interlocutor, Long second, Integer page, Integer size, String sort, List<String> sortProperties) {
         Pageable p = getPageableForRestService(page, size, sort, sortProperties,
                 this.messageMaxFetch, this.defaultMessageSortType, this.defaultMessageSortProperties);
