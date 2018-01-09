@@ -118,6 +118,11 @@ public class ChannelRestController {
         return channelRestService.deleteChannel(id);
     }
 
+    @DeleteMapping(value = "/message/{id}")
+    public ResponseEntity<HttpStatus> deleteMessageChannel(@PathVariable Long id) {
+        return channelRestService.deleteMessageChannel(id);
+    }
+
     @PostMapping(value = "/join/{id}")
     public ResponseEntity<ChannelDTO> joinToChannel(@PathVariable Long id) {
         return channelRestService.joinToChannel(id);

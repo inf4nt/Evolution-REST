@@ -197,7 +197,11 @@ public class ChannelRestServiceImpl implements ChannelRestService {
 
     @Override
     public ResponseEntity<HttpStatus> deleteMessageChannel(Long id) {
-        return null;
+        BusinessServiceExecuteResult<BusinessServiceExecuteStatus> b = channelBusinessService.deleteMessageChannel(id);
+        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok().build();
     }
 
     @Override

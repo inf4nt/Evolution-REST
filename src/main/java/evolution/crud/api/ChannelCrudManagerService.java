@@ -3,6 +3,7 @@ package evolution.crud.api;
 import evolution.dto.model.ChannelSaveDTO;
 import evolution.model.User;
 import evolution.model.channel.Channel;
+import evolution.model.channel.MessageChannel;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

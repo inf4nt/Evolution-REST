@@ -1,6 +1,7 @@
 package evolution.crud;
 
 import evolution.crud.api.ChannelCrudManagerService;
+import evolution.crud.api.MessageChannelCrudManagerService;
 import evolution.crud.api.UserCrudManagerService;
 import evolution.dto.model.ChannelSaveDTO;
 import evolution.model.User;
@@ -43,14 +44,18 @@ public class ChannelCrudManagerServiceImpl implements ChannelCrudManagerService 
 
     private final UserCrudManagerService userCrudManagerService;
 
+    private final MessageChannelCrudManagerService messageChannelCrudManagerService;
+
     private final DateService dateService;
 
     @Autowired
     public ChannelCrudManagerServiceImpl(ChannelRepository channelRepository,
                                          UserCrudManagerService userCrudManagerService,
+                                         MessageChannelCrudManagerService messageChannelCrudManagerService,
                                          DateService dateService) {
         this.channelRepository = channelRepository;
         this.userCrudManagerService = userCrudManagerService;
+        this.messageChannelCrudManagerService = messageChannelCrudManagerService;
         this.dateService = dateService;
     }
 

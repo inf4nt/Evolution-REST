@@ -2,8 +2,6 @@ package evolution.crud;
 
 import evolution.crud.api.MessageChannelCrudManagerService;
 import evolution.crud.api.UserCrudManagerService;
-import evolution.model.User;
-import evolution.model.channel.Channel;
 import evolution.model.channel.MessageChannel;
 import evolution.repository.MessageChanelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,6 +108,13 @@ public class MessageChannelCrudManagerServiceImpl implements MessageChannelCrudM
     @Override
     public MessageChannel save(MessageChannel object) {
         return messageChanelRepository.save(object);
+    }
+
+    @Override
+    @Transactional
+    public void deleteByIdAndSenderId(Long id, Long senderId) {
+        Optional<MessageChannel> mc = messageChanelRepository.findOneMessageChannel(id, senderId);
+        mc.ifPresent(messageChanelRepository::delete);
     }
 
     @Override

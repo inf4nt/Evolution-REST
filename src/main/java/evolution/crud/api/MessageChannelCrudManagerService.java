@@ -23,5 +23,7 @@ public interface MessageChannelCrudManagerService extends AbstractCrudManagerSer
 
     Long findCountMessageChannelByChannelId(Long id);
 
+    void deleteByIdAndSenderId(Long id, Long senderId);
+
 //    MessageChannel save(String text, Long senderId, Long channelId);
 }

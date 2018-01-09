@@ -275,7 +275,12 @@ public class ChannelBusinessServiceImpl implements ChannelBusinessService {
 
     @Override
     public BusinessServiceExecuteResult<BusinessServiceExecuteStatus> deleteMessageChannel(Long id) {
-        return null;
+        if (securitySupportService.isAdmin()) {
+            messageChannelCrudManagerService.delete(id);
+        } else {
+            messageChannelCrudManagerService.deleteByIdAndSenderId(id, securitySupportService.getAuthenticationPrincipal().getUser().getId());
+        }
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK);
     }
 
     @Override

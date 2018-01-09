@@ -135,7 +135,7 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
     @Override
     public void delete(Long aLong) {
         Optional<Message> message = messageRepository.findOneMessageById(aLong);
-        message.ifPresent(m -> messageRepository.delete(m));
+        message.ifPresent(messageRepository::delete);
     }
 
     @Override
