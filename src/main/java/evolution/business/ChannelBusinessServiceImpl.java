@@ -20,7 +20,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -193,8 +192,8 @@ public class ChannelBusinessServiceImpl implements ChannelBusinessService {
     }
 
     @Override
-    public Long findCountChannelUserByChannelId(Long id) {
-        return channelCrudManagerService.findCountUserByChannelId(id);
+    public Long countUserByChannel(Long id) {
+        return channelCrudManagerService.countUserByChannel(id);
     }
 
     @Override

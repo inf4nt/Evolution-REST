@@ -202,13 +202,18 @@ public class ChannelCrudManagerServiceImpl implements ChannelCrudManagerService 
     }
 
     @Override
-    public Long findCountUserByChannelId(Long id) {
-        return channelRepository.findCountUserByChannelId(id);
+    public Long countUserByChannel(Long id) {
+        return channelRepository.countUserByChannel(id);
     }
 
     @Override
+    @Transactional
     public List<User> findUserByChannel(Long channelId) {
-        return null;
+        Optional<Channel> oc = findOne(channelId);
+        if (oc.isPresent()) {
+            return oc.get().getChannelUser();
+        }
+        return new ArrayList<>();
     }
 
     @Override

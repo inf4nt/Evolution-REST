@@ -149,8 +149,8 @@ public class ChannelRestServiceImpl implements ChannelRestService {
     }
 
     @Override
-    public ResponseEntity<Long> findCountChannelUserByChannelId(Long id) {
-        return ResponseEntity.ok(channelBusinessService.findCountChannelUserByChannelId(id));
+    public ResponseEntity<Long> countUserByChannel(Long id) {
+        return ResponseEntity.ok(channelBusinessService.countUserByChannel(id));
     }
 
     @Override

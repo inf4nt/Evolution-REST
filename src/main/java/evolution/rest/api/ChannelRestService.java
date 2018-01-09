@@ -62,7 +62,7 @@ public interface ChannelRestService extends AbstractRestService {
 
     ResponseEntity<Long> findCountMessageByChannelId(Long id);
 
-    ResponseEntity<Long> findCountChannelUserByChannelId(Long id);
+    ResponseEntity<Long> countUserByChannel(Long id);
 
     ResponseEntity<ChannelDTO> createNewChannel(ChannelSaveDTO channelSaveDTO);
 

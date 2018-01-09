@@ -132,4 +132,30 @@ public class ChannelRestController {
     public ResponseEntity<ChannelDTO> out(@PathVariable Long id) {
         return channelRestService.outFromChannel(id);
     }
+
+    @GetMapping(value = "/{id}/count-user")
+    public ResponseEntity<Long> countUserByChannel(@PathVariable Long id) {
+        return channelRestService.countUserByChannel(id);
+    }
+
+    @GetMapping(value = "/{id}/user")
+    public ResponseEntity<List<UserDTO>> findUserByChannel(@PathVariable Long id) {
+        return channelRestService.findUserByChannelId(id);
+    }
+
+    @GetMapping(value = "/{id}/user/list")
+    public ResponseEntity<List<UserDTO>> findUserByChannel(@PathVariable Long id,
+                                                           @RequestParam(required = false) String sortType,
+                                                           @RequestParam(required = false) List<String> sortProperties) {
+        return channelRestService.findUserByChannelId(id, sortType, sortProperties);
+    }
+
+    @GetMapping(value = "/{id}/user/page")
+    public ResponseEntity<Page<UserDTO>> findUserByChannel(@PathVariable Long id,
+                                                           @RequestParam(required = false) Integer page,
+                                                           @RequestParam(required = false) Integer size,
+                                                           @RequestParam(required = false) String sortType,
+                                                           @RequestParam(required = false) List<String> sortProperties) {
+        return channelRestService.findUserByChannelId(id, page, size, sortType, sortProperties);
+    }
 }

@@ -43,7 +43,7 @@ public interface ChannelCrudManagerService extends AbstractCrudManagerService<Ch
 
     Page<Channel> findChannelForWhoCreateChannelUser(Long userId, Integer page, Integer size, String sortType, List<String> sortProperties);
 
-    Long findCountUserByChannelId(Long id);
+    Long countUserByChannel(Long id);
 
     List<User> findUserByChannel(Long channelId);
 

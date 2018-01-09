@@ -64,7 +64,7 @@ public interface ChannelBusinessService {
 
     Long findCountMessageByChannelId(Long id);
 
-    Long findCountChannelUserByChannelId(Long id);
+    Long countUserByChannel(Long id);
 
     BusinessServiceExecuteResult<ChannelDTO> createNewChannel3(ChannelSaveDTO channelSaveDTO);
 
