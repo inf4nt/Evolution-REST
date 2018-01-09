@@ -234,7 +234,10 @@ public class ChannelCrudManagerServiceImpl implements ChannelCrudManagerService 
         }
 
         Channel channel = new Channel();
-        channel.setChannelUser(new ArrayList<User>(){{add(ou.get());}});
+
+        channel.getChannelUser()
+                .add(ou.get());
+
         channel.setWhoCreatedChannel(ou.get());
         channel.setPrivate(channelSaveDTO.isPrivate());
         channel.setDateCreate(dateService.getCurrentDateInUTC());
@@ -248,7 +251,8 @@ public class ChannelCrudManagerServiceImpl implements ChannelCrudManagerService 
         messageChannel.setActive(true);
         messageChannel.setSender(ou.get());
 
-        channel.setMessageChannelList(new ArrayList<MessageChannel>(){{add(messageChannel);}});
+        channel.getMessageChannelList()
+                .add(messageChannel);
 
         return Optional.of(save(channel));
     }
