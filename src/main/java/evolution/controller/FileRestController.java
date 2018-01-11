@@ -1,6 +1,9 @@
 package evolution.controller;
 
 import com.google.api.client.http.FileContent;
+import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpResponse;
+import com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
@@ -11,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,17 +53,27 @@ public class FileRestController {
         System.out.println("===================================");
     }
 
-    @GetMapping(value = "/upload")
-    public void upload() throws IOException {
-        File fileMetadata = new File();
-        fileMetadata.setName("/E-Nexc_YR2I.jpg");
-        java.io.File filePath = new java.io.File("/E-Nexc_YR2I.jpg");
-        FileContent mediaContent = new FileContent("image/jpeg", filePath);
-        File file = googleDrive.getDrive().files().create(fileMetadata, mediaContent)
-                .setFields("id")
-                .execute();
-        System.out.println("File ID: " + file.getId());
-    }
 
+    @GetMapping(value = "/test2")
+    public Object test2() throws IOException {
+        Drive drive = googleDrive.getDrive();
+        FileList result = drive.files().list()
+                .setPageSize(10)
+                .setFields("nextPageToken, files(id, name, parents, webViewLink, webContentLink, iconLink)")
+                .execute();
+        List<File> files = result.getFiles();
+        File file = files.get(0);
+
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        drive.files().get(file.getId()).executeMediaAndDownloadTo(outputStream);
+        byte [] b = outputStream.toByteArray();
+        byte[] encoded = Base64.encodeBase64(b);
+        String encodedString = new String(encoded);
+
+//        data:image/gif;base64,
+
+        return file.getWebContentLink();
+    }
 
 }
