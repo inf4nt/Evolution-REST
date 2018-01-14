@@ -249,5 +249,4 @@ public class GoogleDriveImpl implements GoogleDrive {
     public String getShareLinkByFileId(String id) {
         return getShareLinkByFileId(drive().files().get(id).execute());
     }
-
 }
