@@ -74,7 +74,7 @@ public class GoogleDriveImpl implements GoogleDrive {
     private final HashMap<String, String> extensions;
 
     public GoogleDriveImpl() {
-                try {
+        try {
             HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
             DATA_STORE_FACTORY = new FileDataStoreFactory(DATA_STORE_DIR);
         } catch (Throwable t) {
