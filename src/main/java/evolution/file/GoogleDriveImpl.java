@@ -74,13 +74,13 @@ public class GoogleDriveImpl implements GoogleDrive {
     private final HashMap<String, String> extensions;
 
     static {
-        try {
-            HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-            DATA_STORE_FACTORY = new FileDataStoreFactory(DATA_STORE_DIR);
-        } catch (Throwable t) {
-            logger.info("error " + t);
-            System.exit(1);
-        }
+//        try {
+//            HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+//            DATA_STORE_FACTORY = new FileDataStoreFactory(DATA_STORE_DIR);
+//        } catch (Throwable t) {
+//            logger.info("error " + t);
+//            System.exit(1);
+//        }
     }
 
     public GoogleDriveImpl() {
