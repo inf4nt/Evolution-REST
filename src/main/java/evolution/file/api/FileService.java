@@ -1,18 +1,37 @@
 package evolution.file.api;
 
-import com.google.api.services.drive.Drive;
+
+import com.google.api.services.drive.model.Permission;
+import lombok.SneakyThrows;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.List;
 
 public interface FileService {
 
-    boolean uploadFile(File file) throws IOException;
+    String uploadFile(File file, Permission permission);
 
-    String uploadFile(MultipartFile  file) throws IOException;
+    @SneakyThrows
+    String uploadFile(MultipartFile multipartFile, Permission permission);
 
-    File getFileByKey(String fileKey) throws IOException;
+    String uploadFile(File file);
+
+    String uploadFile(MultipartFile multipartFile);
+
+    File getFileByKey(String fileKey);
+
+    String getLinkByFileKey(String fileKey);
 
     String generateFileKey();
+
+    List<String> getAllFileLink();
+
+    List<String> getAllFileId();
+
+    List<File> getAllFile();
+
+    void delete(String fileKey);
+
+    void deleteAll();
 }

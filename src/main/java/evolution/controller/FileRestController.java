@@ -1,22 +1,19 @@
 package evolution.controller;
 
-import com.google.api.client.http.FileContent;
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpResponse;
 import com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import evolution.file.api.FileService;
+import evolution.file.GoogleDriveImpl;
 import evolution.file.api.GoogleDrive;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -35,19 +32,69 @@ public class FileRestController {
         this.googleDrive = googleDrive;
     }
 
+    @GetMapping
+    public ResponseEntity<List<File>> getAllFile() {
+//        return ResponseEntity.ok(fileService.getAllFiles().getFiles());
+        return null;
+    }
+
+    @GetMapping(value = "/{fileKey}")
+    public ResponseEntity<String> getLinkByFleKey(@PathVariable String fileKey) {
+        return null;
+    }
+
+    @PostMapping
+    public ResponseEntity<String> upload(@RequestParam(name = "file") MultipartFile multipartFile) {
+        return null;
+    }
+
+    @GetMapping(value = "/download/{fileKey}")
+    public ResponseEntity<String> downloadFileByKey(@PathVariable String fileKey) {
+        return null;
+    }
+
+    @GetMapping(value = "/delete/all")
+    public ResponseEntity<HttpStatus> deleteAll() {
+        fileService.deleteAll();
+
+        return ResponseEntity.ok().build();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     @GetMapping(value = "/test")
     public void test() throws IOException {
-        Drive drive = googleDrive.getDrive();
+        Drive drive = googleDrive.drive();
         FileList result = drive.files().list()
-                .setPageSize(10)
                 .setFields("nextPageToken, files(id, name, parents, webViewLink )")
                 .execute();
         List<File> files = result.getFiles();
 
 
-        if (files != null) {
-            files.forEach(o -> System.out.println(o));
-
+        for (int i = 0; i < files.size(); i++) {
+            System.out.println(i + " " + files.get(i));
         }
 
         System.out.println("===================================");
@@ -56,7 +103,7 @@ public class FileRestController {
 
     @GetMapping(value = "/test2")
     public Object test2() throws IOException {
-        Drive drive = googleDrive.getDrive();
+        Drive drive = googleDrive.drive();
         FileList result = drive.files().list()
                 .setPageSize(10)
                 .setFields("nextPageToken, files(id, name, parents, webViewLink, webContentLink, iconLink)")
@@ -71,9 +118,32 @@ public class FileRestController {
         byte[] encoded = Base64.encodeBase64(b);
         String encodedString = new String(encoded);
 
-//        data:image/gif;base64,
+        if (file.getPermissions() != null) {
+            file.getPermissions().forEach(System.out::println);
+        }
 
+        String link = "https://docs.google.com/uc?id=" + file.getWebViewLink();
+
+        String res = "data:image/jpg;base64," + encodedString;
+//        https://drive.google.com/file/d/13Cbi9RMmHLmwY5_fUIOhny3n1kqUVvmn/view?usp=drivesdk
+//        13Cbi9RMmHLmwY5_fUIOhny3n1kqUVvmn
         return file.getWebContentLink();
+    }
+
+    @GetMapping(value = "/upload")
+    public String upload() throws IOException {
+        java.io.File file = new java.io.File("/E-Nexc_YR2I.jpg");
+        return fileService.uploadFile(file);
+
+//        File fileMetadata = new File();
+//        fileMetadata.setName("/E-Nexc_YR2I.jpg");
+//        java.io.File filePath = new java.io.File("/E-Nexc_YR2I.jpg");
+//        FileContent mediaContent = new FileContent("image/jpeg", filePath);
+//        File file = googleDrive.getDrive().files().create(fileMetadata, mediaContent)
+//                .setFields("id")
+//                .execute();
+//        System.out.println("File ID: " + file.getId());
+//        return file.getId();
     }
 
 }
