@@ -25,15 +25,10 @@
 		<json.web.token.version>0.7.0</json.web.token.version>
 		<javax.mail.version>1.4.7</javax.mail.version>
 		<model.mapper>1.1.0</model.mapper>
+		<apache.commons-io>2.6</apache.commons-io>
+		<jaco.maven.plugin>0.7.5.201505241946</jaco.maven.plugin>
 	</properties>
-
 	<dependencies>
-
-		<!-- https://mvnrepository.com/artifact/joda-time/joda-time -->
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-devtools -->
 		<dependency>
@@ -90,12 +85,12 @@
 			<artifactId>hibernate-validator</artifactId>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.0</version>
-		</dependency>
+		<!--&lt;!&ndash; https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 &ndash;&gt;-->
+		<!--<dependency>-->
+			<!--<groupId>org.apache.commons</groupId>-->
+			<!--<artifactId>commons-lang3</artifactId>-->
+			<!--<version>3.0</version>-->
+		<!--</dependency>-->
 
 		<!-- https://mvnrepository.com/artifact/javax.mail/mail -->
 		<dependency>
@@ -143,8 +138,22 @@
         <dependency>
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
-            <version>0.7.5.201505241946</version>
+            <version>${jaco.maven.plugin}</version>
         </dependency>
+
+		<!-- https://mvnrepository.com/artifact/joda-time/joda-time -->
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>${apache.commons-io}</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

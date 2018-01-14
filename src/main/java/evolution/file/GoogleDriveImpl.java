@@ -12,8 +12,8 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 
-import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import com.google.api.services.drive.model.Permission;
@@ -24,13 +24,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class GoogleDriveImpl implements GoogleDrive {
@@ -70,20 +69,10 @@ public class GoogleDriveImpl implements GoogleDrive {
      * If modifying these scopes, delete your previously saved google.drive.credentials
      * at ~/.google.drive.credentials/drive-java-quickstart
      */
-    private final List<String> SCOPES = new ArrayList<String>() {{
-        add(DriveScopes.DRIVE);
-    }};
+    private final List<String> SCOPES;
 
     @Getter
-    private final HashMap<String, String> extensions = new HashMap<String, String>() {{
-        put(".mp3", "audio/mpeg");
-        put(".json", "application/json");
-        put(".txt", "text/pain");
-        put(".png", "image/png");
-        put(".bmp", "image/x-windows-bmp");
-        put(".jpg", "image/jpeg");
-        put("", "application/vnd.google-apps.folder");
-    }};
+    private final HashMap<String, String> extensions;
 
     static {
         try {
@@ -91,10 +80,26 @@ public class GoogleDriveImpl implements GoogleDrive {
             DATA_STORE_FACTORY = new FileDataStoreFactory(DATA_STORE_DIR);
         } catch (Throwable t) {
             logger.info("error " + t);
-            t.printStackTrace();
             System.exit(1);
         }
     }
+
+    public GoogleDriveImpl() {
+        List<String> scopes = new ArrayList<>();
+        scopes.add(DriveScopes.DRIVE);
+        SCOPES = scopes;
+
+        HashMap<String, String> extensions = new HashMap<>();
+        extensions.put(".mp3", "audio/mpeg");
+        extensions.put(".json", "application/json");
+        extensions.put(".txt", "text/pain");
+        extensions.put(".png", "image/png");
+        extensions.put(".bmp", "image/x-windows-bmp");
+        extensions.put(".jpg", "image/jpeg");
+        extensions.put("", "application/vnd.google-apps.folder");
+        this.extensions = extensions;
+    }
+
 
     @SneakyThrows
     private Credential authorize() {
@@ -169,6 +174,15 @@ public class GoogleDriveImpl implements GoogleDrive {
     }
 
     @Override
+    public String createSharedFile(File file, FileContent fileContent) {
+        Permission per = new Permission();
+        per.setType("anyone");
+        per.setRole("reader");
+
+        return create(file, fileContent, per);
+    }
+
+    @Override
     @SneakyThrows
     public void delete(String id) {
         drive().files().delete(id).execute();
@@ -177,9 +191,7 @@ public class GoogleDriveImpl implements GoogleDrive {
     @Override
     @SneakyThrows
     public void deleteAll() {
-        getAllFiles().getFiles().forEach(o -> {
-            delete(o.getId());
-        });
+        getAllFiles().getFiles().forEach(o -> delete(o.getId()));
     }
 
     @Override

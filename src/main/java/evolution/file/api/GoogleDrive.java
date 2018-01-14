@@ -19,6 +19,8 @@ public interface GoogleDrive {
 
     String create(File file, FileContent fileContent, Permission permission);
 
+    String createSharedFile(File file, FileContent fileContent);
+
     File update(String id, File file);
 
     void delete(String id);

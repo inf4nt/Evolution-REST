@@ -5,7 +5,6 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import evolution.file.api.FileService;
-import evolution.file.GoogleDriveImpl;
 import evolution.file.api.GoogleDrive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -133,7 +132,7 @@ public class FileRestController {
     @GetMapping(value = "/upload")
     public String upload() throws IOException {
         java.io.File file = new java.io.File("/E-Nexc_YR2I.jpg");
-        return fileService.uploadFile(file);
+        return fileService.uploadSharedFile(file);
 
 //        File fileMetadata = new File();
 //        fileMetadata.setName("/E-Nexc_YR2I.jpg");
