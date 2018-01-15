@@ -3,7 +3,7 @@ package evolution.module.user.rest.api;
 
 import evolution.module.user.dto.UserDTO;
 import evolution.module.user.dto.UserDTOLazy;
-import evolution.rest.api.AbstractRestService;
+import evolution.rest.AbstractRestService;
 import evolution.user.dto.UserSaveDTO;
 import evolution.user.dto.UserUpdateDTO;
 import evolution.user.dto.UserSetPasswordDTO;

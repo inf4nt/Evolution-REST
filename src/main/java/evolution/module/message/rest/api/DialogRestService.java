@@ -3,7 +3,7 @@ package evolution.module.message.rest.api;
 import evolution.module.message.dto.DialogDTO;
 import evolution.module.message.dto.DialogDTOLazy;
 import evolution.module.message.dto.MessageDTO;
-import evolution.rest.api.AbstractRestService;
+import evolution.rest.AbstractRestService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

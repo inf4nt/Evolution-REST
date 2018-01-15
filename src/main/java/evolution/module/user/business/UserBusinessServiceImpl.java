@@ -16,7 +16,7 @@ import evolution.user.dto.UserSaveDTO;
 import evolution.user.dto.UserUpdateDTO;
 import evolution.user.dto.UserSetPasswordDTO;
 import evolution.service.DateService;
-import evolution.service.UserTechnicalService;
+import evolution.module.user.service.UserTechnicalService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

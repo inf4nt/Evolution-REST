@@ -1,4 +1,4 @@
-package evolution.rest.api;
+package evolution.rest;
 
 import evolution.business.BusinessServiceExecuteResult;
 import evolution.common.BusinessServiceExecuteStatus;

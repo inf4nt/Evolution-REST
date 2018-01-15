@@ -4,7 +4,7 @@ import evolution.module.friend.dto.FriendActionDTO;
 import evolution.module.friend.dto.FriendDTO;
 import evolution.module.friend.dto.FriendDTOLazy;
 import evolution.module.friend.dto.FriendResultActionDTO;
-import evolution.rest.api.AbstractRestService;
+import evolution.rest.AbstractRestService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 

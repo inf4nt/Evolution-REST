@@ -2,7 +2,7 @@ package evolution.module.message.rest.api;
 
 import evolution.module.message.dto.*;
 import evolution.module.user.dto.UserDTO;
-import evolution.rest.api.AbstractRestService;
+import evolution.rest.AbstractRestService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

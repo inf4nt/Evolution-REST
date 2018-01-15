@@ -3,7 +3,7 @@ package evolution.module.feed.rest.api;
 import evolution.module.feed.dto.FeedDTO;
 import evolution.module.feed.dto.FeedSaveDTO;
 import evolution.module.feed.dto.FeedUpdateDTO;
-import evolution.rest.api.AbstractRestService;
+import evolution.rest.AbstractRestService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 

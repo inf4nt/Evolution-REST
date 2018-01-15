@@ -1,4 +1,4 @@
-package evolution.service;
+package evolution.module.user.service;
 
 import evolution.module.user.model.User;
 import org.springframework.beans.factory.annotation.Autowired;

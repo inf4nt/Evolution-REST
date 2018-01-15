@@ -2,7 +2,7 @@ package evolution.module.security.crud;
 
 import evolution.module.security.crud.api.AuthenticationSessionCrudManagerService;
 import evolution.security.model.AuthenticationSession;
-import evolution.repository.JwtSecurityRepository;
+import evolution.module.security.repository.JwtSecurityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

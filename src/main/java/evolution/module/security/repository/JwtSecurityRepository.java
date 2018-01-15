@@ -1,4 +1,4 @@
-package evolution.repository;
+package evolution.module.security.repository;
 
 import evolution.security.model.AuthenticationSession;
 import org.springframework.data.jpa.repository.JpaRepository;
