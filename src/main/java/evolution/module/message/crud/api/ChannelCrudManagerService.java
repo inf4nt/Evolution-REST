@@ -1,11 +1,11 @@
-package evolution.message.crud.api;
+package evolution.module.message.crud.api;
 
 import evolution.crud.AbstractCrudManagerService;
 import evolution.crud.InitializeLazyCrudManagerService;
 import evolution.crud.PageableManager;
-import evolution.message.dto.ChannelSaveDTO;
-import evolution.user.model.User;
-import evolution.message.model.Channel;
+import evolution.module.message.dto.ChannelSaveDTO;
+import evolution.module.message.model.Channel;
+import evolution.module.user.model.User;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

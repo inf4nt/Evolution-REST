@@ -1,14 +1,13 @@
-package evolution.friend.business.api;
+package evolution.module.friend.business.api;
 
 import evolution.business.BusinessServiceExecuteResult;
 import evolution.friend.common.FriendActionEnum;
-import evolution.friend.dto.FriendActionDTO;
-import evolution.friend.dto.FriendDTO;
-import evolution.friend.dto.FriendDTOLazy;
-import evolution.friend.dto.FriendResultActionDTO;
-import evolution.friend.model.Friend;
+import evolution.module.friend.dto.FriendActionDTO;
+import evolution.module.friend.dto.FriendDTO;
+import evolution.module.friend.dto.FriendDTOLazy;
+import evolution.module.friend.dto.FriendResultActionDTO;
+import evolution.module.friend.model.Friend;
 import org.springframework.data.domain.Page;
-
 import java.util.List;
 import java.util.Optional;
 

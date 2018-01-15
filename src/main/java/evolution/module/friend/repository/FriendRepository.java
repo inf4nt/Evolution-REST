@@ -1,7 +1,7 @@
-package evolution.friend.repository;
+package evolution.module.friend.repository;
 
 import evolution.friend.common.RelationshipStatus;
-import evolution.friend.model.Friend;
+import evolution.module.friend.model.Friend;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,10 +1,10 @@
-package evolution.friend.crud;
+package evolution.module.friend.crud;
 
 import evolution.friend.common.RelationshipStatus;
-import evolution.friend.crud.api.FriendCrudManagerService;
-import evolution.friend.model.Friend;
-import evolution.user.model.User;
-import evolution.friend.repository.FriendRepository;
+import evolution.module.friend.crud.api.FriendCrudManagerService;
+import evolution.module.friend.model.Friend;
+import evolution.module.friend.repository.FriendRepository;
+import evolution.module.user.model.User;
 import evolution.user.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

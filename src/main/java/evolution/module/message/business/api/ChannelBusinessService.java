@@ -1,12 +1,13 @@
-package evolution.message.business.api;
+package evolution.module.message.business.api;
 
 import evolution.business.BusinessServiceExecuteResult;
 import evolution.common.BusinessServiceExecuteStatus;
-import evolution.message.dto.*;
-import evolution.message.model.Channel;
-import evolution.message.model.MessageChannel;
-import evolution.user.dto.UserDTO;
+import evolution.module.message.dto.*;
+import evolution.module.message.model.Channel;
+import evolution.module.message.model.MessageChannel;
+import evolution.module.user.dto.UserDTO;
 import org.springframework.data.domain.Page;
+
 
 import java.util.List;
 import java.util.Optional;

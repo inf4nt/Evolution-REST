@@ -1,8 +1,8 @@
-package evolution.security;
+package evolution.module.security;
 
 import evolution.module.security.crud.api.AuthenticationSessionCrudManagerService;
+import evolution.module.security.token.JwtTokenService;
 import evolution.security.model.AuthenticationSession;
-import evolution.security.token.JwtTokenService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;

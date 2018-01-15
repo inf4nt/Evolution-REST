@@ -1,14 +1,14 @@
-package evolution.user.business.api;
+package evolution.module.user.business.api;
 
 
 import evolution.business.BusinessServiceExecuteResult;
 import evolution.common.BusinessServiceExecuteStatus;
-import evolution.user.dto.UserDTO;
-import evolution.user.dto.UserDTOLazy;
+import evolution.module.user.dto.UserDTO;
+import evolution.module.user.dto.UserDTOLazy;
+import evolution.module.user.model.User;
 import evolution.user.dto.UserSaveDTO;
 import evolution.user.dto.UserUpdateDTO;
 import evolution.user.dto.UserSetPasswordDTO;
-import evolution.user.model.User;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

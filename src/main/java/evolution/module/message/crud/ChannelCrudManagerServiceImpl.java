@@ -1,13 +1,14 @@
-package evolution.message.crud;
+package evolution.module.message.crud;
 
-import evolution.message.crud.api.ChannelCrudManagerService;
-import evolution.message.crud.api.MessageChannelCrudManagerService;
-import evolution.user.crud.api.UserCrudManagerService;
-import evolution.message.dto.ChannelSaveDTO;
-import evolution.user.model.User;
-import evolution.message.model.Channel;
-import evolution.message.model.MessageChannel;
-import evolution.message.repository.ChannelRepository;
+
+import evolution.module.message.crud.api.ChannelCrudManagerService;
+import evolution.module.message.crud.api.MessageChannelCrudManagerService;
+import evolution.module.message.dto.ChannelSaveDTO;
+import evolution.module.message.model.Channel;
+import evolution.module.message.model.MessageChannel;
+import evolution.module.message.repository.ChannelRepository;
+import evolution.module.user.crud.api.UserCrudManagerService;
+import evolution.module.user.model.User;
 import evolution.service.DateService;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,9 +1,8 @@
-package evolution.message.dto.transfer;
-
+package evolution.module.message.dto.transfer;
 
 import evolution.dto.TransferDTO;
-import evolution.message.dto.MessageChannelDTO;
-import evolution.message.model.MessageChannel;
+import evolution.module.message.dto.MessageChannelDTO;
+import evolution.module.message.model.MessageChannel;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

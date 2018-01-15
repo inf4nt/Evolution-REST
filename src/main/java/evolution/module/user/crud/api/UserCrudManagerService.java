@@ -1,10 +1,10 @@
-package evolution.user.crud.api;
+package evolution.module.user.crud.api;
 
 import evolution.crud.AbstractCrudManagerService;
 import evolution.crud.InitializeLazyCrudManagerService;
 import evolution.crud.PageableManager;
-import evolution.user.model.User;
-import evolution.user.model.UserAdditionalData;
+import evolution.module.user.model.User;
+import evolution.module.user.model.UserAdditionalData;
 import org.springframework.data.domain.Page;
 import java.util.List;
 import java.util.Optional;

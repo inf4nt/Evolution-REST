@@ -1,9 +1,9 @@
-package evolution.friend.rest.api;
+package evolution.module.friend.rest.api;
 
-import evolution.friend.dto.FriendActionDTO;
-import evolution.friend.dto.FriendDTO;
-import evolution.friend.dto.FriendDTOLazy;
-import evolution.friend.dto.FriendResultActionDTO;
+import evolution.module.friend.dto.FriendActionDTO;
+import evolution.module.friend.dto.FriendDTO;
+import evolution.module.friend.dto.FriendDTOLazy;
+import evolution.module.friend.dto.FriendResultActionDTO;
 import evolution.rest.api.AbstractRestService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;

@@ -1,9 +1,9 @@
-package evolution.user.rest.api;
+package evolution.module.user.rest.api;
 
 
+import evolution.module.user.dto.UserDTO;
+import evolution.module.user.dto.UserDTOLazy;
 import evolution.rest.api.AbstractRestService;
-import evolution.user.dto.UserDTO;
-import evolution.user.dto.UserDTOLazy;
 import evolution.user.dto.UserSaveDTO;
 import evolution.user.dto.UserUpdateDTO;
 import evolution.user.dto.UserSetPasswordDTO;

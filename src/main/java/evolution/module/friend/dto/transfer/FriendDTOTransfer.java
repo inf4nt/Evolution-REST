@@ -1,12 +1,12 @@
-package evolution.friend.dto.transfer;
+package evolution.module.friend.dto.transfer;
 
-import evolution.friend.dto.FriendDTO;
-import evolution.friend.dto.FriendDTOLazy;
-import evolution.friend.dto.FriendResultActionDTO;
-import evolution.user.dto.UserDTO;
-import evolution.friend.model.Friend;
-import evolution.user.dto.transfer.UserDTOTransfer;
-import evolution.user.model.User;
+import evolution.module.friend.dto.FriendDTO;
+import evolution.module.friend.dto.FriendDTOLazy;
+import evolution.module.friend.dto.FriendResultActionDTO;
+import evolution.module.friend.model.Friend;
+import evolution.module.user.dto.UserDTO;
+import evolution.module.user.dto.transfer.UserDTOTransfer;
+import evolution.module.user.model.User;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

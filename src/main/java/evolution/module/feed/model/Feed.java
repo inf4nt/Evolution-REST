@@ -1,7 +1,7 @@
 package evolution.module.feed.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import evolution.user.model.User;
+import evolution.module.user.model.User;
 import lombok.*;
 
 import javax.persistence.*;

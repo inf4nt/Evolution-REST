@@ -1,8 +1,8 @@
-package evolution.friend.dto;
+package evolution.module.friend.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import evolution.friend.common.RelationshipStatus;
-import evolution.user.dto.UserDTO;
+import evolution.module.user.dto.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

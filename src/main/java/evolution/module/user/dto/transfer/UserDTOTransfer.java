@@ -1,12 +1,13 @@
-package evolution.user.dto.transfer;
+package evolution.module.user.dto.transfer;
+
 
 import evolution.dto.TransferDTOLazy;
-import evolution.user.dto.UserDTO;
-import evolution.user.dto.UserDTOLazy;
+import evolution.module.security.dto.CustomSecurityUser;
+import evolution.module.user.dto.UserDTO;
+import evolution.module.user.dto.UserDTOLazy;
+import evolution.module.user.model.User;
+import evolution.module.user.model.UserAdditionalData;
 import evolution.user.dto.UserSaveDTO;
-import evolution.user.model.User;
-import evolution.user.model.UserAdditionalData;
-import evolution.security.dto.CustomSecurityUser;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

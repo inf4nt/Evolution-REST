@@ -1,4 +1,4 @@
-package evolution.user.dto;
+package evolution.module.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import evolution.user.common.GenderEnum;

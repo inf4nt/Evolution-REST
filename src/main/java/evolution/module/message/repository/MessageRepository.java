@@ -1,6 +1,6 @@
 package evolution.message.repository;
 
-import evolution.message.model.Message;
+import evolution.module.message.model.Message;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;

@@ -1,12 +1,11 @@
-package evolution.message.dto;
+package evolution.module.message.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import evolution.user.dto.UserDTO;
+import evolution.module.user.dto.UserDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.List;
-
 
 @Data
 @JsonInclude

@@ -1,12 +1,12 @@
-package evolution.message.crud;
+package evolution.module.message.crud;
 
-import evolution.message.crud.api.MessageCrudManagerService;
 import evolution.message.dto.MessageSaveDTO;
-import evolution.message.model.Dialog;
-import evolution.message.model.Message;
-import evolution.user.model.User;
-import evolution.message.repository.DialogRepository;
 import evolution.message.repository.MessageRepository;
+import evolution.module.message.crud.api.MessageCrudManagerService;
+import evolution.module.message.model.Dialog;
+import evolution.module.message.model.Message;
+import evolution.module.message.repository.DialogRepository;
+import evolution.module.user.model.User;
 import evolution.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

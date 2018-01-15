@@ -1,8 +1,8 @@
-package evolution.message.rest.api;
+package evolution.module.message.rest.api;
 
-import evolution.message.dto.*;
+import evolution.module.message.dto.*;
+import evolution.module.user.dto.UserDTO;
 import evolution.rest.api.AbstractRestService;
-import evolution.user.dto.UserDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

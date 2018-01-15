@@ -1,10 +1,10 @@
-package evolution.security.controller;
+package evolution.module.security.controller;
 
 
+import evolution.module.security.dto.AuthenticationResponse;
+import evolution.module.security.service.AuthenticationService;
 import evolution.security.dto.AuthenticationRequest;
-import evolution.security.dto.AuthenticationResponse;
 import evolution.security.dto.JwtCleanToken;
-import evolution.security.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

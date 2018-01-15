@@ -1,4 +1,4 @@
-package evolution.security.token;
+package evolution.module.security.token;
 
 import evolution.security.model.AuthenticationSession;
 import io.jsonwebtoken.Claims;

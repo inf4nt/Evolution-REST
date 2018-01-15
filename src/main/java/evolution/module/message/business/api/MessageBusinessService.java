@@ -1,9 +1,9 @@
-package evolution.message.business.api;
+package evolution.module.message.business.api;
 
 import evolution.business.BusinessServiceExecuteResult;
-import evolution.message.dto.MessageDTO;
 import evolution.message.dto.MessageSaveDTO;
 import evolution.message.dto.MessageUpdateDTO;
+import evolution.module.message.dto.MessageDTO;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

@@ -1,6 +1,6 @@
-package evolution.security.dto;
+package evolution.module.security.dto;
 
-import evolution.user.dto.UserDTO;
+import evolution.module.user.dto.UserDTO;
 import lombok.*;
 
 /**

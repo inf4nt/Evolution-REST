@@ -1,9 +1,9 @@
 package evolution.module.security.service;
 
+import evolution.module.security.dto.CustomSecurityUser;
+import evolution.module.user.model.User;
 import evolution.user.common.UserRoleEnum;
 import evolution.module.security.exception.AuthenticationPrincipalNotFoundException;
-import evolution.user.model.User;
-import evolution.security.dto.CustomSecurityUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

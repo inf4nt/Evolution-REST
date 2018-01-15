@@ -1,8 +1,8 @@
-package evolution.message.crud;
+package evolution.module.message.crud;
 
-import evolution.message.crud.api.DialogCrudManagerService;
-import evolution.message.model.Dialog;
-import evolution.message.repository.DialogRepository;
+import evolution.module.message.crud.api.DialogCrudManagerService;
+import evolution.module.message.model.Dialog;
+import evolution.module.message.repository.DialogRepository;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.Optional;
 

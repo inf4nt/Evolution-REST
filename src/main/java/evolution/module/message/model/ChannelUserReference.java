@@ -1,6 +1,6 @@
-package evolution.message.model;
+package evolution.module.message.model;
 
-import evolution.user.model.User;
+import evolution.module.user.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

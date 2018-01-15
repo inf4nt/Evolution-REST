@@ -1,14 +1,13 @@
-package evolution.message.rest;
-
+package evolution.module.message.rest;
 
 
 import evolution.business.BusinessServiceExecuteResult;
-import evolution.message.business.api.MessageBusinessService;
 import evolution.common.BusinessServiceExecuteStatus;
-import evolution.message.dto.MessageDTO;
 import evolution.message.dto.MessageSaveDTO;
 import evolution.message.dto.MessageUpdateDTO;
-import evolution.message.rest.api.MessageRestService;
+import evolution.module.message.business.api.MessageBusinessService;
+import evolution.module.message.dto.MessageDTO;
+import evolution.module.message.rest.api.MessageRestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;

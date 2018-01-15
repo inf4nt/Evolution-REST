@@ -1,12 +1,12 @@
-package evolution.message.rest;
+package evolution.module.message.rest;
 
 import evolution.business.BusinessServiceExecuteResult;
-import evolution.message.business.api.DialogBusinessService;
 import evolution.common.BusinessServiceExecuteStatus;
-import evolution.message.dto.DialogDTO;
-import evolution.message.dto.DialogDTOLazy;
-import evolution.message.dto.MessageDTO;
-import evolution.message.rest.api.DialogRestService;
+import evolution.module.message.business.api.DialogBusinessService;
+import evolution.module.message.dto.DialogDTO;
+import evolution.module.message.dto.DialogDTOLazy;
+import evolution.module.message.dto.MessageDTO;
+import evolution.module.message.rest.api.DialogRestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

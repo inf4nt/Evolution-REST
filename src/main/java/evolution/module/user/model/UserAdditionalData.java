@@ -1,4 +1,4 @@
-package evolution.user.model;
+package evolution.module.user.model;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import evolution.user.common.GenderEnum;

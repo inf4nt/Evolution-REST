@@ -1,6 +1,6 @@
-package evolution.message.repository;
+package evolution.module.message.repository;
 
-import evolution.message.model.Channel;
+import evolution.module.message.model.Channel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;

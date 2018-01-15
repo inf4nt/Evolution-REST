@@ -1,7 +1,7 @@
-package evolution.message.model;
+package evolution.module.message.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import evolution.user.model.User;
+import evolution.module.user.model.User;
 import lombok.Data;
 
 import javax.persistence.*;

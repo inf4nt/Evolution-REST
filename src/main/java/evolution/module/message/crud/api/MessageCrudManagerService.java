@@ -1,11 +1,10 @@
-package evolution.message.crud.api;
+package evolution.module.message.crud.api;
 
 import evolution.crud.AbstractCrudManagerService;
 import evolution.crud.PageableManager;
 import evolution.message.dto.MessageSaveDTO;
-import evolution.message.model.Message;
+import evolution.module.message.model.Message;
 import org.springframework.data.domain.Page;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;

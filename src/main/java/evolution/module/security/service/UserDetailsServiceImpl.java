@@ -1,8 +1,9 @@
-package evolution.security.service;
+package evolution.module.security.service;
 
-import evolution.user.crud.api.UserCrudManagerService;
-import evolution.user.model.User;
-import evolution.security.dto.CustomSecurityUser;
+
+import evolution.module.security.dto.CustomSecurityUser;
+import evolution.module.user.crud.api.UserCrudManagerService;
+import evolution.module.user.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

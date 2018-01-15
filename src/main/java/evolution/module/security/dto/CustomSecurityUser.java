@@ -1,7 +1,7 @@
-package evolution.security.dto;
+package evolution.module.security.dto;
 
 
-import evolution.user.model.User;
+import evolution.module.user.model.User;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;

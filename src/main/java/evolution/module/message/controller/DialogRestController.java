@@ -1,9 +1,10 @@
-package evolution.message.controller;
+package evolution.module.message.controller;
 
-import evolution.message.dto.DialogDTO;
-import evolution.message.dto.DialogDTOLazy;
-import evolution.message.dto.MessageDTO;
-import evolution.message.rest.api.DialogRestService;
+
+import evolution.module.message.dto.DialogDTO;
+import evolution.module.message.dto.DialogDTOLazy;
+import evolution.module.message.dto.MessageDTO;
+import evolution.module.message.rest.api.DialogRestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;

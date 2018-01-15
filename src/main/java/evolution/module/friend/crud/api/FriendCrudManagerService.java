@@ -1,9 +1,8 @@
-package evolution.friend.crud.api;
+package evolution.module.friend.crud.api;
 
 import evolution.crud.PageableManager;
-import evolution.friend.model.Friend;
+import evolution.module.friend.model.Friend;
 import org.springframework.data.domain.Page;
-
 import java.util.List;
 import java.util.Optional;
 

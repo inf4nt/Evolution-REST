@@ -1,6 +1,6 @@
 package evolution.user.repository;
 
-import evolution.user.model.User;
+import evolution.module.user.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;

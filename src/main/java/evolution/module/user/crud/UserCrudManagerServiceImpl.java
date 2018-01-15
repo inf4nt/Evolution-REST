@@ -1,11 +1,11 @@
-package evolution.user.crud;
+package evolution.module.user.crud;
 
-import evolution.message.crud.api.DialogCrudManagerService;
 import evolution.module.feed.crud.api.FeedCrudManagerService;
-import evolution.friend.crud.api.FriendCrudManagerService;
-import evolution.user.crud.api.UserCrudManagerService;
-import evolution.user.model.User;
-import evolution.user.model.UserAdditionalData;
+import evolution.module.friend.crud.api.FriendCrudManagerService;
+import evolution.module.message.crud.api.DialogCrudManagerService;
+import evolution.module.user.crud.api.UserCrudManagerService;
+import evolution.module.user.model.User;
+import evolution.module.user.model.UserAdditionalData;
 import evolution.user.repository.UserRepository;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;

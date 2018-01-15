@@ -1,7 +1,7 @@
-package evolution.security.service;
+package evolution.module.security.service;
 
+import evolution.module.security.dto.AuthenticationResponse;
 import evolution.security.dto.AuthenticationRequest;
-import evolution.security.dto.AuthenticationResponse;
 import evolution.security.dto.JwtCleanToken;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

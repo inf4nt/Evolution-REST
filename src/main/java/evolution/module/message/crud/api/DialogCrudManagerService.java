@@ -1,8 +1,8 @@
-package evolution.message.crud.api;
+package evolution.module.message.crud.api;
 
 import evolution.crud.AbstractCrudManagerService;
 import evolution.crud.PageableManager;
-import evolution.message.model.Dialog;
+import evolution.module.message.model.Dialog;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

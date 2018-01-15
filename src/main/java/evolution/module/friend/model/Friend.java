@@ -1,7 +1,7 @@
-package evolution.friend.model;
+package evolution.module.friend.model;
 
 import evolution.friend.common.RelationshipStatus;
-import evolution.user.model.User;
+import evolution.module.user.model.User;
 import lombok.*;
 import javax.persistence.*;
 import java.io.Serializable;

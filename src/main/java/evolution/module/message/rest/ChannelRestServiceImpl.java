@@ -1,11 +1,11 @@
-package evolution.message.rest;
+package evolution.module.message.rest;
 
 import evolution.business.BusinessServiceExecuteResult;
-import evolution.message.business.api.ChannelBusinessService;
 import evolution.common.BusinessServiceExecuteStatus;
-import evolution.message.dto.*;
-import evolution.message.rest.api.ChannelRestService;
-import evolution.user.dto.UserDTO;
+import evolution.module.message.business.api.ChannelBusinessService;
+import evolution.module.message.dto.*;
+import evolution.module.message.rest.api.ChannelRestService;
+import evolution.module.user.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;

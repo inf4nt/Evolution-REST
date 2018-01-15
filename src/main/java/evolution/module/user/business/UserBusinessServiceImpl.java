@@ -1,21 +1,21 @@
-package evolution.user.business;
+package evolution.module.user.business;
 
 import evolution.business.BusinessServiceExecuteResult;
-import evolution.message.business.api.MessageBusinessService;
-import evolution.user.business.api.UserBusinessService;
+import evolution.module.message.business.api.MessageBusinessService;
+import evolution.module.security.service.SecuritySupportService;
+import evolution.module.user.business.api.UserBusinessService;
 import evolution.common.BusinessServiceExecuteStatus;
+import evolution.module.user.crud.api.UserCrudManagerService;
+import evolution.module.user.dto.UserDTO;
+import evolution.module.user.dto.UserDTOLazy;
+import evolution.module.user.dto.transfer.UserDTOTransfer;
+import evolution.module.user.model.User;
 import evolution.user.common.UserRoleEnum;
-import evolution.user.crud.api.UserCrudManagerService;
 
-import evolution.user.dto.UserDTO;
-import evolution.user.dto.UserDTOLazy;
 import evolution.user.dto.UserSaveDTO;
 import evolution.user.dto.UserUpdateDTO;
 import evolution.user.dto.UserSetPasswordDTO;
-import evolution.user.dto.transfer.UserDTOTransfer;
-import evolution.user.model.User;
 import evolution.service.DateService;
-import evolution.security.service.SecuritySupportService;
 import evolution.service.UserTechnicalService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

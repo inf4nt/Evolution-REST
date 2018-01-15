@@ -1,13 +1,13 @@
-package evolution.message.dto.transfer;
+package evolution.module.message.dto.transfer;
 
 import evolution.dto.TransferDTOLazy;
-import evolution.user.dto.transfer.UserDTOTransfer;
-import evolution.message.dto.DialogDTO;
-import evolution.message.dto.DialogDTOLazy;
-import evolution.message.dto.MessageDTO;
-import evolution.message.model.Dialog;
-import evolution.user.dto.UserDTO;
-import evolution.user.model.User;
+import evolution.module.message.dto.DialogDTO;
+import evolution.module.message.dto.DialogDTOLazy;
+import evolution.module.message.dto.MessageDTO;
+import evolution.module.message.model.Dialog;
+import evolution.module.user.dto.UserDTO;
+import evolution.module.user.dto.transfer.UserDTOTransfer;
+import evolution.module.user.model.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

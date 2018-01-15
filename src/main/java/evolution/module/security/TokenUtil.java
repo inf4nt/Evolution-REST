@@ -1,7 +1,7 @@
 package evolution.security;
 
 
-import evolution.security.dto.CustomSecurityUser;
+import evolution.module.security.dto.CustomSecurityUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

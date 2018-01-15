@@ -2,7 +2,6 @@ package evolution.module.user.model;
 
 
 import evolution.user.common.UserRoleEnum;
-import evolution.security.dto.CustomSecurityUser;
 import lombok.*;
 
 import javax.persistence.*;
@@ -66,14 +65,6 @@ public class User implements Serializable {
         this.role = role;
     }
 
-    public User(CustomSecurityUser customSecurityUser) {
-        this.id = customSecurityUser.getUser().getId();
-        this.firstName = customSecurityUser.getUser().getFirstName();
-        this.lastName = customSecurityUser.getUser().getLastName();
-        this.nickname = customSecurityUser.getUser().getNickname();
-        this.role = customSecurityUser.getUser().getRole();
-    }
-
     @Override
     public String toString() {
         return "User{" +
@@ -86,7 +77,7 @@ public class User implements Serializable {
                 '}';
     }
 
-    public boolean equalsById(Long id) {
-        return this.id.equals(id);
+    public boolean equalsById(Long auth) {
+        return id.equals(auth);
     }
 }

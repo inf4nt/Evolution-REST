@@ -3,14 +3,14 @@ package evolution.user.rest;
 
 
 import evolution.business.BusinessServiceExecuteResult;
-import evolution.user.business.api.UserBusinessService;
 import evolution.common.BusinessServiceExecuteStatus;
-import evolution.user.dto.UserDTO;
-import evolution.user.dto.UserDTOLazy;
+import evolution.module.user.business.api.UserBusinessService;
+import evolution.module.user.dto.UserDTO;
+import evolution.module.user.dto.UserDTOLazy;
+import evolution.module.user.rest.api.UserRestService;
 import evolution.user.dto.UserSaveDTO;
 import evolution.user.dto.UserUpdateDTO;
 import evolution.user.dto.UserSetPasswordDTO;
-import evolution.user.rest.api.UserRestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;

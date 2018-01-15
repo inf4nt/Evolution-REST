@@ -1,4 +1,4 @@
-package evolution.friend.dto;
+package evolution.module.friend.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import evolution.friend.common.FriendActionEnum;

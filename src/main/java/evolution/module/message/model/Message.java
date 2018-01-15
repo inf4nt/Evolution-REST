@@ -1,8 +1,8 @@
-package evolution.message.model;
+package evolution.module.message.model;
 
-import evolution.user.model.User;
+
+import evolution.module.user.model.User;
 import lombok.*;
-
 import javax.persistence.*;
 import java.util.Date;
 

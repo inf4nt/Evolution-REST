@@ -1,7 +1,7 @@
-package evolution.message.dto;
+package evolution.module.message.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import evolution.user.dto.UserDTO;
+import evolution.module.user.dto.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

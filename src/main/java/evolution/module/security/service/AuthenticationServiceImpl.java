@@ -1,14 +1,14 @@
-package evolution.security.service;
+package evolution.module.security.service;
 
+import evolution.module.security.dto.AuthenticationResponse;
+import evolution.module.security.dto.CustomSecurityUser;
+import evolution.module.security.token.JwtTokenService;
+import evolution.module.user.dto.transfer.UserDTOTransfer;
 import evolution.user.common.UserRoleEnum;
 import evolution.module.security.crud.api.AuthenticationSessionCrudManagerService;
-import evolution.user.dto.transfer.UserDTOTransfer;
 import evolution.security.model.AuthenticationSession;
 import evolution.security.dto.AuthenticationRequest;
-import evolution.security.dto.AuthenticationResponse;
-import evolution.security.dto.CustomSecurityUser;
 import evolution.security.dto.JwtCleanToken;
-import evolution.security.token.JwtTokenService;
 import evolution.service.DateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
