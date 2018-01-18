@@ -2,10 +2,10 @@ package evolution.crud;
 
 import evolution.common.RelationshipStatus;
 import evolution.crud.api.FriendCrudManagerService;
+import evolution.crud.api.UserCrudManagerService;
 import evolution.model.Friend;
 import evolution.model.User;
 import evolution.repository.FriendRepository;
-import evolution.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Created by Infant on 08.11.2017.
@@ -32,7 +33,7 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
 
     private final FriendRepository friendRepository;
 
-    private final UserRepository userRepository;
+    private final UserCrudManagerService userCrudManagerService;
 
     private Long firstId;
 
@@ -40,9 +41,15 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
 
     @Autowired
     public FriendCrudManagerServiceImpl(FriendRepository friendRepository,
-                                        UserRepository userRepository) {
+                                        UserCrudManagerService userCrudManagerService) {
         this.friendRepository = friendRepository;
-        this.userRepository = userRepository;
+        this.userCrudManagerService = userCrudManagerService;
+    }
+
+    @Override
+    public CompletableFuture<Optional<Friend>> findOneAsync(Long first, Long second) {
+        return friendRepository.findOneFriendAsync(first, second)
+                .thenApply(v -> Optional.ofNullable(v));
     }
 
     @Override
@@ -122,9 +129,16 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
         User action = null;
 
         init(senderId, recipientId);
-        Optional<Friend> exist = friendRepository.findOneFriend(firstId, secondId);
-        Optional<User> of = userRepository.findOneUserById(firstId);
-        Optional<User> os = userRepository.findOneUserById(secondId);
+
+        CompletableFuture<Optional<Friend>> fe = findOneAsync(firstId, secondId);
+        CompletableFuture<Optional<User>> cf = userCrudManagerService.findOneAsync(firstId);
+        CompletableFuture<Optional<User>> cs = userCrudManagerService.findOneAsync(secondId);
+
+        CompletableFuture.allOf(fe, cf, cs);
+
+        Optional<Friend> exist = fe.join();
+        Optional<User> of = cf.join();
+        Optional<User> os = cs.join();
 
         if (!of.isPresent() || !os.isPresent()) {
             return exist;

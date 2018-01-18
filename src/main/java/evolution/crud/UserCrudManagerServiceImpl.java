@@ -10,6 +10,7 @@ import evolution.repository.UserRepository;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -20,6 +21,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Created by Infant on 07.11.2017.
@@ -49,7 +51,7 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
 
     @Autowired
     public UserCrudManagerServiceImpl(UserRepository userRepository,
-                                      FriendCrudManagerService friendCrudManagerService,
+                                      @Lazy FriendCrudManagerService friendCrudManagerService,
                                       FeedCrudManagerService feedCrudManagerService,
                                       DialogCrudManagerService dialogCrudManagerService) {
         this.userRepository = userRepository;
@@ -92,6 +94,24 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
         Optional<User> op = userRepository.findOneUserById(userId);
         op.ifPresent(this::initializeLazy);
         return op;
+    }
+
+    @Override
+    public CompletableFuture<Optional<User>> findOneAsync(Long userId) {
+        return userRepository.findOneUserByIdAsync(userId)
+                .thenApply(v -> Optional.ofNullable(v));
+    }
+
+    @Override
+    public CompletableFuture<Optional<User>> findOneAsyncLazy(Long userId) {
+        return userRepository.findOneUserByIdAsync(userId)
+                .thenApply(v -> {
+                    if (v != null) {
+                        return Optional.of(initializeLazy(v));
+                    } else {
+                        return Optional.empty();
+                    }
+                });
     }
 
     @Override
@@ -184,8 +204,6 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
             friendCrudManagerService.clearRowByUserForeignKey(o.get().getId());
             dialogCrudManagerService.clearRowByUserForeignKey(o.get().getId());
             //todo clear channel message
-
-
 
             userRepository.delete(o.get());
         }

@@ -5,11 +5,14 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Created by Infant on 08.11.2017.
  */
 public interface FriendCrudManagerService extends PageableManager {
+
+    CompletableFuture<Optional<Friend>> findOneAsync(Long first, Long second);
 
     Page<Friend> findRandomFriends(Long user, Integer size);
 

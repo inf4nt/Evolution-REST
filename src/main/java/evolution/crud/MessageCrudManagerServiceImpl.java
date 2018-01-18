@@ -1,14 +1,13 @@
 package evolution.crud;
 
+import evolution.crud.api.DialogCrudManagerService;
 import evolution.crud.api.MessageCrudManagerService;
+import evolution.crud.api.UserCrudManagerService;
 import evolution.dto.model.MessageSaveDTO;
 import evolution.model.Dialog;
 import evolution.model.Message;
 import evolution.model.User;
-import evolution.repository.DialogRepository;
 import evolution.repository.MessageRepository;
-import evolution.repository.UserRepository;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -30,9 +29,9 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
 
     private final MessageRepository messageRepository;
 
-    private final DialogRepository dialogRepository;
+    private final DialogCrudManagerService dialogCrudManagerService;
 
-    private final UserRepository userRepository;
+    private final UserCrudManagerService userCrudManagerService;
 
     @Value("${model.message.maxfetch}")
     private Integer messageMaxFetch;
@@ -45,11 +44,11 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
 
     @Autowired
     public MessageCrudManagerServiceImpl(MessageRepository messageRepository,
-                                         DialogRepository dialogRepository,
-                                         UserRepository userRepository) {
+                                         DialogCrudManagerService dialogCrudManagerService,
+                                         UserCrudManagerService userCrudManagerService) {
         this.messageRepository = messageRepository;
-        this.dialogRepository = dialogRepository;
-        this.userRepository = userRepository;
+        this.dialogCrudManagerService = dialogCrudManagerService;
+        this.userCrudManagerService = userCrudManagerService;
     }
 
 
@@ -88,15 +87,26 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
         Dialog dialog;
         Message message = new Message();
 
-        CompletableFuture<Dialog> cd = dialogRepository.findDialogByUsersAsync(senderId, recipientId);
-        CompletableFuture<User> cr = userRepository.findOneUserByIdAsync(recipientId);
-        CompletableFuture<User> cs = userRepository.findOneUserByIdAsync(senderId);
+//        CompletableFuture<Dialog> cd = dialogRepository.findDialogByUsersAsync(senderId, recipientId);
+//        CompletableFuture<User> cr = userRepository.findOneUserByIdAsync(recipientId);
+//        CompletableFuture<User> cs = userRepository.findOneUserByIdAsync(senderId);
+//
+//
+//        CompletableFuture.allOf(cd, cr, cs);
+//
+//        Optional<Dialog> od = Optional.ofNullable(cd.join());
+//        Optional<User> or = Optional.ofNullable(cr.join());
+//        Optional<User> os = Optional.ofNullable(cs.join());
+
+        CompletableFuture<Optional<Dialog>> cd = dialogCrudManagerService.findDialogByUsersAsync(senderId, recipientId);
+        CompletableFuture<Optional<User>> cr = userCrudManagerService.findOneAsync(recipientId);
+        CompletableFuture<Optional<User>> cs = userCrudManagerService.findOneAsync(senderId);
 
         CompletableFuture.allOf(cd, cr, cs);
 
-        Optional<Dialog> od = Optional.ofNullable(cd.join());
-        Optional<User> or = Optional.ofNullable(cr.join());
-        Optional<User> os = Optional.ofNullable(cs.join());
+        Optional<Dialog> od = cd.join();
+        Optional<User> or = cr.join();
+        Optional<User> os = cs.join();
 
         os.ifPresent(o -> message.setSender(o));
 
@@ -114,7 +124,7 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
                 dialog.setSecond(or.get());
                 message.setSender(os.get());
             }
-            dialog = dialogRepository.save(dialog);
+            dialog = dialogCrudManagerService.save(dialog);
         }
 
         message.setDateDispatch(createDateUTC);
@@ -164,10 +174,10 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
             List<Message> messageList = dialog.getMessageList();
             if (!messageList.isEmpty()) {
                 if (messageList.size() == 1) {
-                    dialogRepository.delete(dialog);
+                    dialogCrudManagerService.delete(dialog);
                 } else {
                     messageList.remove(message.get());
-                    dialogRepository.save(dialog);
+                    dialogCrudManagerService.save(dialog);
                 }
             }
         });
@@ -182,10 +192,10 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
             List<Message> messageList = dialog.getMessageList();
             if (!messageList.isEmpty()) {
                 if (messageList.size() == 1) {
-                    dialogRepository.delete(dialog);
+                    dialogCrudManagerService.delete(dialog);
                 } else {
                     messageList.remove(message.get());
-                    dialogRepository.save(dialog);
+                    dialogCrudManagerService.save(dialog);
                 }
             }
         });

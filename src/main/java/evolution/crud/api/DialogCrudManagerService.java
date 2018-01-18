@@ -5,13 +5,18 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Created by Infant on 07.11.2017.
  */
-public interface DialogCrudManagerService extends AbstractCrudManagerService<Dialog, Long>, PageableManager {
+public interface DialogCrudManagerService extends AbstractCrudManagerService<Dialog, Long>, PageableManager, InitializeLazyCrudManagerService<Dialog> {
 
     Optional<Dialog> findOneLazy(Long id);
+
+    CompletableFuture<Optional<Dialog>> findDialogByUsersAsync(Long first, Long second);
+
+    CompletableFuture<Optional<Dialog>> findDialogByUsersAsyncLazy(Long first, Long second);
 
     Optional<Dialog> findOneLazyAndParticipantId(Long id, Long participant);
 
@@ -32,6 +37,8 @@ public interface DialogCrudManagerService extends AbstractCrudManagerService<Dia
     Page<Dialog> findDialogsByUserId(Long userId, Integer page, Integer size, String sort, List<String> sortProperties);
 
     Optional<Dialog> findOne(Long iam, Long dialogId);
+
+    void delete(Dialog dialog);
 
     void delete(List<Long> ids);
 

@@ -3,8 +3,11 @@ package evolution.crud.api;
 import evolution.model.User;
 import evolution.model.UserAdditionalData;
 import org.springframework.data.domain.Page;
+import org.springframework.scheduling.annotation.Async;
+
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Created by Infant on 07.11.2017.
@@ -54,6 +57,10 @@ public interface UserCrudManagerService extends AbstractCrudManagerService<User,
     Optional<User> findOneAndIsBlockLazy(Long userId, boolean block);
 
     Optional<User> findOneLazy(Long userId);
+
+    CompletableFuture<Optional<User>> findOneAsync(Long userId);
+
+    CompletableFuture<Optional<User>> findOneAsyncLazy(Long userId);
 
     Page<User> findAllAndIsActiveLazy(boolean active, Integer page, Integer size, String sort, List<String> sortProperties);
 

@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Created by Infant on 07.11.2017.
@@ -47,6 +48,24 @@ public class DialogCrudManagerServiceImpl implements DialogCrudManagerService {
     @Override
     public Optional<Dialog> findOneLazy(Long id) {
         return dialogRepository.findOneLazy(id);
+    }
+
+    @Override
+    public CompletableFuture<Optional<Dialog>> findDialogByUsersAsync(Long first, Long second) {
+        return dialogRepository.findDialogByUsersAsync(first, second)
+                .thenApply(v -> Optional.ofNullable(v));
+    }
+
+    @Override
+    public CompletableFuture<Optional<Dialog>> findDialogByUsersAsyncLazy(Long first, Long second) {
+        return dialogRepository.findDialogByUsersAsync(first, second)
+                .thenApply(v -> {
+                    if (v != null) {
+                        return Optional.ofNullable(initializeLazy(v));
+                    } else {
+                        return Optional.empty();
+                    }
+                });
     }
 
     @Override
@@ -126,6 +145,11 @@ public class DialogCrudManagerServiceImpl implements DialogCrudManagerService {
     }
 
     @Override
+    public void delete(Dialog dialog) {
+        dialogRepository.delete(dialog);
+    }
+
+    @Override
     @Transactional
     public void delete(List<Long> ids) {
         ids.forEach(o -> delete(o));
@@ -153,5 +177,12 @@ public class DialogCrudManagerServiceImpl implements DialogCrudManagerService {
         List<Dialog> list = dialogRepository.findMyDialog(id);
         list.forEach(o -> Hibernate.initialize(o.getMessageList().size()));
         dialogRepository.delete(list);
+    }
+
+    @Override
+    @Transactional
+    public Dialog initializeLazy(Dialog dialog) {
+        Hibernate.initialize(dialog.getMessageList().size());
+        return dialog;
     }
 }
