@@ -7,9 +7,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.scheduling.annotation.Async;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Created by Infant on 07.11.2017.
@@ -19,10 +21,21 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select u from User u where u.id =:id")
     Optional<User> findOneUserById(@Param("id") Long userId);
 
+    @Async
+    @Query("select u from User u where u.id =:id")
+    CompletableFuture<User> findOneUserByIdAsync(@Param("id") Long userId);
+
     @Query("select u " +
             " from User u " +
             " where u.userAdditionalData.username =:username ")
     Optional<User> findUserByUsername(@Param("username") String username);
+
+    @Async
+    @Query("select u " +
+            " from User u " +
+            " join fetch u.userAdditionalData ua " +
+            " where ua.username =:username ")
+    CompletableFuture<User> findUserByUsernameAsync(@Param("username") String username);
 
     @Query("select u " +
             " from User u " +

@@ -24,7 +24,7 @@ public class Message {
     private Dialog dialog;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "sender_id", columnDefinition = "bigint")
+    @JoinColumn(name = "sender_id", columnDefinition = "bigint", nullable = false)
     private User sender;
 
     @Column(name = "message", nullable = false, columnDefinition = "text")

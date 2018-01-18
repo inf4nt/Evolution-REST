@@ -8,6 +8,7 @@ import evolution.model.User;
 import evolution.repository.DialogRepository;
 import evolution.repository.MessageRepository;
 import evolution.repository.UserRepository;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Created by Infant on 07.11.2017.
@@ -83,11 +85,19 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
     @Override
     @Transactional
     public Message saveMessageAndMaybeCreateNewDialog(String text, Long senderId, Long recipientId, Date createDateUTC) {
-        Optional<Dialog> od = dialogRepository.findDialogByUsers(senderId, recipientId);
         Dialog dialog;
         Message message = new Message();
 
-        Optional<User> os = userRepository.findOneUserById(senderId);
+        CompletableFuture<Dialog> cd = dialogRepository.findDialogByUsersAsync(senderId, recipientId);
+        CompletableFuture<User> cr = userRepository.findOneUserByIdAsync(recipientId);
+        CompletableFuture<User> cs = userRepository.findOneUserByIdAsync(senderId);
+
+        CompletableFuture.allOf(cd, cr, cs);
+
+        Optional<Dialog> od = Optional.ofNullable(cd.join());
+        Optional<User> or = Optional.ofNullable(cr.join());
+        Optional<User> os = Optional.ofNullable(cs.join());
+
         os.ifPresent(o -> message.setSender(o));
 
         if (od.isPresent()) {
@@ -98,7 +108,7 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
             dialog = new Dialog();
             dialog.setCreateDate(createDateUTC);
 
-            Optional<User> or = userRepository.findOneUserById(recipientId);
+
             if (os.isPresent() && or.isPresent()) {
                 dialog.setFirst(os.get());
                 dialog.setSecond(or.get());

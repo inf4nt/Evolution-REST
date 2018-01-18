@@ -2,7 +2,9 @@ package evolution.security;
 
 import evolution.crud.api.AuthenticationSessionCrudManagerService;
 import evolution.model.AuthenticationSession;
+import evolution.security.service.UserAuthenticationService;
 import evolution.security.token.JwtTokenService;
+import lombok.SneakyThrows;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -20,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @Component
 public class AuthenticationTokenFilter extends OncePerRequestFilter {
@@ -30,12 +34,16 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
 
     private final JwtTokenService jwtTokenService;
 
+    private final UserAuthenticationService userAuthenticationService;
+
     private final AuthenticationSessionCrudManagerService authenticationSessionCrudManagerService;
 
     @Autowired
     public AuthenticationTokenFilter(UserDetailsService userDetailsService,
                                      JwtTokenService jwtTokenService,
+                                     UserAuthenticationService userAuthenticationService,
                                      AuthenticationSessionCrudManagerService authenticationSessionCrudManagerService) {
+        this.userAuthenticationService = userAuthenticationService;
         this.authenticationSessionCrudManagerService = authenticationSessionCrudManagerService;
         this.userDetailsService = userDetailsService;
         this.jwtTokenService = jwtTokenService;
@@ -76,25 +84,26 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
         logger.info("checking authentication für user " + username);
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-            if (this.jwtTokenService.isValidToken(authToken, userDetails) && checkAuthSession(authToken)) {
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            CompletableFuture<Optional<UserDetails>> cfu = userAuthenticationService.loadByUsername(username);
+            CompletableFuture<Optional<AuthenticationSession>> cfa = userAuthenticationService
+                    .findAuthenticationSessionBySessionKey(jwtTokenService.getAuthenticationSession(authToken));
+
+            CompletableFuture.allOf(cfu, cfa);
+            Optional<UserDetails> userDetails = cfu.join();
+            Optional<AuthenticationSession> authenticationSession = cfa.join();
+
+            if (userDetails.isPresent() && authenticationSession.isPresent()) {
+                if (this.jwtTokenService.isValidToken(authToken, userDetails.get())) {
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(userDetails.get(), null, userDetails.get().getAuthorities());
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
             }
         }
 
         System.out.println("Auth filter ============================================================");
         chain.doFilter(request, response);
     }
-
-    private boolean checkAuthSession(String authToken) {
-        String session = jwtTokenService.getAuthenticationSession(authToken);
-        Optional<AuthenticationSession> authenticationSession = authenticationSessionCrudManagerService.findByAuthSessionKey(session);
-        logger.info("auth session " + session);
-        logger.info("jwt security modelOld " + authenticationSession);
-        return authenticationSession.isPresent();
-    }
-
 }

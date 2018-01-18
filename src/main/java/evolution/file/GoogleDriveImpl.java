@@ -96,7 +96,6 @@ public class GoogleDriveImpl implements GoogleDrive {
         this.extensions = extensions;
     }
 
-
     @SneakyThrows
     private Credential authorize() {
         InputStream in =

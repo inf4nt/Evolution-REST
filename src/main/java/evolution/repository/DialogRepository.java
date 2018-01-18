@@ -7,9 +7,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.scheduling.annotation.Async;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Created by Infant on 07.11.2017.
@@ -43,6 +45,13 @@ public interface DialogRepository extends JpaRepository<Dialog, Long> {
             " where ( d.first.id =:u1 and d.second.id =:u2 ) " +
             " or ( d.first.id =:u2 and d.second.id =:u1 ) ")
     Optional<Dialog> findDialogByUsers(@Param("u1") Long user1, @Param("u2") Long user2);
+
+    @Async
+    @Query("select d " +
+            "from Dialog d " +
+            " where ( d.first.id =:u1 and d.second.id =:u2 ) " +
+            " or ( d.first.id =:u2 and d.second.id =:u1 ) ")
+    CompletableFuture<Dialog> findDialogByUsersAsync(@Param("u1") Long user1, @Param("u2") Long user2);
 
     @Query(" select d " +
             " from Dialog d " +
