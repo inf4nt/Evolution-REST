@@ -23,6 +23,7 @@ import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 
 @Service
@@ -40,24 +41,17 @@ public class ChannelCrudManagerServiceImpl implements ChannelCrudManagerService 
     @PersistenceContext
     private EntityManager entityManager;
 
-    private final ChannelRepository channelRepository;
-
-    private final UserCrudManagerService userCrudManagerService;
-
-    private final MessageChannelCrudManagerService messageChannelCrudManagerService;
-
-    private final DateService dateService;
+    @Autowired
+    private ChannelRepository channelRepository;
 
     @Autowired
-    public ChannelCrudManagerServiceImpl(ChannelRepository channelRepository,
-                                         UserCrudManagerService userCrudManagerService,
-                                         MessageChannelCrudManagerService messageChannelCrudManagerService,
-                                         DateService dateService) {
-        this.channelRepository = channelRepository;
-        this.userCrudManagerService = userCrudManagerService;
-        this.messageChannelCrudManagerService = messageChannelCrudManagerService;
-        this.dateService = dateService;
-    }
+    private UserCrudManagerService userCrudManagerService;
+
+    @Autowired
+    private MessageChannelCrudManagerService messageChannelCrudManagerService;
+
+    @Autowired
+    private DateService dateService;
 
     @Override
     public Optional<Channel> findOne(Long id) {
@@ -280,7 +274,6 @@ public class ChannelCrudManagerServiceImpl implements ChannelCrudManagerService 
             return Optional.empty();
         }
         MessageChannel m = new MessageChannel();
-
         oc.get().getChannelUser().add(ou.get());
 
         m.setSender(ou.get());
@@ -321,6 +314,16 @@ public class ChannelCrudManagerServiceImpl implements ChannelCrudManagerService 
     @Override
     public void detach(Channel channel) {
         entityManager.detach(channel);
+    }
+
+    @Override
+    public CompletableFuture<List<Channel>> findMyChannelAsync(Long userid) {
+        return channelRepository.findMyChannelAsync(userid);
+    }
+
+    @Override
+    public void delete(List<Channel> list) {
+        channelRepository.delete(list);
     }
 
     @Override

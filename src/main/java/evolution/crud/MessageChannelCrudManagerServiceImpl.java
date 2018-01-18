@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class MessageChannelCrudManagerServiceImpl implements MessageChannelCrudManagerService {
@@ -55,6 +56,11 @@ public class MessageChannelCrudManagerServiceImpl implements MessageChannelCrudM
         Pageable p = getPageableForRestService(page, size, sortType, sortProperties,
                 this.defaultMaxFetch, this.defaultSortType, this.defaultSortProperties);
         return messageChanelRepository.findMessageChannelByChannelId(channelId, p);
+    }
+
+    @Override
+    public CompletableFuture<List<MessageChannel>> findMessageChannelBySenderAsync(Long senderId) {
+        return messageChanelRepository.findMessageChannelBySenderAsync(senderId);
     }
 
     @Override
@@ -115,6 +121,11 @@ public class MessageChannelCrudManagerServiceImpl implements MessageChannelCrudM
     public void deleteByIdAndSenderId(Long id, Long senderId) {
         Optional<MessageChannel> mc = messageChanelRepository.findOneMessageChannel(id, senderId);
         mc.ifPresent(messageChanelRepository::delete);
+    }
+
+    @Override
+    public void delete(List<MessageChannel> messageChannels) {
+        messageChanelRepository.delete(messageChannels);
     }
 
     @Override

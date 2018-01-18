@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -124,29 +125,35 @@ public class FeedBusinessServiceImpl implements FeedBusinessService {
             return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
         }
 
-        Feed f = new Feed();
-        f.setContent(feed.getContent());
-
-        Optional<User> optionalSender = userCrudManagerService.findOne(feed.getSenderId());
-        if (!optionalSender.isPresent()) {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
+        Feed f = feedCrudManagerService.save(feed);
+        if (f != null) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, feedDTOTransfer.modelToDTO(f));
         }
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.EXPECTATION_FAILED);
 
-        if (feed.getToUserId() != null) {
-            Optional<User> optionalToUser = userCrudManagerService.findOne(feed.getToUserId());
-            if (!optionalToUser.isPresent()) {
-                return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
-            }
-            f.setToUser(optionalToUser.get());
-        }
-
-        f.setSender(optionalSender.get());
-        f.setActive(true);
-        f.setDate(dateService.getCurrentDateInUTC());
-
-        f = feedCrudManagerService.save(f);
-
-        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, feedDTOTransfer.modelToDTO(f));
+//        Feed f = new Feed();
+//        f.setContent(feed.getContent());
+//
+//        Optional<User> optionalSender = userCrudManagerService.findOne(feed.getSenderId());
+//        if (!optionalSender.isPresent()) {
+//            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
+//        }
+//
+//        if (feed.getToUserId() != null) {
+//            Optional<User> optionalToUser = userCrudManagerService.findOne(feed.getToUserId());
+//            if (!optionalToUser.isPresent()) {
+//                return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
+//            }
+//            f.setToUser(optionalToUser.get());
+//        }
+//
+//        f.setSender(optionalSender.get());
+//        f.setActive(true);
+//        f.setDate(dateService.getCurrentDateInUTC());
+//
+//        f = feedCrudManagerService.save(f);
+//
+//        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, feedDTOTransfer.modelToDTO(f));
     }
 
     @Override

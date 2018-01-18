@@ -57,18 +57,6 @@ public class DialogCrudManagerServiceImpl implements DialogCrudManagerService {
     }
 
     @Override
-    public CompletableFuture<Optional<Dialog>> findDialogByUsersAsyncLazy(Long first, Long second) {
-        return dialogRepository.findDialogByUsersAsync(first, second)
-                .thenApply(v -> {
-                    if (v != null) {
-                        return Optional.ofNullable(initializeLazy(v));
-                    } else {
-                        return Optional.empty();
-                    }
-                });
-    }
-
-    @Override
     public Optional<Dialog> findOneLazyAndParticipantId(Long id, Long participant) {
         return dialogRepository.findOneLazyAndParticipantId(id, participant);
     }
@@ -176,6 +164,16 @@ public class DialogCrudManagerServiceImpl implements DialogCrudManagerService {
     public void clearRowByUserForeignKey(Long id) {
         List<Dialog> list = dialogRepository.findMyDialog(id);
         list.forEach(o -> Hibernate.initialize(o.getMessageList().size()));
+        dialogRepository.delete(list);
+    }
+
+    @Override
+    public CompletableFuture<List<Dialog>> findMyDialogAsync(Long userId) {
+        return dialogRepository.findMyDialogAsync(userId);
+    }
+
+    @Override
+    public void deleteList(List<Dialog> list) {
         dialogRepository.delete(list);
     }
 

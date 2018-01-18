@@ -257,6 +257,16 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
         friendRepository.delete(list);
     }
 
+    @Override
+    public CompletableFuture<List<Friend>> findFriendByFirstOrSecondAsync(Long userid) {
+        return friendRepository.findFriendByFirstOrSecondAsync(userid);
+    }
+
+    @Override
+    public void delete(List<Friend> list) {
+        friendRepository.delete(list);
+    }
+
     private void init(Long senderOrAction, Long recipient) {
         if (senderOrAction > recipient) {
             firstId = senderOrAction;

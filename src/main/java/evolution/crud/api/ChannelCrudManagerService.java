@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 public interface ChannelCrudManagerService extends AbstractCrudManagerService<Channel, Long>, PageableManager, InitializeLazyCrudManagerService<Channel> {
 
@@ -60,4 +61,8 @@ public interface ChannelCrudManagerService extends AbstractCrudManagerService<Ch
     Optional<Channel> outFromChannel(Long channelId, Long userId);
 
     void detach(Channel channel);
+
+    CompletableFuture<List<Channel>> findMyChannelAsync(Long userid);
+
+    void delete(List<Channel> list);
 }

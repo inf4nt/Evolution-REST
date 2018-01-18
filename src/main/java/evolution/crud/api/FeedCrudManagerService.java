@@ -1,10 +1,12 @@
 package evolution.crud.api;
 
+import evolution.dto.model.FeedSaveDTO;
 import evolution.model.Feed;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Created by Infant on 08.11.2017.
@@ -34,4 +36,10 @@ public interface FeedCrudManagerService extends AbstractCrudManagerService<Feed,
     Page<Feed> findFeedBySender(Long sender, Integer page, Integer size, String sortType, List<String> sortProperties);
 
     void clearRowByUserForeignKey(Long id);
+
+    CompletableFuture<List<Feed>> findFeedBySenderOrToUserAsync(Long userid);
+
+    void delete(List<Feed> list);
+
+    Feed save(FeedSaveDTO feedSaveDTO);
 }

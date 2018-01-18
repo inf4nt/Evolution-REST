@@ -7,9 +7,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.scheduling.annotation.Async;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 public interface MessageChanelRepository extends JpaRepository<MessageChannel, Long> {
 
@@ -27,6 +29,10 @@ public interface MessageChanelRepository extends JpaRepository<MessageChannel, L
 
     @Query("select m from MessageChannel m where m.channel.id =:id")
     Page<MessageChannel> findMessageChannelByChannelId(@Param("id") Long id, Pageable pageable);
+
+    @Async
+    @Query("select m from MessageChannel m where m.sender.id =:sender")
+    CompletableFuture<List<MessageChannel>> findMessageChannelBySenderAsync(@Param("sender") Long senderId);
 
     @Query("select m from MessageChannel m where m.sender.id =:sender")
     List<MessageChannel> findMessageChannelBySender(@Param("sender") Long senderId);

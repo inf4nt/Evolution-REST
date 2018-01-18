@@ -6,9 +6,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.scheduling.annotation.Async;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Created by Infant on 08.11.2017.
@@ -56,4 +58,8 @@ public interface FeedRepository extends JpaRepository<Feed, Long> {
 
     @Query("select f from Feed f where f.sender.id =:id or f.toUser.id =:id")
     List<Feed> findAllFeedByToUserOrSender(@Param("id") Long id);
+
+    @Async
+    @Query("select f from Feed f where f.sender.id =:id or f.toUser.id =:id")
+    CompletableFuture<List<Feed>> findAllFeedByToUserOrSenderAsync(@Param("id") Long id);
 }

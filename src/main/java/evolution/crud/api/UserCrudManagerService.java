@@ -14,6 +14,8 @@ import java.util.concurrent.CompletableFuture;
  */
 public interface UserCrudManagerService extends AbstractCrudManagerService<User, Long>, PageableManager, InitializeLazyCrudManagerService<User> {
 
+    void delete(User user);
+
     Optional<User> findByUsernameLazy(String username);
 
     Optional<User> findUserBySecretKey(String secretKey);
@@ -59,8 +61,6 @@ public interface UserCrudManagerService extends AbstractCrudManagerService<User,
     Optional<User> findOneLazy(Long userId);
 
     CompletableFuture<Optional<User>> findOneAsync(Long userId);
-
-    CompletableFuture<Optional<User>> findOneAsyncLazy(Long userId);
 
     Page<User> findAllAndIsActiveLazy(boolean active, Integer page, Integer size, String sort, List<String> sortProperties);
 

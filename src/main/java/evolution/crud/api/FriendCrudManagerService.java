@@ -47,4 +47,8 @@ public interface FriendCrudManagerService extends PageableManager {
     Optional<Friend> acceptRequest(Long senderId, Long recipientId);
 
     void clearRowByUserForeignKey(Long id);
+
+    CompletableFuture<List<Friend>> findFriendByFirstOrSecondAsync(Long userid);
+
+    void delete(List<Friend> list);
 }

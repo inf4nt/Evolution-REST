@@ -16,8 +16,6 @@ public interface DialogCrudManagerService extends AbstractCrudManagerService<Dia
 
     CompletableFuture<Optional<Dialog>> findDialogByUsersAsync(Long first, Long second);
 
-    CompletableFuture<Optional<Dialog>> findDialogByUsersAsyncLazy(Long first, Long second);
-
     Optional<Dialog> findOneLazyAndParticipantId(Long id, Long participant);
 
     List<Dialog> findAllLazy();
@@ -43,4 +41,8 @@ public interface DialogCrudManagerService extends AbstractCrudManagerService<Dia
     void delete(List<Long> ids);
 
     void clearRowByUserForeignKey(Long id);
+
+    CompletableFuture<List<Dialog>> findMyDialogAsync(Long userId);
+
+    void deleteList(List<Dialog> list);
 }

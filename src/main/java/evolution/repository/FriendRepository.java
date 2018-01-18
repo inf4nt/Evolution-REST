@@ -75,6 +75,10 @@ public interface FriendRepository extends JpaRepository<Friend, Friend.FriendEmb
     @Query("select f from Friend f where f.pk.first.id =:id or f.pk.second.id =:id")
     List<Friend> findRowByIam(@Param("id") Long id);
 
+    @Async
+    @Query("select f from Friend f where f.pk.first.id =:id or f.pk.second.id =:id")
+    CompletableFuture<List<Friend>> findFriendByFirstOrSecondAsync(@Param("id") Long id);
+
     @Query("select f" +
             " from Friend f" +
             " where f.status =:status" +

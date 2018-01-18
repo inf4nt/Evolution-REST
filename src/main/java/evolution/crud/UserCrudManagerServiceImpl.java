@@ -1,11 +1,9 @@
 package evolution.crud;
 
-import evolution.crud.api.DialogCrudManagerService;
-import evolution.crud.api.FeedCrudManagerService;
-import evolution.crud.api.FriendCrudManagerService;
-import evolution.crud.api.UserCrudManagerService;
-import evolution.model.User;
-import evolution.model.UserAdditionalData;
+import evolution.crud.api.*;
+import evolution.model.*;
+import evolution.model.channel.Channel;
+import evolution.model.channel.MessageChannel;
 import evolution.repository.UserRepository;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +27,7 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class UserCrudManagerServiceImpl implements UserCrudManagerService {
 
-    private final UserRepository userRepository;
+
 
     @Value("${model.user.maxfetch}")
     private Integer userMaxFetch;
@@ -43,22 +41,23 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    private final FriendCrudManagerService friendCrudManagerService;
-
-    private final FeedCrudManagerService feedCrudManagerService;
-
-    private final DialogCrudManagerService dialogCrudManagerService;
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
-    public UserCrudManagerServiceImpl(UserRepository userRepository,
-                                      @Lazy FriendCrudManagerService friendCrudManagerService,
-                                      FeedCrudManagerService feedCrudManagerService,
-                                      DialogCrudManagerService dialogCrudManagerService) {
-        this.userRepository = userRepository;
-        this.friendCrudManagerService = friendCrudManagerService;
-        this.feedCrudManagerService = feedCrudManagerService;
-        this.dialogCrudManagerService = dialogCrudManagerService;
-    }
+    private FriendCrudManagerService friendCrudManagerService;
+
+    @Autowired
+    private FeedCrudManagerService feedCrudManagerService;
+
+    @Autowired
+    private DialogCrudManagerService dialogCrudManagerService;
+
+    @Autowired
+    private ChannelCrudManagerService channelCrudManagerService;
+
+    @Autowired
+    private MessageChannelCrudManagerService messageChannelCrudManagerService;
 
     @Override
     public List<User> findAll() {
@@ -100,18 +99,6 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
     public CompletableFuture<Optional<User>> findOneAsync(Long userId) {
         return userRepository.findOneUserByIdAsync(userId)
                 .thenApply(v -> Optional.ofNullable(v));
-    }
-
-    @Override
-    public CompletableFuture<Optional<User>> findOneAsyncLazy(Long userId) {
-        return userRepository.findOneUserByIdAsync(userId)
-                .thenApply(v -> {
-                    if (v != null) {
-                        return Optional.of(initializeLazy(v));
-                    } else {
-                        return Optional.empty();
-                    }
-                });
     }
 
     @Override
@@ -197,15 +184,20 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
     @Override
     @Transactional
     public void delete(Long aLong) {
-        Optional<User> o = userRepository.findOneUserById(aLong);
-        o.ifPresent(op -> Hibernate.initialize(op.getUserAdditionalData()));
-        if (o.isPresent()) {
-            feedCrudManagerService.clearRowByUserForeignKey(o.get().getId());
-            friendCrudManagerService.clearRowByUserForeignKey(o.get().getId());
-            dialogCrudManagerService.clearRowByUserForeignKey(o.get().getId());
-            //todo clear channel message
+        CompletableFuture<Optional<User>> cu = findOneAsync(aLong);
+        CompletableFuture<List<Feed>> cfeed = feedCrudManagerService.findFeedBySenderOrToUserAsync(aLong);
+        CompletableFuture<List<Friend>> cfriend = friendCrudManagerService.findFriendByFirstOrSecondAsync(aLong);
+        CompletableFuture<List<Dialog>> cdialog = dialogCrudManagerService.findMyDialogAsync(aLong);
+        CompletableFuture<List<MessageChannel>> cmc = messageChannelCrudManagerService.findMessageChannelBySenderAsync(aLong);
 
-            userRepository.delete(o.get());
+        CompletableFuture.allOf(cu, cfeed, cfriend, cdialog, cmc);
+
+        if (cu.join().isPresent()) {
+            friendCrudManagerService.delete(cfriend.join());
+            feedCrudManagerService.delete(cfeed.join());
+            dialogCrudManagerService.deleteList(cdialog.join());
+            messageChannelCrudManagerService.delete(cmc.join());
+            delete(cu.join().get());
         }
     }
 
@@ -213,6 +205,11 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
     public void deleteAll() {
         List<User> list = userRepository.findAllFetchLazy();
         userRepository.delete(list);
+    }
+
+    @Override
+    public void delete(User user) {
+        userRepository.delete(user);
     }
 
     @Override

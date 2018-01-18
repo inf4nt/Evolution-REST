@@ -68,6 +68,12 @@ public interface DialogRepository extends JpaRepository<Dialog, Long> {
             " where d.first.id =:iam or d.second.id =:iam  ")
     List<Dialog> findMyDialog(@Param("iam") Long id);
 
+    @Async
+    @Query(" select d " +
+            " from Dialog d " +
+            " where d.first.id =:iam or d.second.id =:iam  ")
+    CompletableFuture<List<Dialog>> findMyDialogAsync(@Param("iam") Long id);
+
     @Query("select d " +
             "from Dialog d " +
             "join fetch d.messageList ")

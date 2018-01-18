@@ -49,11 +49,11 @@ public class FeedRestServiceImpl implements FeedRestService {
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {
             return ResponseEntity.status(403).build();
         }
-        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE) {
-            return ResponseEntity.status(417).build();
-        }
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent()) {
             return ResponseEntity.status(201).body(b.getResultObject());
+        }
+        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.EXPECTATION_FAILED) {
+            return ResponseEntity.badRequest().build();
         }
 
         return ResponseEntity.status(500).build();

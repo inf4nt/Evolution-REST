@@ -13,7 +13,6 @@ import java.util.Date;
 @Entity
 @Table(name = "feed")
 @Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Feed {
 
     @Id
@@ -22,7 +21,7 @@ public class Feed {
     @SequenceGenerator(name = "seq_feed", sequenceName = "seq_feed_id", allocationSize = 1)
     private Long id;
 
-    @Column(name = "feed_content", columnDefinition = "text")
+    @Column(name = "feed_content", columnDefinition = "text", nullable = false)
     private String content;
 
     @Column(name = "date_create", columnDefinition = "timestamp", nullable = false, updatable = false)
@@ -30,11 +29,11 @@ public class Feed {
     private Date date;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "sender_id", columnDefinition = "bigint")
+    @JoinColumn(name = "sender_id", columnDefinition = "bigint", nullable = false)
     private User sender;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "to_user_id", columnDefinition = "bigint")
+    @JoinColumn(name = "to_user_id", columnDefinition = "bigint", nullable = false)
     private User toUser;
 
     @Column(columnDefinition = "text")

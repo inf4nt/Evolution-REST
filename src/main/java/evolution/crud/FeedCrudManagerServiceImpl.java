@@ -1,8 +1,12 @@
 package evolution.crud;
 
 import evolution.crud.api.FeedCrudManagerService;
+import evolution.crud.api.UserCrudManagerService;
+import evolution.dto.model.FeedSaveDTO;
 import evolution.model.Feed;
+import evolution.model.User;
 import evolution.repository.FeedRepository;
+import evolution.service.DateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -11,9 +15,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.plaf.basic.BasicButtonUI;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Created by Infant on 08.11.2017.
@@ -30,12 +34,14 @@ public class FeedCrudManagerServiceImpl implements FeedCrudManagerService {
     @Value("${model.feed.defaultsortproperties}")
     private String defaultFeedSortProperties;
 
-    private final FeedRepository feedRepository;
+    @Autowired
+    private FeedRepository feedRepository;
 
     @Autowired
-    public FeedCrudManagerServiceImpl(FeedRepository feedRepository) {
-        this.feedRepository = feedRepository;
-    }
+    private UserCrudManagerService userCrudManagerService;
+
+    @Autowired
+    private DateService dateService;
 
     @Override
     public List<Feed> findAll() {
@@ -152,5 +158,45 @@ public class FeedCrudManagerServiceImpl implements FeedCrudManagerService {
     public void clearRowByUserForeignKey(Long id) {
         List<Feed> list = feedRepository.findAllFeedByToUserOrSender(id);
         feedRepository.delete(list);
+    }
+
+    @Override
+    public CompletableFuture<List<Feed>> findFeedBySenderOrToUserAsync(Long userid) {
+        return feedRepository.findAllFeedByToUserOrSenderAsync(userid);
+    }
+
+    @Override
+    public void delete(List<Feed> list) {
+        feedRepository.delete(list);
+    }
+
+    @Override
+    @Transactional
+    public Feed save(FeedSaveDTO feedSaveDTO) {
+
+        CompletableFuture<Optional<User>> cs = userCrudManagerService.findOneAsync(feedSaveDTO.getSenderId());
+        CompletableFuture<Optional<User>> ctu = userCrudManagerService.findOneAsync(feedSaveDTO.getToUserId());
+
+        CompletableFuture.allOf(cs, ctu);
+
+        Optional<User> sender = cs.join();
+        Optional<User> toUser = ctu.join();
+
+        if (!sender.isPresent() || !toUser.isPresent()) {
+            sender.ifPresent(v -> userCrudManagerService.detach(v));
+            toUser.ifPresent(v -> userCrudManagerService.detach(v));
+            return null;
+        }
+
+        Feed feed = new Feed();
+        feed.setSender(sender.get());
+        feed.setToUser(toUser.get());
+        feed.setContent(feedSaveDTO.getContent());
+        // todo set tags !
+//        feed.setTags();
+        feed.setDate(dateService.getCurrentDateInUTC());
+        feed.setActive(true);
+
+        return feedRepository.save(feed);
     }
 }

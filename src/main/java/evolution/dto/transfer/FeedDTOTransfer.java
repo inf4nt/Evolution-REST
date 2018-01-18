@@ -1,6 +1,7 @@
 package evolution.dto.transfer;
 
 import evolution.dto.model.FeedDTO;
+import evolution.dto.model.UserDTO;
 import evolution.model.Feed;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,17 +11,23 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @Service
-public class FeedDTOTransfer {
-
-    private final ModelMapper modelMapper;
+public class FeedDTOTransfer implements TransferDTO<FeedDTO, Feed> {
 
     @Autowired
-    public FeedDTOTransfer(ModelMapper modelMapper) {
-        this.modelMapper = modelMapper;
-    }
+    private ModelMapper modelMapper;
 
+    @Autowired
+    private UserDTOTransfer userDTOTransfer;
+
+    @Override
     public FeedDTO modelToDTO(Feed feed) {
-        FeedDTO dto = modelMapper.map(feed, FeedDTO.class);
+        FeedDTO dto = new FeedDTO();
+        dto.setId(feed.getId());
+        dto.setActive(feed.isActive());
+        dto.setDate(feed.getDate());
+        dto.setContent(feed.getContent());
+        dto.setSender(userDTOTransfer.modelToDTO(feed.getSender()));
+        dto.setToUser(userDTOTransfer.modelToDTO(feed.getToUser()));
 
         // todo check this
         if (feed.getTags() != null) {
