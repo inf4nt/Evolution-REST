@@ -1,17 +1,25 @@
 package evolution.crud;
 
+import evolution.crud.api.ChannelCrudManagerService;
 import evolution.crud.api.MessageChannelCrudManagerService;
 import evolution.crud.api.UserCrudManagerService;
+import evolution.dto.model.MessageChannelSaveDTO;
+import evolution.model.User;
+import evolution.model.channel.Channel;
 import evolution.model.channel.MessageChannel;
 import evolution.repository.MessageChanelRepository;
+import evolution.service.DateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -28,16 +36,20 @@ public class MessageChannelCrudManagerServiceImpl implements MessageChannelCrudM
     @Value("${model.messageChannel.defaultsortproperties}")
     private String defaultSortProperties;
 
-    private final MessageChanelRepository messageChanelRepository;
-
-    private final UserCrudManagerService userCrudManagerService;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
-    public MessageChannelCrudManagerServiceImpl(MessageChanelRepository messageChanelRepository,
-                                                UserCrudManagerService userCrudManagerService) {
-        this.messageChanelRepository = messageChanelRepository;
-        this.userCrudManagerService = userCrudManagerService;
-    }
+    private DateService dateService;
+
+    @Autowired
+    private MessageChanelRepository messageChanelRepository;
+
+    @Autowired
+    private UserCrudManagerService userCrudManagerService;
+
+    @Autowired
+    private ChannelCrudManagerService channelCrudManagerService;
 
     @Override
     public List<MessageChannel> findMessageChannelByChannelId(Long channelId) {
@@ -118,6 +130,114 @@ public class MessageChannelCrudManagerServiceImpl implements MessageChannelCrudM
 
     @Override
     @Transactional
+    public Optional<MessageChannel> save(MessageChannelSaveDTO messageChannelSaveDTO) {
+        return save(messageChannelSaveDTO.getChannelId(), messageChannelSaveDTO.getSenderId(), messageChannelSaveDTO.getText());
+    }
+
+    @Override
+    @Transactional
+    public Optional<MessageChannel> save(Long channelId, Long senderId, String text) {
+        CompletableFuture<Optional<User>> cs = userCrudManagerService.findOneAsync(senderId);
+        CompletableFuture<Optional<Channel>> cc = channelCrudManagerService.findOneAsync(channelId);
+
+        CompletableFuture.allOf(cs, cc);
+
+        Optional<User> sender = cs.join();
+        Optional<Channel> channel = cc.join();
+
+        if (!sender.isPresent() || !channel.isPresent()) {
+            sender.ifPresent(v -> userCrudManagerService.detach(v));
+            channel.ifPresent(v -> detach(v));
+            return Optional.empty();
+        }
+
+        MessageChannel m = new MessageChannel();
+        m.setSender(sender.get());
+        m.setChannel(channel.get());
+        m.setActive(true);
+        m.setDatePost(dateService.getCurrentDateInUTC());
+        m.setText(text);
+        return Optional.of(messageChanelRepository.save(m));
+    }
+
+    @Override
+    public Optional<MessageChannel> sendMessageAfterLeftFromChannel(Long channelId, Long senderId) {
+        CompletableFuture<Optional<User>> cs = userCrudManagerService.findOneAsync(senderId);
+        CompletableFuture<Optional<Channel>> cc = channelCrudManagerService.findOneAsync(channelId);
+
+        CompletableFuture.allOf(cs, cc);
+
+        Optional<User> sender = cs.join();
+        Optional<Channel> channel = cc.join();
+
+        if (!sender.isPresent() || !channel.isPresent()) {
+            sender.ifPresent(v -> userCrudManagerService.detach(v));
+            channel.ifPresent(v -> detach(v));
+            return Optional.empty();
+        }
+
+        MessageChannel m = new MessageChannel();
+        m.setSender(sender.get());
+        m.setChannel(channel.get());
+        m.setActive(true);
+        m.setDatePost(dateService.getCurrentDateInUTC());
+        m.setText(sender.get().getFirstName() + " " + sender.get().getLastName() + " out from channel #" + channel.get().getChannelName());
+        return Optional.of(messageChanelRepository.save(m));
+    }
+
+
+    @Override
+    public Optional<MessageChannel> sendMessageAfterJoinFromChannel(Long channelId, Long senderId) {
+        CompletableFuture<Optional<User>> cs = userCrudManagerService.findOneAsync(senderId);
+        CompletableFuture<Optional<Channel>> cc = channelCrudManagerService.findOneAsync(channelId);
+
+        CompletableFuture.allOf(cs, cc);
+
+        Optional<User> sender = cs.join();
+        Optional<Channel> channel = cc.join();
+
+        if (!sender.isPresent() || !channel.isPresent()) {
+            sender.ifPresent(v -> userCrudManagerService.detach(v));
+            channel.ifPresent(v -> detach(v));
+            return Optional.empty();
+        }
+
+        MessageChannel m = new MessageChannel();
+        m.setSender(sender.get());
+        m.setChannel(channel.get());
+        m.setActive(true);
+        m.setDatePost(dateService.getCurrentDateInUTC());
+        m.setText(sender.get().getFirstName() + " " + sender.get().getLastName() + " join to channel #" + channel.get().getChannelName());
+        return Optional.of(messageChanelRepository.save(m));
+    }
+
+    @Override
+    public Optional<MessageChannel> sendMessageAfterCreateChannel(Long channelId, Long whoCreateChannel) {
+        CompletableFuture<Optional<User>> cs = userCrudManagerService.findOneAsync(whoCreateChannel);
+        CompletableFuture<Optional<Channel>> cc = channelCrudManagerService.findOneAsync(channelId);
+
+        CompletableFuture.allOf(cs, cc);
+
+        Optional<User> sender = cs.join();
+        Optional<Channel> channel = cc.join();
+
+        if (!sender.isPresent() || !channel.isPresent()) {
+            sender.ifPresent(v -> userCrudManagerService.detach(v));
+            channel.ifPresent(v -> detach(v));
+            return Optional.empty();
+        }
+
+        MessageChannel m = new MessageChannel();
+        m.setSender(sender.get());
+        m.setChannel(channel.get());
+        m.setActive(true);
+        m.setDatePost(dateService.getCurrentDateInUTC());
+        m.setText(sender.get().getFirstName() + " " + sender.get().getLastName() + " create channel #" + channel.get().getChannelName());
+        return Optional.of(messageChanelRepository.save(m));
+    }
+
+    @Override
+    @Transactional
     public void deleteByIdAndSenderId(Long id, Long senderId) {
         Optional<MessageChannel> mc = messageChanelRepository.findOneMessageChannel(id, senderId);
         mc.ifPresent(messageChanelRepository::delete);
@@ -129,8 +249,14 @@ public class MessageChannelCrudManagerServiceImpl implements MessageChannelCrudM
     }
 
     @Override
+    @Transactional
     public void delete(Long aLong) {
         Optional<MessageChannel> op = messageChanelRepository.findOneMessageChannel(aLong);
         op.ifPresent(messageChanelRepository::delete);
+    }
+
+    @Override
+    public void detach(Channel channel) {
+        entityManager.detach(channel);
     }
 }

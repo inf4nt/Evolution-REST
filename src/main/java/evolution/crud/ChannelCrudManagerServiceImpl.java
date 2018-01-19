@@ -6,8 +6,10 @@ import evolution.crud.api.UserCrudManagerService;
 import evolution.dto.model.ChannelSaveDTO;
 import evolution.model.User;
 import evolution.model.channel.Channel;
+import evolution.model.channel.ChannelUserReference;
 import evolution.model.channel.MessageChannel;
 import evolution.repository.ChannelRepository;
+import evolution.repository.ChannelUserReferenceRepository;
 import evolution.service.DateService;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +19,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-
 
 @Service
 public class ChannelCrudManagerServiceImpl implements ChannelCrudManagerService {
@@ -48,10 +48,10 @@ public class ChannelCrudManagerServiceImpl implements ChannelCrudManagerService 
     private UserCrudManagerService userCrudManagerService;
 
     @Autowired
-    private MessageChannelCrudManagerService messageChannelCrudManagerService;
+    private DateService dateService;
 
     @Autowired
-    private DateService dateService;
+    private ChannelUserReferenceRepository channelUserReferenceRepository;
 
     @Override
     public Optional<Channel> findOne(Long id) {
@@ -227,7 +227,11 @@ public class ChannelCrudManagerServiceImpl implements ChannelCrudManagerService 
     @Override
     @Transactional
     public Optional<Channel> createNewChannel(ChannelSaveDTO channelSaveDTO) {
-        Optional<User> ou = userCrudManagerService.findOne(channelSaveDTO.getWhoCreateId());
+        CompletableFuture<Optional<User>> cu = userCrudManagerService.findOneAsync(channelSaveDTO.getWhoCreateId());
+        CompletableFuture.allOf(cu);
+
+        Optional<User> ou = cu.join();
+
         if (!ou.isPresent()) {
             return Optional.empty();
         }
@@ -243,15 +247,15 @@ public class ChannelCrudManagerServiceImpl implements ChannelCrudManagerService 
         channel.setChannelName(channelSaveDTO.getChannelName());
         channel.setActive(true);
 
-        MessageChannel messageChannel = new MessageChannel();
-        messageChannel.setText(ou.get().getFirstName() + " " + ou.get().getLastName() + " create channel #" + channelSaveDTO.getChannelName());
-        messageChannel.setDatePost(dateService.getCurrentDateInUTC());
-        messageChannel.setChannel(channel);
-        messageChannel.setActive(true);
-        messageChannel.setSender(ou.get());
-
-        channel.getMessageChannelList()
-                .add(messageChannel);
+//        MessageChannel messageChannel = new MessageChannel();
+//        messageChannel.setText(ou.get().getFirstName() + " " + ou.get().getLastName() + " create channel #" + channelSaveDTO.getChannelName());
+//        messageChannel.setDatePost(dateService.getCurrentDateInUTC());
+//        messageChannel.setChannel(channel);
+//        messageChannel.setActive(true);
+//        messageChannel.setSender(ou.get());
+//
+//        channel.getMessageChannelList()
+//                .add(messageChannel);
 
         return Optional.of(save(channel));
     }
@@ -264,51 +268,41 @@ public class ChannelCrudManagerServiceImpl implements ChannelCrudManagerService 
     @Override
     @Transactional
     public Optional<Channel> joinChannel(Long channelId, Long userId) {
-        Optional<Channel> oc = findOne(channelId);
-        if (!oc.isPresent()) {
-            return Optional.empty();
-        }
-        Optional<User> ou = userCrudManagerService.findOne(userId);
-        if (!ou.isPresent()) {
-            detach(oc.get());
-            return Optional.empty();
-        }
-        MessageChannel m = new MessageChannel();
-        oc.get().getChannelUser().add(ou.get());
+        CompletableFuture<Optional<User>> cs = userCrudManagerService.findOneAsync(userId);
+        CompletableFuture<Optional<Channel>> cc = findOneAsync(channelId);
 
-        m.setSender(ou.get());
-        m.setChannel(oc.get());
-        m.setActive(true);
-        m.setDatePost(dateService.getCurrentDateInUTC());
-        m.setText(ou.get().getFirstName() + " " + ou.get().getLastName() + " join to channel #" + oc.get().getChannelName());
-        oc.get().getMessageChannelList().add(m);
-        return Optional.of(save(oc.get()));
+        CompletableFuture.allOf(cs, cc);
+
+        Optional<User> sender = cs.join();
+        Optional<Channel> channel = cc.join();
+
+        if (!sender.isPresent() || !channel.isPresent()) {
+            sender.ifPresent(v -> userCrudManagerService.detach(v));
+            channel.ifPresent(v -> detach(v));
+            return Optional.empty();
+        }
+
+        ChannelUserReference channelUserReference = channelUserReferenceRepository.save(new ChannelUserReference(channel.get(), sender.get()));
+        return Optional.of(channelUserReference.getPk().getChannel());
+    }
+
+    @Override
+    @Transactional
+    public CompletableFuture<Optional<Channel>> findOneAsync(Long id) {
+        return channelRepository.findOneAsync(id)
+                .thenApply(v -> Optional.ofNullable(v));
     }
 
     @Override
     @Transactional
     public Optional<Channel> outFromChannel(Long channelId, Long userId) {
-        Optional<User> ou = userCrudManagerService.findOne(userId);
-        if (!ou.isPresent()) {
+        Optional<ChannelUserReference> cur = channelUserReferenceRepository.findByUserAndChannel(channelId, userId);
+        if (cur.isPresent()) {
+            channelUserReferenceRepository.delete(cur.get());
+            return Optional.of(cur.get().getPk().getChannel());
+        } else {
             return Optional.empty();
         }
-
-        Optional<Channel> oc = findOne(channelId);
-        if (!oc.isPresent()) {
-            userCrudManagerService.detach(ou.get());
-            return Optional.empty();
-        }
-
-        oc.get().getChannelUser().remove(ou.get());
-        MessageChannel m = new MessageChannel();
-        m.setSender(ou.get());
-        m.setChannel(oc.get());
-        m.setActive(true);
-        m.setDatePost(dateService.getCurrentDateInUTC());
-        m.setText(ou.get().getFirstName() + " " + ou.get().getLastName() + " out from channel #" + oc.get().getChannelName());
-        oc.get().getMessageChannelList().add(m);
-
-        return Optional.of(channelRepository.save(oc.get()));
     }
 
     @Override

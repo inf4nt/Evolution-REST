@@ -22,7 +22,7 @@ public class SecuritySupportService {
 
     public Optional<CustomSecurityUser> getPrincipal() {
         Object object = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (!(object instanceof String) && object instanceof CustomSecurityUser) {
+        if (object instanceof CustomSecurityUser) {
             CustomSecurityUser customSecurityUser = (CustomSecurityUser) object;
             return Optional.of(customSecurityUser);
         } else {

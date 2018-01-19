@@ -3,8 +3,8 @@ package evolution.crud.api;
 import evolution.dto.model.ChannelSaveDTO;
 import evolution.model.User;
 import evolution.model.channel.Channel;
-import evolution.model.channel.MessageChannel;
 import org.springframework.data.domain.Page;
+import org.springframework.scheduling.annotation.Async;
 
 import java.util.List;
 import java.util.Optional;
@@ -57,6 +57,9 @@ public interface ChannelCrudManagerService extends AbstractCrudManagerService<Ch
     Optional<Channel> createNewChannel(ChannelSaveDTO channelSaveDTO);
 
     Optional<Channel> joinChannel(Long channelId, Long userId);
+
+    @Async
+    CompletableFuture<Optional<Channel>> findOneAsync(Long id);
 
     Optional<Channel> outFromChannel(Long channelId, Long userId);
 

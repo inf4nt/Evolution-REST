@@ -9,6 +9,7 @@ import evolution.dto.model.*;
 import evolution.dto.transfer.ChannelDTOTransfer;
 import evolution.dto.transfer.MessageChannelDTOTransfer;
 import evolution.dto.transfer.UserDTOTransfer;
+import evolution.model.Message;
 import evolution.model.User;
 import evolution.model.channel.Channel;
 import evolution.model.channel.MessageChannel;
@@ -26,40 +27,29 @@ import java.util.Optional;
 @Service
 public class ChannelBusinessServiceImpl implements ChannelBusinessService {
 
-    private final ChannelCrudManagerService channelCrudManagerService;
-
-    private final MessageChannelCrudManagerService messageChannelCrudManagerService;
-
-    private final MessageChannelDTOTransfer messageChannelDTOTransfer;
-
-    private final ChannelDTOTransfer channelDTOTransfer;
-
-    private final UserDTOTransfer userDTOTransfer;
-
-    private final UserBusinessService userBusinessService;
-
-    private final DateService dateService;
-
-    private final SecuritySupportService securitySupportService;
+    @Autowired
+    private ChannelCrudManagerService channelCrudManagerService;
 
     @Autowired
-    public ChannelBusinessServiceImpl(ChannelCrudManagerService channelCrudManagerService,
-                                      MessageChannelCrudManagerService messageChannelCrudManagerService,
-                                      MessageChannelDTOTransfer messageChannelDTOTransfer,
-                                      ChannelDTOTransfer channelDTOTransfer,
-                                      UserDTOTransfer userDTOTransfer,
-                                      UserBusinessService userBusinessService,
-                                      DateService dateService,
-                                      SecuritySupportService securitySupportService) {
-        this.channelCrudManagerService = channelCrudManagerService;
-        this.messageChannelCrudManagerService = messageChannelCrudManagerService;
-        this.messageChannelDTOTransfer = messageChannelDTOTransfer;
-        this.channelDTOTransfer = channelDTOTransfer;
-        this.userDTOTransfer = userDTOTransfer;
-        this.userBusinessService = userBusinessService;
-        this.dateService = dateService;
-        this.securitySupportService = securitySupportService;
-    }
+    private MessageChannelCrudManagerService messageChannelCrudManagerService;
+
+    @Autowired
+    private MessageChannelDTOTransfer messageChannelDTOTransfer;
+
+    @Autowired
+    private ChannelDTOTransfer channelDTOTransfer;
+
+    @Autowired
+    private UserDTOTransfer userDTOTransfer;
+
+    @Autowired
+    private UserBusinessService userBusinessService;
+
+    @Autowired
+    private DateService dateService;
+
+    @Autowired
+    private SecuritySupportService securitySupportService;
 
     @Override
     public Optional<ChannelDTO> findOneChannel(Long id) {
@@ -206,10 +196,14 @@ public class ChannelBusinessServiceImpl implements ChannelBusinessService {
     }
 
     @Override
+    @Transactional
     public BusinessServiceExecuteResult<Channel> createNewChannel(ChannelSaveDTO channelSaveDTO) {
         Optional<Channel> oc = channelCrudManagerService.createNewChannel(channelSaveDTO);
         if (oc.isPresent()) {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, oc.get());
+            BusinessServiceExecuteResult<BusinessServiceExecuteStatus> b = sendMessageAfterCreateChannel(oc.get().getId(), channelSaveDTO.getWhoCreateId());
+            if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
+                return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, oc.get());
+            }
         }
         return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.EXPECTATION_FAILED);
     }
@@ -252,24 +246,11 @@ public class ChannelBusinessServiceImpl implements ChannelBusinessService {
 
     @Override
     public BusinessServiceExecuteResult<MessageChannel> createNewMessageChannel2(MessageChannelSaveDTO messageChannelSaveDTO) {
-        Optional<User> ou = userBusinessService.findOneModel(messageChannelSaveDTO.getSenderId());
-        if (!ou.isPresent()) {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
+        Optional<MessageChannel> messageChannel = messageChannelCrudManagerService.save(messageChannelSaveDTO);
+        if (messageChannel.isPresent()) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, messageChannel.get());
         }
-        Optional<Channel> oc = findOneChannelModel(messageChannelSaveDTO.getChannelId());
-        if (!oc.isPresent()) {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE);
-        }
-
-        MessageChannel messageChannel = new MessageChannel();
-        messageChannel.setActive(true);
-        messageChannel.setText(messageChannelSaveDTO.getText());
-        messageChannel.setSender(ou.get());
-        messageChannel.setChannel(oc.get());
-        messageChannel.setDatePost(dateService.getCurrentDateInUTC());
-
-        MessageChannel res = messageChannelCrudManagerService.save(messageChannel);
-        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, res);
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.EXPECTATION_FAILED);
     }
 
     @Override
@@ -294,21 +275,73 @@ public class ChannelBusinessServiceImpl implements ChannelBusinessService {
     }
 
     @Override
+    @Transactional
     public BusinessServiceExecuteResult<ChannelDTO> joinToChannel(Long channelId, Long userId) {
         Optional<Channel> oc = channelCrudManagerService.joinChannel(channelId, userId);
         if (oc.isPresent()) {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, channelDTOTransfer.modelToDTO(oc.get()));
+            BusinessServiceExecuteResult<BusinessServiceExecuteStatus> b = sendMessageAfterJoinFromChannel(channelId, userId);
+            if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
+                return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, channelDTOTransfer.modelToDTO(oc.get()));
+            }
         }
 
         return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.EXPECTATION_FAILED);
     }
 
     @Override
-    public BusinessServiceExecuteResult<ChannelDTO> outFromChannel(Long id) {
+    @Transactional
+    public BusinessServiceExecuteResult<ChannelDTO> outFromChannelByAuthUser(Long id) {
         User user = securitySupportService.getAuthenticationPrincipal().getUser();
-        Optional<Channel> oc = channelCrudManagerService.outFromChannel(id, user.getId());
-        if (oc.isPresent()) {
-            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, channelDTOTransfer.modelToDTO(oc.get()));
+        return outFromChannel(id, user.getId());
+    }
+
+    @Override
+    @Transactional
+    public BusinessServiceExecuteResult<ChannelDTO> outFromChannel(Long channelId, Long userId) {
+        if (securitySupportService.isAllowedFull(userId)) {
+
+            Optional<Channel> oc = channelCrudManagerService.outFromChannel(channelId, userId);
+
+            if (oc.isPresent()) {
+                BusinessServiceExecuteResult<BusinessServiceExecuteStatus> b = sendMessageAfterLeftFromChannel(channelId, userId);
+                if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK) {
+                    return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK, channelDTOTransfer.modelToDTO(oc.get()));
+                }
+            }
+        } else {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.FORBIDDEN);
+        }
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.EXPECTATION_FAILED);
+    }
+
+    @Override
+    public BusinessServiceExecuteResult<BusinessServiceExecuteStatus> sendMessageAfterLeftFromChannel(Long channelId, Long senderId) {
+        Optional<MessageChannel> messageChannel = messageChannelCrudManagerService.sendMessageAfterLeftFromChannel(channelId, senderId);
+
+        if (messageChannel.isPresent()) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK);
+        }
+
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.EXPECTATION_FAILED);
+    }
+
+    @Override
+    public BusinessServiceExecuteResult<BusinessServiceExecuteStatus> sendMessageAfterJoinFromChannel(Long channelId, Long senderId) {
+        Optional<MessageChannel> messageChannel = messageChannelCrudManagerService.sendMessageAfterJoinFromChannel(channelId, senderId);
+
+        if (messageChannel.isPresent()) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK);
+        }
+
+        return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.EXPECTATION_FAILED);
+    }
+
+    @Override
+    public BusinessServiceExecuteResult<BusinessServiceExecuteStatus> sendMessageAfterCreateChannel(Long channelId, Long senderId) {
+        Optional<MessageChannel> messageChannel = messageChannelCrudManagerService.sendMessageAfterCreateChannel(channelId, senderId);
+
+        if (messageChannel.isPresent()) {
+            return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.OK);
         }
 
         return BusinessServiceExecuteResult.build(BusinessServiceExecuteStatus.EXPECTATION_FAILED);

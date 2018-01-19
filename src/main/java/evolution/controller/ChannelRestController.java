@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -128,6 +129,7 @@ public class ChannelRestController {
         return channelRestService.joinToChannel(id);
     }
 
+    @Transactional
     @DeleteMapping(value = "/out/{id}")
     public ResponseEntity<ChannelDTO> out(@PathVariable Long id) {
         return channelRestService.outFromChannel(id);

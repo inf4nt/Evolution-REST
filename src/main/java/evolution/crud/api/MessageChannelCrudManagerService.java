@@ -1,8 +1,12 @@
 package evolution.crud.api;
 
 
+import evolution.dto.model.MessageChannelSaveDTO;
+import evolution.model.User;
+import evolution.model.channel.Channel;
 import evolution.model.channel.MessageChannel;
 import org.springframework.data.domain.Page;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,9 +30,19 @@ public interface MessageChannelCrudManagerService extends AbstractCrudManagerSer
 
     Long findCountMessageChannelByChannelId(Long id);
 
+    Optional<MessageChannel> save(MessageChannelSaveDTO messageChannelSaveDTO);
+
+    Optional<MessageChannel> save(Long channelId, Long senderId, String text);
+
+    Optional<MessageChannel> sendMessageAfterLeftFromChannel(Long channelId, Long senderId);
+
+    Optional<MessageChannel> sendMessageAfterJoinFromChannel(Long channelId, Long senderId);
+
+    Optional<MessageChannel> sendMessageAfterCreateChannel(Long channelId, Long whoCreateChannel);
+
     void deleteByIdAndSenderId(Long id, Long senderId);
 
     void delete(List<MessageChannel> messageChannels);
 
-//    MessageChannel save(String text, Long senderId, Long channelId);
+    void detach(Channel channel);
 }

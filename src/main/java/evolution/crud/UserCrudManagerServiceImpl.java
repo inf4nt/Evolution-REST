@@ -27,8 +27,6 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class UserCrudManagerServiceImpl implements UserCrudManagerService {
 
-
-
     @Value("${model.user.maxfetch}")
     private Integer userMaxFetch;
 
@@ -96,6 +94,7 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
     }
 
     @Override
+    @Transactional
     public CompletableFuture<Optional<User>> findOneAsync(Long userId) {
         return userRepository.findOneUserByIdAsync(userId)
                 .thenApply(v -> Optional.ofNullable(v));

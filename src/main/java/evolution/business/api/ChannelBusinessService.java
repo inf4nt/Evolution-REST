@@ -90,5 +90,13 @@ public interface ChannelBusinessService {
 
     BusinessServiceExecuteResult<ChannelDTO> joinToChannel(Long channelId, Long userId);
 
-    BusinessServiceExecuteResult<ChannelDTO> outFromChannel(Long id);
+    BusinessServiceExecuteResult<ChannelDTO> outFromChannelByAuthUser(Long id);
+
+    BusinessServiceExecuteResult<ChannelDTO> outFromChannel(Long channelId, Long userId);
+
+    BusinessServiceExecuteResult<BusinessServiceExecuteStatus> sendMessageAfterLeftFromChannel(Long channelId, Long senderId);
+
+    BusinessServiceExecuteResult<BusinessServiceExecuteStatus> sendMessageAfterJoinFromChannel(Long channelId, Long senderId);
+
+    BusinessServiceExecuteResult<BusinessServiceExecuteStatus> sendMessageAfterCreateChannel(Long channelId, Long senderId);
 }

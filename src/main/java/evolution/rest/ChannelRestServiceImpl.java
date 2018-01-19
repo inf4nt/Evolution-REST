@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -219,8 +220,9 @@ public class ChannelRestServiceImpl implements ChannelRestService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<ChannelDTO> outFromChannel(Long id) {
-        BusinessServiceExecuteResult<ChannelDTO> b = channelBusinessService.outFromChannel(id);
+        BusinessServiceExecuteResult<ChannelDTO> b = channelBusinessService.outFromChannelByAuthUser(id);
         if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent()) {
             return ResponseEntity.noContent().build();
         }
