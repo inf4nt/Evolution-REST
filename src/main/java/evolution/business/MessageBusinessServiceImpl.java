@@ -204,23 +204,47 @@ public class MessageBusinessServiceImpl implements MessageBusinessService {
 
     @Override
     public BusinessServiceExecuteResult<MessageDTO> update(MessageUpdateDTO messageUpdateDTO) {
-        Optional<Message> original = messageCrudManagerService.findOne(messageUpdateDTO.getId());
-        if (original.isPresent()) {
-            if (securitySupportService.isAllowedFull(original.get().getSender().getId())) {
-                Message m = original.get();
-                m.setMessage(messageUpdateDTO.getMessage());
+        Optional<Message> messageOptional;
+        User auth = securitySupportService.getAuthenticationPrincipal().getUser();
 
-                Optional<Message> res = messageCrudManagerService.update(m);
-                return res
-                        .map(message -> BusinessServiceExecuteResult.build(OK, messageDTOTransfer.modelToDTO(message)))
-                        .orElseGet(() -> BusinessServiceExecuteResult.build(NOT_FOUNT_OBJECT_FOR_EXECUTE));
-
-            } else {
-                return BusinessServiceExecuteResult.build(FORBIDDEN);
-            }
+        if (securitySupportService.isAdmin()) {
+            messageOptional = messageCrudManagerService.update(messageUpdateDTO);
         } else {
-            return BusinessServiceExecuteResult.build(NOT_FOUNT_OBJECT_FOR_EXECUTE);
+            messageOptional = messageCrudManagerService.update(messageUpdateDTO, auth.getId());
         }
+
+        if (!messageOptional.isPresent()) {
+            return BusinessServiceExecuteResult.build(EXPECTATION_FAILED);
+        }
+
+        MessageDTO result;
+        if (messageOptional.get().getDialog().getSecond().getId().equals(auth.getId())
+                || messageOptional.get().getDialog().getFirst().getId().equals(auth.getId())) {
+            result = messageDTOTransfer.modelToDTO(messageOptional.get(), auth);
+        } else {
+            result = messageDTOTransfer.modelToDTO(messageOptional.get());
+        }
+
+        return BusinessServiceExecuteResult.build(OK, result);
+
+
+//        Optional<Message> original = messageCrudManagerService.findOne(messageUpdateDTO.getId());
+//        if (original.isPresent()) {
+//            if (securitySupportService.isAllowedFull(original.get().getSender().getId())) {
+//                Message m = original.get();
+//                m.setMessage(messageUpdateDTO.getMessage());
+//
+//                Optional<Message> res = messageCrudManagerService.update(m);
+//                return res
+//                        .map(message -> BusinessServiceExecuteResult.build(OK, messageDTOTransfer.modelToDTO(message)))
+//                        .orElseGet(() -> BusinessServiceExecuteResult.build(NOT_FOUNT_OBJECT_FOR_EXECUTE));
+//
+//            } else {
+//                return BusinessServiceExecuteResult.build(FORBIDDEN);
+//            }
+//        } else {
+//            return BusinessServiceExecuteResult.build(NOT_FOUNT_OBJECT_FOR_EXECUTE);
+//        }
     }
 
     @Override

@@ -4,6 +4,7 @@ import evolution.crud.api.DialogCrudManagerService;
 import evolution.model.Dialog;
 import evolution.model.Message;
 import evolution.repository.DialogRepository;
+import evolution.repository.MessageRepository;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,8 +25,6 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class DialogCrudManagerServiceImpl implements DialogCrudManagerService {
 
-    private final DialogRepository dialogRepository;
-
     @Value("${model.dialog.maxfetch}")
     private Integer dialogMaxFetch;
 
@@ -36,9 +35,10 @@ public class DialogCrudManagerServiceImpl implements DialogCrudManagerService {
     private String defaultDialogSortProperties;
 
     @Autowired
-    public DialogCrudManagerServiceImpl(DialogRepository dialogRepository) {
-        this.dialogRepository = dialogRepository;
-    }
+    private DialogRepository dialogRepository;
+
+    @Autowired
+    private MessageRepository messageRepository;
 
     @Override
     public List<Dialog> findAll() {
@@ -71,6 +71,11 @@ public class DialogCrudManagerServiceImpl implements DialogCrudManagerService {
         Sort s = getSortForRestService(sort, sortProperties,
                 this.defaultDialogSortType, this.defaultDialogSortProperties);
         return dialogRepository.findAllLazy(s);
+    }
+
+    @Override
+    public List<Dialog> findMyDialog(Long iam) {
+        return dialogRepository.findMyDialog(iam);
     }
 
     @Override
@@ -157,6 +162,17 @@ public class DialogCrudManagerServiceImpl implements DialogCrudManagerService {
     public void delete(Long aLong) {
         Optional<Dialog> optional = findOne(aLong);
         optional.ifPresent(dialog -> dialogRepository.delete(dialog));
+    }
+
+    @Override
+    @Transactional
+    public CompletableFuture<Void> deleteIfNotHaveMessageAsync(Long id) {
+        return CompletableFuture.runAsync(() -> {
+            Long count = messageRepository.countMessageByDialogId(id);
+            if (count != null && count.equals(0L)) {
+                delete(id);
+            }
+        });
     }
 
     @Override

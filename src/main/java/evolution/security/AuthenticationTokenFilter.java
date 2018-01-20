@@ -66,42 +66,42 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
             authToken = authToken.substring(7);
         }
 
-////        todo: remove after testing
-//        String username = "com.infant@gmail.com";
-//
-//        if (SecurityContextHolder.getContext().getAuthentication() == null) {
-//            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-//
-//            UsernamePasswordAuthenticationToken authentication =
-//                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-//            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-//            SecurityContextHolder.getContext().setAuthentication(authentication);
-//
-//        }
+//        todo: remove after testing
+        String username = "com.infant@gmail.com";
 
-        String username = jwtTokenService.getUsername(authToken);
+        if (SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-        logger.info("checking authentication für user " + username);
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
-            CompletableFuture<Optional<UserDetails>> cfu = userAuthenticationService.loadByUsername(username);
-            CompletableFuture<Optional<AuthenticationSession>> cfa = userAuthenticationService
-                    .findAuthenticationSessionBySessionKey(jwtTokenService.getAuthenticationSession(authToken));
-
-            CompletableFuture.allOf(cfu, cfa);
-            Optional<UserDetails> userDetails = cfu.join();
-            Optional<AuthenticationSession> authenticationSession = cfa.join();
-
-            if (userDetails.isPresent() && authenticationSession.isPresent()) {
-                if (this.jwtTokenService.isValidToken(authToken, userDetails.get())) {
-                    UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(userDetails.get(), null, userDetails.get().getAuthorities());
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                }
-            }
         }
+
+//        String username = jwtTokenService.getUsername(authToken);
+//
+//        logger.info("checking authentication für user " + username);
+//
+//        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+//
+//            CompletableFuture<Optional<UserDetails>> cfu = userAuthenticationService.loadByUsername(username);
+//            CompletableFuture<Optional<AuthenticationSession>> cfa = userAuthenticationService
+//                    .findAuthenticationSessionBySessionKey(jwtTokenService.getAuthenticationSession(authToken));
+//
+//            CompletableFuture.allOf(cfu, cfa);
+//            Optional<UserDetails> userDetails = cfu.join();
+//            Optional<AuthenticationSession> authenticationSession = cfa.join();
+//
+//            if (userDetails.isPresent() && authenticationSession.isPresent()) {
+//                if (this.jwtTokenService.isValidToken(authToken, userDetails.get())) {
+//                    UsernamePasswordAuthenticationToken authentication =
+//                            new UsernamePasswordAuthenticationToken(userDetails.get(), null, userDetails.get().getAuthorities());
+//                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+//                    SecurityContextHolder.getContext().setAuthentication(authentication);
+//                }
+//            }
+//        }
 
         System.out.println("Auth filter ============================================================");
         chain.doFilter(request, response);

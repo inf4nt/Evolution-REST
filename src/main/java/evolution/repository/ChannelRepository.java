@@ -57,6 +57,7 @@ public interface ChannelRepository extends JpaRepository<Channel, Long> {
 
     @Query("select c " +
             " from Channel c " +
+            " join fetch c.messageChannelList " +
             " where c.whoCreatedChannel.id =:userId ")
     List<Channel> findChannelForWhoCreateChannelUser(@Param("userId") Long userId);
 
@@ -79,4 +80,17 @@ public interface ChannelRepository extends JpaRepository<Channel, Long> {
             " join fetch c.channelUser cu " +
             " where cu.id =:userid or c.whoCreatedChannel.id =:userid ")
     CompletableFuture<List<Channel>> findMyChannelAsync(@Param("userid") Long userid);
+
+    @Async
+    @Query(" select c from " +
+            " Channel c " +
+            " join fetch c.channelUser cu " +
+            " where c.whoCreatedChannel.id =:userid ")
+    CompletableFuture<List<Channel>> findByWhoCreatedChannelAsync(@Param("userid") Long userid);
+
+    @Query(" select c from " +
+            " Channel c " +
+            " join fetch c.channelUser cu " +
+            " where c.whoCreatedChannel.id =:userid ")
+    List<Channel> findByWhoCreatedChannel(@Param("userid") Long userid);
 }

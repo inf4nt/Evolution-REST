@@ -15,6 +15,7 @@ import java.util.List;
 @Table(name = "dialog")
 @Data
 @ToString(exclude = {"messageList"})
+@Deprecated // todo create dialog by composite foreign key ! or create new entity message
 public class Dialog {
 
     @Id

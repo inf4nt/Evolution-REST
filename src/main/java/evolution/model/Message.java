@@ -11,6 +11,7 @@ import java.util.Date;
 @Entity
 @Table(name = "message")
 @Data
+@Deprecated // todo create dialog by composite foreign key ! or create new entity message
 public class Message {
 
     @Id
@@ -21,7 +22,7 @@ public class Message {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "dialog_id", updatable = false, nullable = false, columnDefinition = "bigint")
-    private Dialog dialog;
+    private Dialog dialog; // todo create dialog by composite foreign key ! or create new entity message
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "sender_id", columnDefinition = "bigint", nullable = false)

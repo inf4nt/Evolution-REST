@@ -3,12 +3,15 @@ package evolution.crud;
 import evolution.crud.api.*;
 import evolution.model.*;
 import evolution.model.channel.Channel;
+import evolution.model.channel.ChannelUserReference;
 import evolution.model.channel.MessageChannel;
+import evolution.repository.ChannelRepository;
+import evolution.repository.ChannelUserReferenceRepository;
+import evolution.repository.MessageChanelRepository;
 import evolution.repository.UserRepository;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -20,6 +23,7 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 /**
  * Created by Infant on 07.11.2017.
@@ -52,10 +56,19 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
     private DialogCrudManagerService dialogCrudManagerService;
 
     @Autowired
-    private ChannelCrudManagerService channelCrudManagerService;
+    private ChannelUserReferenceRepository channelUserReferenceRepository;
 
     @Autowired
     private MessageChannelCrudManagerService messageChannelCrudManagerService;
+
+    @Autowired
+    private ChannelCrudManagerService channelCrudManagerService;
+
+    @Autowired
+    private ChannelRepository channelRepository;
+
+    @Autowired
+    private MessageChanelRepository messageChanelRepository;
 
     @Override
     public List<User> findAll() {
@@ -183,20 +196,23 @@ public class UserCrudManagerServiceImpl implements UserCrudManagerService {
     @Override
     @Transactional
     public void delete(Long aLong) {
-        CompletableFuture<Optional<User>> cu = findOneAsync(aLong);
-        CompletableFuture<List<Feed>> cfeed = feedCrudManagerService.findFeedBySenderOrToUserAsync(aLong);
-        CompletableFuture<List<Friend>> cfriend = friendCrudManagerService.findFriendByFirstOrSecondAsync(aLong);
-        CompletableFuture<List<Dialog>> cdialog = dialogCrudManagerService.findMyDialogAsync(aLong);
-        CompletableFuture<List<MessageChannel>> cmc = messageChannelCrudManagerService.findMessageChannelBySenderAsync(aLong);
+        Optional<User> cu = findOne(aLong);
+        List<Feed> cfeed = feedCrudManagerService.findFeedBySenderOrToUser(aLong);
+        List<Friend> cfriend = friendCrudManagerService.findFriendByFirstOrSecond(aLong);
+        List<Dialog> cdialog = dialogCrudManagerService.findMyDialog(aLong);
+        List<MessageChannel> cmc = messageChannelCrudManagerService.findMessageChannelBySender(aLong).stream().distinct().collect(Collectors.toList());
+        List<ChannelUserReference> cur = channelUserReferenceRepository.findByUserAndNotWhoCreateChannel(aLong);
+        List<Channel> cwr = channelCrudManagerService.findByWhoCreatedChannel(aLong);
 
-        CompletableFuture.allOf(cu, cfeed, cfriend, cdialog, cmc);
+        if (cu.isPresent()) {
+            messageChannelCrudManagerService.delete(cmc);
+            channelUserReferenceRepository.delete(cur);
+            channelCrudManagerService.delete(cwr);
+            friendCrudManagerService.delete(cfriend);
+            feedCrudManagerService.delete(cfeed);
+            dialogCrudManagerService.deleteList(cdialog);
 
-        if (cu.join().isPresent()) {
-            friendCrudManagerService.delete(cfriend.join());
-            feedCrudManagerService.delete(cfeed.join());
-            dialogCrudManagerService.deleteList(cdialog.join());
-            messageChannelCrudManagerService.delete(cmc.join());
-            delete(cu.join().get());
+            delete(cu.get());
         }
     }
 

@@ -4,6 +4,7 @@ import evolution.crud.api.DialogCrudManagerService;
 import evolution.crud.api.MessageCrudManagerService;
 import evolution.crud.api.UserCrudManagerService;
 import evolution.dto.model.MessageSaveDTO;
+import evolution.dto.model.MessageUpdateDTO;
 import evolution.model.Dialog;
 import evolution.model.Message;
 import evolution.model.User;
@@ -87,17 +88,6 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
         Dialog dialog;
         Message message = new Message();
 
-//        CompletableFuture<Dialog> cd = dialogRepository.findDialogByUsersAsync(senderId, recipientId);
-//        CompletableFuture<User> cr = userRepository.findOneUserByIdAsync(recipientId);
-//        CompletableFuture<User> cs = userRepository.findOneUserByIdAsync(senderId);
-//
-//
-//        CompletableFuture.allOf(cd, cr, cs);
-//
-//        Optional<Dialog> od = Optional.ofNullable(cd.join());
-//        Optional<User> or = Optional.ofNullable(cr.join());
-//        Optional<User> os = Optional.ofNullable(cs.join());
-
         CompletableFuture<Optional<Dialog>> cd = dialogCrudManagerService.findDialogByUsersAsync(senderId, recipientId);
         CompletableFuture<Optional<User>> cr = userCrudManagerService.findOneAsync(recipientId);
         CompletableFuture<Optional<User>> cs = userCrudManagerService.findOneAsync(senderId);
@@ -136,6 +126,29 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
     }
 
     @Override
+    @Transactional
+    public Optional<Message> update(MessageUpdateDTO messageUpdateDTO) {
+        Optional<Message> original = findOne(messageUpdateDTO.getId());
+        if (original.isPresent()) {
+            original.get().setMessage(messageUpdateDTO.getMessage());
+            return Optional.of(messageRepository.save(original.get()));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<Message> update(MessageUpdateDTO messageUpdateDTO, Long senderId) {
+        Optional<Message> original = findOne(messageUpdateDTO.getId(), senderId);
+        if (original.isPresent()) {
+            original.get().setMessage(messageUpdateDTO.getMessage());
+            return Optional.of(messageRepository.save(original.get()));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @Override
     public Message saveMessageAndMaybeCreateNewDialog(MessageSaveDTO messageSaveDTO, Date createUTC) {
         return saveMessageAndMaybeCreateNewDialog(messageSaveDTO.getText(), messageSaveDTO.getSenderId(), messageSaveDTO.getRecipientId(), createUTC);
     }
@@ -170,16 +183,18 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
     public void deleteMessageAndMaybeDialog(Long messageId) {
         Optional<Message> message = messageRepository.findOneMessageById(messageId);
         message.ifPresent(o -> {
-            Dialog dialog = message.get().getDialog();
-            List<Message> messageList = dialog.getMessageList();
-            if (!messageList.isEmpty()) {
-                if (messageList.size() == 1) {
-                    dialogCrudManagerService.delete(dialog);
-                } else {
-                    messageList.remove(message.get());
-                    dialogCrudManagerService.save(dialog);
-                }
-            }
+            messageRepository.delete(message.get().getId());
+            dialogCrudManagerService.deleteIfNotHaveMessageAsync(message.get().getDialog().getId());
+//            Dialog dialog = message.get().getDialog();
+//            List<Message> messageList = dialog.getMessageList();
+//            if (!messageList.isEmpty()) {
+//                if (messageList.size() == 1) {
+//                    dialogCrudManagerService.delete(dialog);
+//                } else {
+//                    messageList.remove(message.get());
+//                    dialogCrudManagerService.save(dialog);
+//                }
+//            }
         });
     }
 
@@ -188,16 +203,18 @@ public class MessageCrudManagerServiceImpl implements MessageCrudManagerService 
     public void deleteMessageAndMaybeDialog(Long messageId, Long senderId) {
         Optional<Message> message = messageRepository.findOneByMessageIdAndSender(messageId, senderId);
         message.ifPresent(o -> {
-            Dialog dialog = message.get().getDialog();
-            List<Message> messageList = dialog.getMessageList();
-            if (!messageList.isEmpty()) {
-                if (messageList.size() == 1) {
-                    dialogCrudManagerService.delete(dialog);
-                } else {
-                    messageList.remove(message.get());
-                    dialogCrudManagerService.save(dialog);
-                }
-            }
+            messageRepository.delete(message.get().getId());
+            dialogCrudManagerService.deleteIfNotHaveMessageAsync(message.get().getDialog().getId());
+//            Dialog dialog = message.get().getDialog();
+//            List<Message> messageList = dialog.getMessageList();
+//            if (!messageList.isEmpty()) {
+//                if (messageList.size() == 1) {
+//                    dialogCrudManagerService.delete(dialog);
+//                } else {
+//                    messageList.remove(message.get());
+//                    dialogCrudManagerService.save(dialog);
+//                }
+//            }
         });
     }
 

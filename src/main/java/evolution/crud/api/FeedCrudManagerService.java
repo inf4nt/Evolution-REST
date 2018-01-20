@@ -39,6 +39,8 @@ public interface FeedCrudManagerService extends AbstractCrudManagerService<Feed,
 
     CompletableFuture<List<Feed>> findFeedBySenderOrToUserAsync(Long userid);
 
+    List<Feed> findFeedBySenderOrToUser(Long userid);
+
     void delete(List<Feed> list);
 
     Feed save(FeedSaveDTO feedSaveDTO);

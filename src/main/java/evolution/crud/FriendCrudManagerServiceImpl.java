@@ -263,6 +263,11 @@ public class FriendCrudManagerServiceImpl implements FriendCrudManagerService {
     }
 
     @Override
+    public List<Friend> findFriendByFirstOrSecond(Long userid) {
+        return friendRepository.findFriendByFirstOrSecond(userid);
+    }
+
+    @Override
     public void delete(List<Friend> list) {
         friendRepository.delete(list);
     }

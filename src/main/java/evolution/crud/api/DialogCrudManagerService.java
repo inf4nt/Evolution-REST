@@ -24,6 +24,8 @@ public interface DialogCrudManagerService extends AbstractCrudManagerService<Dia
 
     Page<Dialog> findAllLazy(Integer page, Integer size, String sort, List<String> sortProperties);
 
+    List<Dialog> findMyDialog(Long iam);
+
     Page<Dialog> findMyDialog(Long iam, Integer page, Integer size, String sort, List<String> sortProperties);
 
     List<Dialog> findMyDialog(Long iam, String sort, List<String> sortProperties);
@@ -39,6 +41,8 @@ public interface DialogCrudManagerService extends AbstractCrudManagerService<Dia
     void delete(Dialog dialog);
 
     void delete(List<Long> ids);
+
+    CompletableFuture<Void> deleteIfNotHaveMessageAsync(Long id);
 
     void clearRowByUserForeignKey(Long id);
 

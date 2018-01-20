@@ -38,6 +38,8 @@ public interface ChannelCrudManagerService extends AbstractCrudManagerService<Ch
 
     void clearRowByUserForeignKey(Long userId);
 
+    List<Channel> findChannelForWhoCreateChannelUserLazy(Long userId);
+
     List<Channel> findChannelForWhoCreateChannelUser(Long userId);
 
     List<Channel> findChannelForWhoCreateChannelUser(Long userId, String sortType, List<String> sortProperties);
@@ -68,4 +70,8 @@ public interface ChannelCrudManagerService extends AbstractCrudManagerService<Ch
     CompletableFuture<List<Channel>> findMyChannelAsync(Long userid);
 
     void delete(List<Channel> list);
+
+    CompletableFuture<List<Channel>> findByWhoCreatedChannelAsync(Long whoCreatedChannel);
+
+    List<Channel> findByWhoCreatedChannel(Long whoCreatedChannel);
 }

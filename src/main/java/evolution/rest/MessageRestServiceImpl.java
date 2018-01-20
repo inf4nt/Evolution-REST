@@ -116,7 +116,7 @@ public class MessageRestServiceImpl implements MessageRestService {
         } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {
             return ResponseEntity.status(403).build();
         }
-        return ResponseEntity.status(417).build();
+        return ResponseEntity.noContent().build();
     }
 
     @Override
@@ -127,14 +127,12 @@ public class MessageRestServiceImpl implements MessageRestService {
     @Override
     public ResponseEntity<MessageDTO> update(MessageUpdateDTO message) {
         BusinessServiceExecuteResult<MessageDTO> b = messageBusinessService.update(message);
-        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK  && b.getResultObjectOptional().isPresent()) {
+
+        if (b.getExecuteStatus() == BusinessServiceExecuteStatus.OK && b.getResultObjectOptional().isPresent()) {
             return ResponseEntity.ok(b.getResultObject());
-        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.NOT_FOUNT_OBJECT_FOR_EXECUTE) {
-            return ResponseEntity.noContent().build();
-        } else if (b.getExecuteStatus() == BusinessServiceExecuteStatus.FORBIDDEN) {
-            return ResponseEntity.status(403).build();
         }
-        return ResponseEntity.status(417).build();
+
+        return ResponseEntity.noContent().build();
     }
 
     @Override

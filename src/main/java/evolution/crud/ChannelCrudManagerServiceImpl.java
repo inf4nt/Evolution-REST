@@ -1,13 +1,11 @@
 package evolution.crud;
 
 import evolution.crud.api.ChannelCrudManagerService;
-import evolution.crud.api.MessageChannelCrudManagerService;
 import evolution.crud.api.UserCrudManagerService;
 import evolution.dto.model.ChannelSaveDTO;
 import evolution.model.User;
 import evolution.model.channel.Channel;
 import evolution.model.channel.ChannelUserReference;
-import evolution.model.channel.MessageChannel;
 import evolution.repository.ChannelRepository;
 import evolution.repository.ChannelUserReferenceRepository;
 import evolution.service.DateService;
@@ -25,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class ChannelCrudManagerServiceImpl implements ChannelCrudManagerService {
@@ -177,6 +177,13 @@ public class ChannelCrudManagerServiceImpl implements ChannelCrudManagerService 
     }
 
     @Override
+    public List<Channel> findChannelForWhoCreateChannelUserLazy(Long userId) {
+        List<Channel> list =  channelRepository.findChannelForWhoCreateChannelUser(userId);
+        initializeLazy(list);
+        return list;
+    }
+
+    @Override
     public List<Channel> findChannelForWhoCreateChannelUser(Long userId) {
         return channelRepository.findChannelForWhoCreateChannelUser(userId);
     }
@@ -247,16 +254,6 @@ public class ChannelCrudManagerServiceImpl implements ChannelCrudManagerService 
         channel.setChannelName(channelSaveDTO.getChannelName());
         channel.setActive(true);
 
-//        MessageChannel messageChannel = new MessageChannel();
-//        messageChannel.setText(ou.get().getFirstName() + " " + ou.get().getLastName() + " create channel #" + channelSaveDTO.getChannelName());
-//        messageChannel.setDatePost(dateService.getCurrentDateInUTC());
-//        messageChannel.setChannel(channel);
-//        messageChannel.setActive(true);
-//        messageChannel.setSender(ou.get());
-//
-//        channel.getMessageChannelList()
-//                .add(messageChannel);
-
         return Optional.of(save(channel));
     }
 
@@ -318,6 +315,16 @@ public class ChannelCrudManagerServiceImpl implements ChannelCrudManagerService 
     @Override
     public void delete(List<Channel> list) {
         channelRepository.delete(list);
+    }
+
+    @Override
+    public CompletableFuture<List<Channel>> findByWhoCreatedChannelAsync(Long whoCreatedChannel) {
+        return channelRepository.findByWhoCreatedChannelAsync(whoCreatedChannel);
+    }
+
+    @Override
+    public List<Channel> findByWhoCreatedChannel(Long whoCreatedChannel) {
+        return channelRepository.findByWhoCreatedChannel(whoCreatedChannel);
     }
 
     @Override

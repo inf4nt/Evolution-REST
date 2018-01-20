@@ -166,6 +166,11 @@ public class FeedCrudManagerServiceImpl implements FeedCrudManagerService {
     }
 
     @Override
+    public List<Feed> findFeedBySenderOrToUser(Long userid) {
+        return feedRepository.findAllFeedByToUserOrSender(userid);
+    }
+
+    @Override
     public void delete(List<Feed> list) {
         feedRepository.delete(list);
     }
