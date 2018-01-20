@@ -15,7 +15,7 @@ import java.util.List;
 @Table(name = "dialog")
 @Data
 @ToString(exclude = {"messageList"})
-@Deprecated // todo create dialog by composite foreign key ! or create new entity message
+// todo create dialog by composite foreign key ! or create new entity message
 public class Dialog {
 
     @Id
@@ -38,4 +38,8 @@ public class Dialog {
 
     @OneToMany(mappedBy = "dialog", fetch = FetchType.LAZY, cascade = CascadeType.ALL ,orphanRemoval = true)
     private List<Message> messageList = new ArrayList<>();
+
+    @Version
+    @Column(columnDefinition = "bigint")
+    private Long version;
 }

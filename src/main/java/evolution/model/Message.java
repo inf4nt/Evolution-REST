@@ -11,7 +11,7 @@ import java.util.Date;
 @Entity
 @Table(name = "message")
 @Data
-@Deprecated // todo create dialog by composite foreign key ! or create new entity message
+// todo create dialog by composite foreign key ! or create new entity message
 public class Message {
 
     @Id
