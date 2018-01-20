@@ -60,29 +60,6 @@ public class FileRestController {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @GetMapping(value = "/test")
     public void test() throws IOException {
         Drive drive = googleDrive.drive();
@@ -113,7 +90,7 @@ public class FileRestController {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         drive.files().get(file.getId()).executeMediaAndDownloadTo(outputStream);
-        byte [] b = outputStream.toByteArray();
+        byte[] b = outputStream.toByteArray();
         byte[] encoded = Base64.encodeBase64(b);
         String encodedString = new String(encoded);
 
