@@ -27,7 +27,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("select u " +
             " from User u " +
-            " where u.userAdditionalData.username =:username ")
+            " join fetch u.userAdditionalData ua " +
+            " where ua.username =:username ")
     Optional<User> findUserByUsername(@Param("username") String username);
 
     @Async

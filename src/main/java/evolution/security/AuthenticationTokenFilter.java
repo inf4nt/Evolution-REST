@@ -1,20 +1,16 @@
 package evolution.security;
 
-import evolution.crud.api.AuthenticationSessionCrudManagerService;
 import evolution.model.AuthenticationSession;
 import evolution.security.service.UserAuthenticationService;
 import evolution.security.token.JwtTokenService;
-import lombok.SneakyThrows;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -30,24 +26,11 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
 
     private final Log logger = LogFactory.getLog(this.getClass());
 
-    private final UserDetailsService userDetailsService;
-
-    private final JwtTokenService jwtTokenService;
-
-    private final UserAuthenticationService userAuthenticationService;
-
-    private final AuthenticationSessionCrudManagerService authenticationSessionCrudManagerService;
+    @Autowired
+    private JwtTokenService jwtTokenService;
 
     @Autowired
-    public AuthenticationTokenFilter(UserDetailsService userDetailsService,
-                                     JwtTokenService jwtTokenService,
-                                     UserAuthenticationService userAuthenticationService,
-                                     AuthenticationSessionCrudManagerService authenticationSessionCrudManagerService) {
-        this.userAuthenticationService = userAuthenticationService;
-        this.authenticationSessionCrudManagerService = authenticationSessionCrudManagerService;
-        this.userDetailsService = userDetailsService;
-        this.jwtTokenService = jwtTokenService;
-    }
+    private UserAuthenticationService userAuthenticationService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
@@ -66,42 +49,46 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
             authToken = authToken.substring(7);
         }
 
-//        todo: remove after testing
-        String username = "com.infant@gmail.com";
-
-        if (SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        }
-
-//        String username = jwtTokenService.getUsername(authToken);
+////        todo: remove after testing
+//        String username = "com.infant@gmail.com";
 //
-//        logger.info("checking authentication für user " + username);
+//        if (SecurityContextHolder.getContext().getAuthentication() == null) {
+//            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 //
-//        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+//            UsernamePasswordAuthenticationToken authentication =
+//                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+//            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+//            SecurityContextHolder.getContext().setAuthentication(authentication);
 //
-//            CompletableFuture<Optional<UserDetails>> cfu = userAuthenticationService.loadByUsername(username);
-//            CompletableFuture<Optional<AuthenticationSession>> cfa = userAuthenticationService
-//                    .findAuthenticationSessionBySessionKey(jwtTokenService.getAuthenticationSession(authToken));
-//
-//            CompletableFuture.allOf(cfu, cfa);
-//            Optional<UserDetails> userDetails = cfu.join();
-//            Optional<AuthenticationSession> authenticationSession = cfa.join();
-//
-//            if (userDetails.isPresent() && authenticationSession.isPresent()) {
-//                if (this.jwtTokenService.isValidToken(authToken, userDetails.get())) {
-//                    UsernamePasswordAuthenticationToken authentication =
-//                            new UsernamePasswordAuthenticationToken(userDetails.get(), null, userDetails.get().getAuthorities());
-//                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-//                    SecurityContextHolder.getContext().setAuthentication(authentication);
-//                }
-//            }
 //        }
+
+
+        String username = jwtTokenService.getUsername(authToken);
+
+        logger.info("checking authentication für user " + username);
+
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+
+            CompletableFuture<Optional<UserDetails>> cfu = userAuthenticationService.loadByUsernameAsync(username);
+            CompletableFuture<Optional<AuthenticationSession>> cfa = userAuthenticationService
+                    .findAuthenticationSessionBySessionKeyAsync(jwtTokenService.getAuthenticationSession(authToken));
+
+            CompletableFuture.allOf(cfu, cfa);
+
+            Optional<UserDetails> userDetails = cfu.join();
+            Optional<AuthenticationSession> authenticationSession = cfa.join();
+
+            if (userDetails.isPresent() && authenticationSession.isPresent()) {
+                if (this.jwtTokenService.isValidToken(authToken, userDetails.get())) {
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(userDetails.get(), null, userDetails.get().getAuthorities());
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            } else {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            }
+        }
 
         System.out.println("Auth filter ============================================================");
         chain.doFilter(request, response);
