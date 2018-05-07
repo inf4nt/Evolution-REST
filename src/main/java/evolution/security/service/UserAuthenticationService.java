@@ -8,7 +8,6 @@ import java.util.concurrent.CompletableFuture;
 
 public interface UserAuthenticationService {
 
-
     CompletableFuture<Optional<UserDetails>> loadByUsernameAsync(String username);
 
     CompletableFuture<Optional<AuthenticationSession>> findAuthenticationSessionBySessionKeyAsync(String sessionKey);

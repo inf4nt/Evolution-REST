@@ -1,6 +1,7 @@
 package evolution.model;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import evolution.common.UserRoleEnum;
 import evolution.security.model.CustomSecurityUser;
 import lombok.*;
